@@ -1,6 +1,7 @@
 package com.ffxiv_gatherer_alarm;
 
 import android.os.Bundle;
+import androidx.core.view.WindowCompat;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
@@ -11,6 +12,7 @@ public class MainActivity extends ReactActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(null);
+      WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
   }
 
   /**
