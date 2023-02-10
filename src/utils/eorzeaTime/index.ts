@@ -44,8 +44,8 @@ enum GatheringRarePopEventState {
 
 function parseGatheringRarePopEvents(
   timeTable: EorzeaTimeUtils.TimeTableItem[],
+  currentEt: Date,
 ): EorzeaTimeUtils.ParsedGatheringRarePopEvents {
-  const currentEt = computeEorzeaDate(new Date());
   const events: EorzeaTimeUtils.GatheringRarePopEvent[] = timeTable
     .slice(0, 3)
     .map(time => {
