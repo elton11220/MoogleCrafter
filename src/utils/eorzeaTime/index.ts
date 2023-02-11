@@ -120,10 +120,35 @@ function parseGatheringRarePopEvents(
   };
 }
 
+function getCountdownValueByParsedEvents(
+  events: EorzeaTimeUtils.ParsedGatheringRarePopEvents,
+  currentLt: Date,
+) {
+  if (
+    events.sortedOccurringEvents.length > 0 &&
+    events.sortedOccurringEvents[0] !== null
+  ) {
+    return moment(
+      events.sortedOccurringEvents[0].endTimeLt.valueOf() - currentLt.valueOf(),
+    ).format('mm:ss');
+  } else if (
+    events.sortedPreparingEvents.length > 0 &&
+    events.sortedPreparingEvents[0] !== null
+  ) {
+    return moment(
+      events.sortedPreparingEvents[0].startTimeLt.valueOf() -
+        currentLt.valueOf(),
+    ).format('mm:ss');
+  } else {
+    return null;
+  }
+}
+
 export {
   computeEorzeaDate,
   computeLocalDate,
   parseStartTime,
   GatheringRarePopEventState,
   parseGatheringRarePopEvents,
+  getCountdownValueByParsedEvents,
 };
