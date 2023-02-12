@@ -120,25 +120,39 @@ function parseGatheringRarePopEvents(
   };
 }
 
-function getCountdownValueByParsedEvents(
-  events: EorzeaTimeUtils.ParsedGatheringRarePopEvents,
-  currentLt: Date,
-) {
+function getPoppingEvent(events: EorzeaTimeUtils.ParsedGatheringRarePopEvents) {
   if (
     events.sortedOccurringEvents.length > 0 &&
     events.sortedOccurringEvents[0] !== null
   ) {
-    return moment(
-      events.sortedOccurringEvents[0].endTimeLt.valueOf() - currentLt.valueOf(),
-    ).format('mm:ss');
+    return events.sortedOccurringEvents[0];
   } else if (
     events.sortedPreparingEvents.length > 0 &&
     events.sortedPreparingEvents[0] !== null
   ) {
-    return moment(
-      events.sortedPreparingEvents[0].startTimeLt.valueOf() -
-        currentLt.valueOf(),
-    ).format('mm:ss');
+    return events.sortedPreparingEvents[0];
+  } else {
+    return null;
+  }
+}
+
+function getCountdownValueByParsedEvents(
+  events: EorzeaTimeUtils.ParsedGatheringRarePopEvents,
+  currentLt: Date,
+) {
+  const poppingEvent = getPoppingEvent(events);
+  if (poppingEvent !== null) {
+    if (poppingEvent.state === GatheringRarePopEventState.OCCURRING) {
+      return moment(
+        poppingEvent.endTimeLt.valueOf() - currentLt.valueOf(),
+      ).format('mm:ss');
+    } else if (poppingEvent.state === GatheringRarePopEventState.PREPARING) {
+      return moment(
+        poppingEvent.startTimeLt.valueOf() - currentLt.valueOf(),
+      ).format('mm:ss');
+    } else {
+      return null;
+    }
   } else {
     return null;
   }
@@ -150,5 +164,6 @@ export {
   parseStartTime,
   GatheringRarePopEventState,
   parseGatheringRarePopEvents,
+  getPoppingEvent,
   getCountdownValueByParsedEvents,
 };
