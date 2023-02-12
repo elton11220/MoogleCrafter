@@ -37,6 +37,7 @@ declare namespace Eorzea {
     y: number;
     gatheringType: GatheringType;
     radius: number;
+    coordConverted: number;
   }
 
   interface GatheringPointBase {
@@ -105,6 +106,9 @@ declare namespace Eorzea {
     mapId: string;
     placeNameForRegion: PlaceName;
     placeName: PlaceName;
+    sizeFactor: number;
+    offsetX: number;
+    offsetY: number;
   }
 
   interface ExVersion {
@@ -140,7 +144,7 @@ declare namespace AppGlobal {
   > &
     Pick<Eorzea.Item, 'name' | 'icon'> &
     Omit<Eorzea.GatheringRarePopTimeTable, 'id'> &
-    Pick<Eorzea.ExportedGatheringPoint, 'x' | 'y'> & {
+    Pick<Eorzea.ExportedGatheringPoint, 'x' | 'y' | 'coordConverted'> & {
       placeName: Pick<Eorzea.PlaceName, 'name'>;
       classJob: Pick<Eorzea.ClassJob, 'name'>;
     };
