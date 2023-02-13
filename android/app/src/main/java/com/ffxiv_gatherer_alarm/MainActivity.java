@@ -6,11 +6,15 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
+import org.devio.rn.splashscreen.SplashScreen;
+import androidx.appcompat.app.AppCompatDelegate;
 
 public class MainActivity extends ReactActivity {
   //react-native-screens override
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+      AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+      SplashScreen.show(this, true);
       super.onCreate(null);
       WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
   }

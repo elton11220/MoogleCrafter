@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">ffxiv_gatherer_alarm</string>
+    <string name="author_name">绿胡子大叔</string>
+    <string name="app_version">App 1.0.0-stable-230213</string>
+    <string name="res_version">Res 2023.01.25.0000.0000-6.2-chs</string>
 </resources>

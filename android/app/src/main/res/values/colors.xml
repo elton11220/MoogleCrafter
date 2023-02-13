@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryContentText">#1A1A1A</color>
+    <color name="secondaryContentText">#767676</color>
+    <color name="tertiaryContentText">#9E9E9E</color>
+    <color name="backgroundColor">#ffffff</color>
+</resources>
