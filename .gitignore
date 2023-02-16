@@ -258,3 +258,4 @@ google-services.json
 
 # icon res
 src/images/gameResource/itemIcons
+src/data/gameData.json
