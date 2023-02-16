@@ -13,6 +13,7 @@
     "@react-navigation/bottom-tabs": "^6.5.3",
     "@react-navigation/material-bottom-tabs": "^6.2.11",
     "@react-navigation/native": "^6.1.2",
+    "immer": "^9.0.19",
     "moment": "^2.29.4",
     "react": "18.2.0",
     "react-native": "0.71.1",
@@ -22,7 +23,8 @@
     "react-native-splash-screen": "^3.3.0",
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-vector-icons": "^9.2.0",
-    "react-native-webview": "^11.26.0"
+    "react-native-webview": "^11.26.0",
+    "zustand": "^4.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
