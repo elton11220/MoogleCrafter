@@ -1,4 +1,4 @@
-import React, {FC, memo, useRef, useState} from 'react';
+import React, {FC, memo, useMemo, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -8,11 +8,11 @@ import {
   Easing,
 } from 'react-native';
 import {Avatar, Text, useTheme} from 'react-native-paper';
-import useEorzeaTime from '../../context/eorzeaTimeContext/useEorzeaTime';
 import {itemIcons} from '../../images/gameResource';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import {
   getCountdownValueByParsedEvents,
+  getTimeTableFromGatheringPoints,
   parseGatheringRarePopEvents,
 } from '../../utils/eorzeaTime';
 import CountdownIndicator, {IndicatorType} from '../CountdownIndicator';
@@ -20,24 +20,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 
 const TopItem: FC<TopItemTypes.Props> = props => {
-  const {gatheringListItem, onRemovePressed, longPresssable} = props;
+  const {gatheringItem, eorzeaTime, onRemovePressed, longPresssable} = props;
   const theme = useTheme<typeof DefaultLightTheme>();
-  const eorzeaTime = useEorzeaTime();
+  const timeTable = useMemo(
+    () => getTimeTableFromGatheringPoints(gatheringItem.gatheringPoints),
+    [gatheringItem.gatheringPoints],
+  );
   const parsedGatheringRarePopEvents = parseGatheringRarePopEvents(
-    [
-      {
-        startTime: gatheringListItem.startTime0,
-        duration: gatheringListItem.duration0,
-      },
-      {
-        startTime: gatheringListItem.startTime1,
-        duration: gatheringListItem.duration1,
-      },
-      {
-        startTime: gatheringListItem.startTime2,
-        duration: gatheringListItem.duration2,
-      },
-    ],
+    timeTable,
     eorzeaTime.currentEt,
   );
   const [longPressed, setLongPressed] = useState(false);
@@ -98,13 +88,13 @@ const TopItem: FC<TopItemTypes.Props> = props => {
         <View>
           <Avatar.Image
             size={px2DpY(50)}
-            source={itemIcons.get(gatheringListItem.icon.toString())}
+            source={itemIcons.get(gatheringItem.icon.toString())}
           />
           {longPressed ? (
             <Pressable
               style={styles.longPressMaskPressable}
               onPress={() => {
-                onRemovePressed(gatheringListItem.id);
+                onRemovePressed(gatheringItem.id);
               }}>
               <Animated.View
                 style={[styles.longPressMaskBg, {opacity: maskOpacityAnim}]}>
@@ -125,7 +115,7 @@ const TopItem: FC<TopItemTypes.Props> = props => {
             style={styles.topItemTitle}
             numberOfLines={1}
             allowFontScaling={false}>
-            {gatheringListItem.name}
+            {gatheringItem.name}
           </Text>
           <CountdownIndicator
             value={
@@ -190,4 +180,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(TopItem);
+export default memo(
+  TopItem,
+  (prev, next) => prev.eorzeaTime.currentLt === next.eorzeaTime.currentLt,
+);

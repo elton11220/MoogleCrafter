@@ -5,6 +5,8 @@ declare namespace EorzeaTimeUtils {
   interface TimeTableItem {
     startTime: number;
     duration: number;
+    gatheringPointIndex: number;
+    gatheringPointBaseId: number;
   }
 
   interface ParsedTimePair {
@@ -13,6 +15,8 @@ declare namespace EorzeaTimeUtils {
   }
 
   type GatheringRarePopEvent = {
+    gatheringPointIndex: number;
+    gatheringPointBaseId: number;
     startTimeEt: Moment;
     startTimeLt: Moment;
     endTimeLt: Moment;

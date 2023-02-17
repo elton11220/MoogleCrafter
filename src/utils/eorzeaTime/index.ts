@@ -42,13 +42,27 @@ enum GatheringRarePopEventState {
   'OCCURRING',
 }
 
+const getTimeTableFromGatheringPoints = (
+  gatheringPoints: AppGlobal.GatheringPoint[],
+) =>
+  gatheringPoints.reduce(
+    (prev, curr, idx) => [
+      ...prev,
+      ...curr.timeTable.map(time => ({
+        ...time,
+        gatheringPointIndex: idx,
+        gatheringPointBaseId: curr.gatheringPointBaseId,
+      })),
+    ],
+    [] as EorzeaTimeUtils.TimeTableItem[],
+  );
+
 function parseGatheringRarePopEvents(
   timeTable: EorzeaTimeUtils.TimeTableItem[],
   currentEt: Date,
 ): EorzeaTimeUtils.ParsedGatheringRarePopEvents {
-  const events: EorzeaTimeUtils.GatheringRarePopEvent[] = timeTable
-    .slice(0, 3)
-    .map(time => {
+  const events: EorzeaTimeUtils.GatheringRarePopEvent[] = timeTable.map(
+    time => {
       const parsedStartTime = parseStartTime(time.startTime);
       const parsedDuration = parseStartTime(time.duration);
       if (parsedStartTime !== null && parsedDuration !== null) {
@@ -68,6 +82,8 @@ function parseGatheringRarePopEvents(
           endTimeEt.getUTCMinutes() + parsedDuration.minute,
         );
         return {
+          gatheringPointIndex: time.gatheringPointIndex,
+          gatheringPointBaseId: time.gatheringPointBaseId,
           startTimeEt: moment(startTimeEt).utc(),
           startTimeLt: moment(computeLocalDate(startTimeEt)),
           endTimeEt: moment(endTimeEt).utc(),
@@ -82,7 +98,8 @@ function parseGatheringRarePopEvents(
       } else {
         return null;
       }
-    });
+    },
+  );
   const occurringEvents = events
     .filter(
       event =>
@@ -158,6 +175,18 @@ function getCountdownValueByParsedEvents(
   }
 }
 
+function getPoppingGatheringPointByParsedEvents(
+  gatheringPoints: AppGlobal.GatheringPoint[],
+  events: EorzeaTimeUtils.ParsedGatheringRarePopEvents,
+) {
+  const poppingEvent = getPoppingEvent(events);
+  if (poppingEvent === null) {
+    return gatheringPoints[0];
+  } else {
+    return gatheringPoints[poppingEvent.gatheringPointIndex];
+  }
+}
+
 export {
   computeEorzeaDate,
   computeLocalDate,
@@ -166,4 +195,6 @@ export {
   parseGatheringRarePopEvents,
   getPoppingEvent,
   getCountdownValueByParsedEvents,
+  getPoppingGatheringPointByParsedEvents,
+  getTimeTableFromGatheringPoints,
 };

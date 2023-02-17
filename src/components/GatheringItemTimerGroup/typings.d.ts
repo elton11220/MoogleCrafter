@@ -5,6 +5,9 @@ declare namespace GatheringItemTimerGroup {
   };
 
   interface Props {
-    timeTable: TimeTableItem[];
+    startTimeLt: string;
+    startTimeEt: string;
+    countdownValue: string;
+    countdownActivate: boolean;
   }
 }

@@ -1,5 +1,9 @@
 declare namespace GatheringItem {
   interface Props {
-    gatheringListItem: AppGlobal.GatheringListItem;
+    gatheringItem: AppGlobal.GatheringItem;
+    eorzeaTime: {
+      currentLt: Date;
+      currentEt: Date;
+    };
   }
 }

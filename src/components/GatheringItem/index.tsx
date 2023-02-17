@@ -1,42 +1,55 @@
-import React, {FC, useMemo} from 'react';
+import React, {FC, memo, useMemo} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Avatar, Text, useTheme} from 'react-native-paper';
 import {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {itemIcons} from '../../images/gameResource';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
+import {
+  GatheringRarePopEventState,
+  getCountdownValueByParsedEvents,
+  getPoppingEvent,
+  getPoppingGatheringPointByParsedEvents,
+  getTimeTableFromGatheringPoints,
+  parseGatheringRarePopEvents,
+} from '../../utils/eorzeaTime';
 import GatheringItemTimerGroup from '../GatheringItemTimerGroup';
 
 const GatheringItem: FC<GatheringItem.Props> = props => {
-  const {gatheringListItem} = props;
+  const {gatheringItem, eorzeaTime} = props;
   const theme = useTheme<typeof DefaultLightTheme>();
-  const timeTable = useMemo(() => {
-    return [
-      {
-        startTime: gatheringListItem.startTime0,
-        duration: gatheringListItem.duration0,
-      },
-      {
-        startTime: gatheringListItem.startTime1,
-        duration: gatheringListItem.duration1,
-      },
-      {
-        startTime: gatheringListItem.startTime2,
-        duration: gatheringListItem.duration2,
-      },
-    ];
-  }, [
-    gatheringListItem.duration0,
-    gatheringListItem.duration1,
-    gatheringListItem.duration2,
-    gatheringListItem.startTime0,
-    gatheringListItem.startTime1,
-    gatheringListItem.startTime2,
-  ]);
+  const timeTable = useMemo(
+    () => getTimeTableFromGatheringPoints(gatheringItem.gatheringPoints),
+    [gatheringItem.gatheringPoints],
+  );
+  const parsedGatheringRarePopEvents = parseGatheringRarePopEvents(
+    timeTable,
+    eorzeaTime.currentEt,
+  );
+  const eventInfo = useMemo(() => {
+    const poppingEvent = getPoppingEvent(parsedGatheringRarePopEvents);
+    if (poppingEvent !== null) {
+      return {
+        startTimeLt: poppingEvent.startTimeLt.format('HH:mm'),
+        startTimeEt: poppingEvent.startTimeEt.format('HH:mm'),
+        state: poppingEvent.state,
+      };
+    } else {
+      return {
+        startTimeLt: '--',
+        startTimeEt: '--',
+        state: null,
+      };
+    }
+  }, [parsedGatheringRarePopEvents]);
+  const gatheringPointDetail = getPoppingGatheringPointByParsedEvents(
+    gatheringItem.gatheringPoints,
+    parsedGatheringRarePopEvents,
+  );
   return (
     <View style={styles.container}>
       <Avatar.Image
         size={px2DpY(56)}
-        source={itemIcons.get(gatheringListItem.icon.toString())}
+        source={itemIcons.get(gatheringItem.icon.toString())}
       />
       <View style={styles.contentContainer}>
         <View style={styles.contentTitleRow}>
@@ -48,7 +61,7 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
               },
             ]}
             allowFontScaling={false}>
-            {gatheringListItem.name}
+            {gatheringItem.name}
           </Text>
         </View>
         <View>
@@ -61,7 +74,9 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
                 color: theme.colors.secondaryContentText,
               },
             ]}>
-            {`等级${gatheringListItem.gatheringItemLevel} ${gatheringListItem.classJob}`}
+            {`等级${gatheringItem.gatheringItemLevel} ${
+              gatheringPointDetail.classJob ?? '-'
+            }`}
           </Text>
           <Text
             allowFontScaling={false}
@@ -72,16 +87,26 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
                 color: theme.colors.secondaryContentText,
               },
             ]}>
-            {`${gatheringListItem.placeName} X: ${
-              gatheringListItem.coordConverted ? gatheringListItem.x : '-'
-            }, Y: ${
-              gatheringListItem.coordConverted ? gatheringListItem.y : '-'
-            }`}
+            {`${gatheringPointDetail?.placeName ?? '-'} X: ${
+              gatheringPointDetail?.x ?? '-'
+            }, Y: ${gatheringPointDetail?.y ?? '-'}`}
           </Text>
         </View>
       </View>
       <View style={styles.rightContainer}>
-        <GatheringItemTimerGroup timeTable={timeTable} />
+        <GatheringItemTimerGroup
+          startTimeLt={eventInfo.startTimeLt}
+          startTimeEt={eventInfo.startTimeEt}
+          countdownActivate={
+            eventInfo.state === GatheringRarePopEventState.OCCURRING
+          }
+          countdownValue={
+            getCountdownValueByParsedEvents(
+              parsedGatheringRarePopEvents,
+              eorzeaTime.currentLt,
+            ) ?? '通常'
+          }
+        />
       </View>
     </View>
   );
@@ -120,4 +145,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GatheringItem;
+export default memo(
+  GatheringItem,
+  (prev, next) => prev.eorzeaTime.currentLt === next.eorzeaTime.currentLt,
+);
