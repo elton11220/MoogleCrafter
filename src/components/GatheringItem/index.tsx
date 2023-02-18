@@ -9,18 +9,14 @@ import {
   getCountdownValueByParsedEvents,
   getPoppingEvent,
   getPoppingGatheringPointByParsedEvents,
-  getTimeTableFromGatheringPoints,
   parseGatheringRarePopEvents,
 } from '../../utils/eorzeaTime';
 import GatheringItemTimerGroup from '../GatheringItemTimerGroup';
+import {GatheringItem as GatheringItemTypes} from './typings';
 
-const GatheringItem: FC<GatheringItem.Props> = props => {
-  const {gatheringItem, eorzeaTime} = props;
+const GatheringItem: FC<GatheringItemTypes.Props> = props => {
+  const {timeTable, gatheringItem, eorzeaTime} = props;
   const theme = useTheme<typeof DefaultLightTheme>();
-  const timeTable = useMemo(
-    () => getTimeTableFromGatheringPoints(gatheringItem.gatheringPoints),
-    [gatheringItem.gatheringPoints],
-  );
   const parsedGatheringRarePopEvents = parseGatheringRarePopEvents(
     timeTable,
     eorzeaTime.currentEt,
@@ -147,5 +143,7 @@ const styles = StyleSheet.create({
 
 export default memo(
   GatheringItem,
-  (prev, next) => prev.eorzeaTime.currentLt === next.eorzeaTime.currentLt,
+  (prev, next) =>
+    prev.timeTable.length === 0 ||
+    prev.eorzeaTime.currentLt === next.eorzeaTime.currentLt,
 );

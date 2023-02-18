@@ -1,12 +1,13 @@
-import {useEffect, useState} from 'react';
-import {computeEorzeaDate} from '../../utils/eorzeaTime';
+import {useFocusEffect} from '@react-navigation/native';
+import {useState} from 'react';
+import {computeEorzeaDate} from '../utils/eorzeaTime';
 
-export default function useEorzeaTimeProvider(interval: number = 1000) {
+export default function useEorzeaTimer(interval: number = 1000) {
   const [eorzeaTime, setEorzeaTime] = useState({
     currentEt: computeEorzeaDate(new Date()),
     currentLt: new Date(),
   });
-  useEffect(() => {
+  useFocusEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
       setEorzeaTime({
@@ -17,6 +18,6 @@ export default function useEorzeaTimeProvider(interval: number = 1000) {
     return () => {
       clearInterval(timer);
     };
-  }, [interval]);
+  });
   return eorzeaTime;
 }
