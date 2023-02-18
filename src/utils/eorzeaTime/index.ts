@@ -54,11 +54,11 @@ const getTimeTableFromGatheringPoints = (
         gatheringPointBaseId: curr.gatheringPointBaseId,
       })),
     ],
-    [] as EorzeaTimeUtils.TimeTableItem[],
+    [] as AppGlobal.TimeTableItem[],
   );
 
 function parseGatheringRarePopEvents(
-  timeTable: EorzeaTimeUtils.TimeTableItem[],
+  timeTable: AppGlobal.TimeTableItem[],
   currentEt: Date,
 ): EorzeaTimeUtils.ParsedGatheringRarePopEvents {
   const events: EorzeaTimeUtils.GatheringRarePopEvent[] = timeTable.map(

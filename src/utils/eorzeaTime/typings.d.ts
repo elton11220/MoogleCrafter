@@ -2,13 +2,6 @@ import type {Moment} from 'moment';
 import type {GatheringRarePopEventState} from './index';
 
 declare namespace EorzeaTimeUtils {
-  interface TimeTableItem {
-    startTime: number;
-    duration: number;
-    gatheringPointIndex: number;
-    gatheringPointBaseId: number;
-  }
-
   interface ParsedTimePair {
     hour: number;
     minute: number;

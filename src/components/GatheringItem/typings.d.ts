@@ -1,5 +1,3 @@
-import {EorzeaTimeUtils} from '../../utils/eorzeaTime/typings';
-
 declare namespace GatheringItem {
   interface Props {
     gatheringItem: AppGlobal.GatheringItem;
@@ -7,6 +5,6 @@ declare namespace GatheringItem {
       currentLt: Date;
       currentEt: Date;
     };
-    timeTable: EorzeaTimeUtils[];
+    timeTable: AppGlobal.TimeTableItem[];
   }
 }

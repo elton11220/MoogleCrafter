@@ -12,9 +12,8 @@ import {
   parseGatheringRarePopEvents,
 } from '../../utils/eorzeaTime';
 import GatheringItemTimerGroup from '../GatheringItemTimerGroup';
-import {GatheringItem as GatheringItemTypes} from './typings';
 
-const GatheringItem: FC<GatheringItemTypes.Props> = props => {
+const GatheringItem: FC<GatheringItem.Props> = props => {
   const {timeTable, gatheringItem, eorzeaTime} = props;
   const theme = useTheme<typeof DefaultLightTheme>();
   const parsedGatheringRarePopEvents = parseGatheringRarePopEvents(
