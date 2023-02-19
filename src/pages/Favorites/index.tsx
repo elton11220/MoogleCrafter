@@ -30,11 +30,7 @@ const Favorites: FC = () => {
         backgroundColor: theme.colors.background,
       }}>
       <Appbar.Header>
-        <Appbar.Content
-          title="我的收藏"
-          accessibilityLabelledBy=""
-          accessibilityLanguage="zh_CN"
-        />
+        <Appbar.Content title="我的收藏" />
       </Appbar.Header>
       <View style={styles.searchBarContainer}>
         <Searchbar
@@ -63,8 +59,6 @@ const Favorites: FC = () => {
           mode="contained"
           size={px2DpY(18)}
           style={styles.searchBarFilterButton}
-          accessibilityLabelledBy={undefined}
-          accessibilityLanguage={undefined}
         />
       </View>
       <View style={styles.topItemContainer}>

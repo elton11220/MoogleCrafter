@@ -14,11 +14,7 @@ const Settings: FC = () => {
         backgroundColor: theme.colors.background,
       }}>
       <Appbar.Header>
-        <Appbar.Content
-          title="设置"
-          accessibilityLabelledBy=""
-          accessibilityLanguage="zh_CN"
-        />
+        <Appbar.Content title="设置" />
       </Appbar.Header>
     </View>
   );

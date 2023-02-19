@@ -14,11 +14,7 @@ const MaterialList: FC = () => {
         backgroundColor: theme.colors.background,
       }}>
       <Appbar.Header>
-        <Appbar.Content
-          title="素材列表"
-          accessibilityLabelledBy=""
-          accessibilityLanguage="zh_CN"
-        />
+        <Appbar.Content title="素材列表" />
       </Appbar.Header>
     </View>
   );
