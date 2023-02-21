@@ -7,7 +7,7 @@ declare namespace AppGlobal {
     folkloreBook: string | null;
     gatheringItemLevel: number;
     gatheringItemStars: number;
-    gatheringPoints: [GatheringPoint, ...GatheringPoint[]];
+    gatheringPoints: GatheringPoint[];
   }
 
   interface GatheringPoint {

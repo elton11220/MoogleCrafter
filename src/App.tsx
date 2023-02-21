@@ -18,8 +18,56 @@ import {
   DefaultLightTheme,
 } from './config/themes/defaultTheme';
 import Settings from './pages/Settings';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import About from './pages/About';
+import NotificationSettings from './pages/NotificationSettings';
+import ThemeSettings from './pages/ThemeSettings';
+import LanguageSettings from './pages/LanguageSettings';
+import GeneralSettings from './pages/GeneralSettings';
 
 const Tab = createMaterialBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+const HomeTabs = () => {
+  return (
+    <Tab.Navigator shifting={true}>
+      <Tab.Screen
+        name="Favorites"
+        component={Favorites}
+        options={{
+          tabBarLabel: '收藏',
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons name="heart" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="MaterialList"
+        component={MaterialList}
+        options={{
+          tabBarLabel: '素材',
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons
+              name="format-list-bulleted"
+              size={24}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={Settings}
+        options={{
+          tabBarLabel: '设置',
+          tabBarIcon: ({color}) => (
+            <MaterialIcons name="settings" size={24} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 
 const App: FC = () => {
   const colorScheme = useColorScheme();
@@ -34,46 +82,42 @@ const App: FC = () => {
         />
         <NavigationContainer
           theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Tab.Navigator shifting={true}>
-            <Tab.Screen
-              name="Favorites"
-              component={Favorites}
+          <Stack.Navigator initialRouteName="HomeTabs">
+            <Stack.Screen
+              name="HomeTabs"
+              component={HomeTabs}
               options={{
-                tabBarLabel: '收藏',
-                tabBarIcon: ({color}) => (
-                  <MaterialCommunityIcons
-                    name="heart"
-                    size={24}
-                    color={color}
-                  />
-                ),
+                headerShown: false,
+                orientation: 'portrait',
+                freezeOnBlur: true,
               }}
             />
-            <Tab.Screen
-              name="MaterialList"
-              component={MaterialList}
-              options={{
-                tabBarLabel: '素材',
-                tabBarIcon: ({color}) => (
-                  <MaterialCommunityIcons
-                    name="format-list-bulleted"
-                    size={24}
-                    color={color}
-                  />
-                ),
-              }}
+            <Stack.Screen
+              name="NotificationSettings"
+              component={NotificationSettings}
+              options={{headerShown: false, orientation: 'portrait'}}
             />
-            <Tab.Screen
-              name="Settings"
-              component={Settings}
-              options={{
-                tabBarLabel: '设置',
-                tabBarIcon: ({color}) => (
-                  <MaterialIcons name="settings" size={24} color={color} />
-                ),
-              }}
+            <Stack.Screen
+              name="ThemeSettings"
+              component={ThemeSettings}
+              options={{headerShown: false, orientation: 'portrait'}}
             />
-          </Tab.Navigator>
+            <Stack.Screen
+              name="LanguageSettings"
+              component={LanguageSettings}
+              options={{headerShown: false, orientation: 'portrait'}}
+            />
+            <Stack.Screen
+              name="GeneralSettings"
+              component={GeneralSettings}
+              options={{headerShown: false, orientation: 'portrait'}}
+            />
+            <Stack.Screen
+              name="About"
+              component={About}
+              options={{headerShown: false, orientation: 'portrait'}}
+            />
+          </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
     </SafeAreaProvider>
