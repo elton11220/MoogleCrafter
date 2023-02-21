@@ -95,27 +95,47 @@ const App: FC = () => {
             <Stack.Screen
               name="NotificationSettings"
               component={NotificationSettings}
-              options={{headerShown: false, orientation: 'portrait'}}
+              options={{
+                headerShown: false,
+                orientation: 'portrait',
+                animation: 'slide_from_right',
+              }}
             />
             <Stack.Screen
               name="ThemeSettings"
               component={ThemeSettings}
-              options={{headerShown: false, orientation: 'portrait'}}
+              options={{
+                headerShown: false,
+                orientation: 'portrait',
+                animation: 'slide_from_right',
+              }}
             />
             <Stack.Screen
               name="LanguageSettings"
               component={LanguageSettings}
-              options={{headerShown: false, orientation: 'portrait'}}
+              options={{
+                headerShown: false,
+                orientation: 'portrait',
+                animation: 'slide_from_right',
+              }}
             />
             <Stack.Screen
               name="GeneralSettings"
               component={GeneralSettings}
-              options={{headerShown: false, orientation: 'portrait'}}
+              options={{
+                headerShown: false,
+                orientation: 'portrait',
+                animation: 'slide_from_right',
+              }}
             />
             <Stack.Screen
               name="About"
               component={About}
-              options={{headerShown: false, orientation: 'portrait'}}
+              options={{
+                headerShown: false,
+                orientation: 'portrait',
+                animation: 'slide_from_right',
+              }}
             />
           </Stack.Navigator>
         </NavigationContainer>
