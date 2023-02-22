@@ -56,6 +56,7 @@ const GeneralSettings = () => {
                 onValueChange={value =>
                   updateGeneralSettings('enableEorzeaTimeDisplayer', value)
                 }
+                style={styles.itemRightPatch}
               />
             )}
           />
@@ -71,6 +72,7 @@ const GeneralSettings = () => {
                 onValueChange={value =>
                   updateGeneralSettings('enableGatheringItemGesture', value)
                 }
+                style={styles.itemRightPatch}
               />
             )}
           />
@@ -113,6 +115,7 @@ const GeneralSettings = () => {
                 onValueChange={value =>
                   updateGeneralSettings('enableFFCafeMapInDetail', value)
                 }
+                style={styles.itemRightPatch}
               />
             )}
           />
@@ -128,6 +131,7 @@ const GeneralSettings = () => {
                 onValueChange={value =>
                   updateGeneralSettings('showAllItemsOfGatheringPoint', value)
                 }
+                style={styles.itemRightPatch}
               />
             )}
           />
@@ -170,6 +174,7 @@ const GeneralSettings = () => {
                 onValueChange={value =>
                   updateGeneralSettings('enableFFCafeMapInFullScreen', value)
                 }
+                style={styles.itemRightPatch}
               />
             )}
           />
@@ -203,6 +208,9 @@ const styles = StyleSheet.create({
   ffCafeTag: {
     fontSize: px2DpY(12),
     lineHeight: px2DpY(18),
+  },
+  itemRightPatch: {
+    marginRight: -8,
   },
 });
 

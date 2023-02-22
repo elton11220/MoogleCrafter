@@ -76,6 +76,7 @@ const ThemeSettings = () => {
                 onValueChange={value =>
                   updateThemeSettings('darkModeFollowOS', value)
                 }
+                style={styles.itemRightPatch}
               />
             )}
           />
@@ -92,6 +93,7 @@ const ThemeSettings = () => {
                   updateThemeSettings('enableDarkMode', value)
                 }
                 disabled={darkModeFollowOS}
+                style={styles.itemRightPatch}
               />
             )}
           />
@@ -114,6 +116,9 @@ const styles = StyleSheet.create({
   colorPickerItem: {
     paddingLeft: px2DpX(15),
     paddingRight: px2DpX(15),
+  },
+  itemRightPatch: {
+    marginRight: -8,
   },
 });
 

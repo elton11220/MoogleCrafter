@@ -63,6 +63,7 @@ const NotificationSettings = () => {
                 onValueChange={value =>
                   updateNotificationSettings('enableRingtone', value)
                 }
+                style={styles.itemRightPatch}
               />
             )}
           />
@@ -78,6 +79,7 @@ const NotificationSettings = () => {
                 onValueChange={value =>
                   updateNotificationSettings('enableVibration', value)
                 }
+                style={styles.itemRightPatch}
               />
             )}
           />
@@ -93,6 +95,7 @@ const NotificationSettings = () => {
                 onValueChange={value =>
                   updateNotificationSettings('enableFullScreen', value)
                 }
+                style={styles.itemRightPatch}
               />
             )}
           />
@@ -103,7 +106,8 @@ const NotificationSettings = () => {
               </Text>
             }
             right={() => (
-              <View style={styles.itemRightNavContainer}>
+              <View
+                style={[styles.itemRightNavContainer, styles.itemRightPatch]}>
                 <Text
                   style={[
                     styles.itemRightNavText,
@@ -205,6 +209,9 @@ const styles = StyleSheet.create({
   itemRightNavText: {
     fontSize: px2DpY(14),
     lineHeight: px2DpY(17),
+  },
+  itemRightPatch: {
+    marginRight: -8,
   },
 });
 
