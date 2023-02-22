@@ -1,5 +1,5 @@
 declare namespace ZustandStore {
-  type InAppRingtoneType = 'system' | 'exVersion';
+  type InAppRingtoneType = 'simple' | 'tts' | 'exVersion';
 
   interface NotificationSettings {
     enableRingtone: boolean;

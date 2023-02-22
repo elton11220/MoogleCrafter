@@ -14,6 +14,7 @@ import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import SoundChips from '../../components/SoundChips';
 import {notificationSettingsSelector, useStore} from '../../store';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const NotificationSettings = () => {
   const insets = useSafeAreaInsets();
@@ -95,6 +96,31 @@ const NotificationSettings = () => {
               />
             )}
           />
+          <List.Item
+            title={
+              <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
+                系统消息通知
+              </Text>
+            }
+            right={() => (
+              <View style={styles.itemRightNavContainer}>
+                <Text
+                  style={[
+                    styles.itemRightNavText,
+                    {color: theme.colors.tertiaryContentText},
+                  ]}
+                  allowFontScaling={false}>
+                  已开启
+                </Text>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={px2DpY(20)}
+                  color={theme.colors.tertiaryContentText}
+                />
+              </View>
+            )}
+            onPress={() => {}}
+          />
         </List.Section>
         <List.Section>
           <List.Subheader
@@ -114,8 +140,13 @@ const NotificationSettings = () => {
             }>
             <RadioButton.Item
               labelStyle={styles.listItemTitleStyle}
-              label="系统提示音"
-              value="system"
+              label="简易提示音"
+              value="simple"
+            />
+            <RadioButton.Item
+              labelStyle={styles.listItemTitleStyle}
+              label="TTS 语音合成"
+              value="tts"
             />
             <RadioButton.Item
               labelStyle={styles.listItemTitleStyle}
@@ -164,6 +195,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: px2DpX(10),
     width: px2DpX(240),
+  },
+  itemRightNavContainer: {
+    height: px2DpY(32),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemRightNavText: {
+    fontSize: px2DpY(14),
+    lineHeight: px2DpY(17),
   },
 });
 

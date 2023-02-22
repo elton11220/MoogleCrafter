@@ -8,7 +8,7 @@ export const initialState: ZustandStore.State = {
       enableRingtone: true,
       enableVibration: true,
       enableFullScreen: true,
-      inAppRingtoneType: 'exVersion',
+      inAppRingtoneType: 'tts',
     },
     themeSettings: {
       themeColor: 'purple',
