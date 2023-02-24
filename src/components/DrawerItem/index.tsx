@@ -1,4 +1,5 @@
 import {View, StyleSheet} from 'react-native';
+import {memo} from 'react';
 import type {FC} from 'react';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import {Text, useTheme} from 'react-native-paper';
@@ -47,4 +48,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DrawerItem;
+export default memo(DrawerItem);
