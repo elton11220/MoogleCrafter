@@ -15,6 +15,8 @@ const NumberInput: FC<NumberInput.Props> = props => {
     } else {
       if (value < max) {
         setValue(value + step);
+      } else {
+        setValue(null);
       }
     }
   };
@@ -24,6 +26,8 @@ const NumberInput: FC<NumberInput.Props> = props => {
     } else {
       if (value !== null) {
         setValue(value - step);
+      } else {
+        setValue(max);
       }
     }
   };
