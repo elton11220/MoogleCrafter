@@ -39,4 +39,18 @@ declare namespace AppGlobal {
     gatheringPointIndex: number;
     gatheringPointBaseId: number;
   }
+
+  interface RegionItem {
+    maps: RegionMap[];
+    regionName: string;
+  }
+
+  interface RegionMap {
+    hierarchy: number;
+    id: string;
+    key: number;
+    name: string;
+    regionName: string;
+    subName: string;
+  }
 }

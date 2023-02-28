@@ -1,7 +1,9 @@
 import gatheringItems from '../data/gameData.json';
+import regions from '../data/region.json';
 
 export const initialState: ZustandStore.State = {
   gatheringItems,
+  regions,
   isSplashScreenShow: true,
   settings: {
     notificationSettings: {

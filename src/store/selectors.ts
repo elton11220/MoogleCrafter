@@ -1,6 +1,8 @@
 export const gatheringItemsSelector = (s: ZustandStore.Store) =>
   s.gatheringItems;
 
+export const regionItemsSelector = (s: ZustandStore.Store) => s.regions;
+
 export const notificationSettingsSelector = (s: ZustandStore.Store) =>
   s.settings.notificationSettings;
 
