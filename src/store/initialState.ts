@@ -1,4 +1,4 @@
-import gatheringItems from '../data/gameData.json';
+import gatheringItems from '../data/gatheringData.json';
 import regions from '../data/region.json';
 
 export const initialState: ZustandStore.State = {
