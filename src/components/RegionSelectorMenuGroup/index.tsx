@@ -54,9 +54,8 @@ const RegionSelectorMenuGroup: FC<RegionSelectorMenuGroup.Props> = props => {
         android_ripple={{color: theme.colors.rippleBackgroundColor}}
         style={styles.headerItem}
         onPress={() => {
-          unfoldAnim(() => {
-            onCollapse(id);
-          });
+          unfoldAnim();
+          onCollapse(id);
         }}>
         <Text
           allowFontScaling={false}
