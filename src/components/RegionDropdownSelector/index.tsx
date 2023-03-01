@@ -1,5 +1,6 @@
 import {View} from 'react-native';
-import {FC, useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
+import type {FC} from 'react';
 import {regionItemsSelector, useStore} from '../../store';
 import RegionDropdownMenuSection from '../RegionDropdownMenuSection';
 
@@ -9,8 +10,10 @@ const RegionDropdownSelector: FC<RegionDropdownSelector.Props> = props => {
   const [activatedSectionId, setActivatedSectionId] =
     useState(collapsedSectionId);
   useEffect(() => {
-    setActivatedSectionId(collapsedSectionId);
-  }, [collapsedSectionId]);
+    if (value === null) {
+      setActivatedSectionId(0);
+    }
+  }, [value]);
   const onItemSelected = useCallback(
     (sectionId: number, itemId: number) => {
       setActivatedSectionId(sectionId);
