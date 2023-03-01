@@ -1,25 +1,30 @@
 import {View} from 'react-native';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect} from 'react';
 import type {FC} from 'react';
 import {regionItemsSelector, useStore} from '../../store';
 import RegionSelectorMenuGroup from '../RegionSelectorMenuGroup';
 
 const RegionSelectorMenu: FC<RegionSelectorMenu.Props> = props => {
-  const {value, onChange, collapsedSectionId, onCollapseSection} = props;
+  const {
+    value,
+    onChange,
+    collapsedGroupId,
+    onCollapseGroup,
+    activatedGroupId,
+    onActivateGroup,
+  } = props;
   const regions = useStore(regionItemsSelector);
-  const [activatedSectionId, setActivatedSectionId] =
-    useState(collapsedSectionId);
   useEffect(() => {
     if (value === null) {
-      setActivatedSectionId(0);
+      onActivateGroup(0);
     }
-  }, [value]);
+  }, [onActivateGroup, value]);
   const onItemSelected = useCallback(
-    (sectionId: number, itemId: number) => {
-      setActivatedSectionId(sectionId);
+    (groupId: number, itemId: number) => {
+      onActivateGroup(groupId);
       onChange(itemId);
     },
-    [onChange],
+    [onActivateGroup, onChange],
   );
   return (
     <View>
@@ -30,9 +35,9 @@ const RegionSelectorMenu: FC<RegionSelectorMenu.Props> = props => {
           label={region.regionName}
           items={region.maps}
           activatedItemId={value || 92}
-          activated={index === activatedSectionId}
-          collapsed={collapsedSectionId === index}
-          onCollapse={onCollapseSection}
+          activated={index === activatedGroupId}
+          collapsed={collapsedGroupId === index}
+          onCollapse={onCollapseGroup}
           onSelected={onItemSelected}
         />
       ))}
