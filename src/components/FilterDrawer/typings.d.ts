@@ -1,5 +1,8 @@
 declare namespace FilterDrawer {
-  interface Props {}
+  interface Props {
+    value: FilterValue;
+    onChange: React.Dispatch<React.SetStateAction<FilterValue>>;
+  }
 
   interface FilterValue {
     isRare: true | false | null;

@@ -4,10 +4,12 @@ import {
   useCallback,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import type {ForwardRefRenderFunction} from 'react';
 import Drawer from '../Drawer';
+import type {DrawerInstance} from '../Drawer';
 import DrawerActions from '../DrawerActions';
 import DrawerItem from '../DrawerItem';
 import RadioTagGroup from '../RadioTagGroup';
@@ -111,36 +113,93 @@ export type FilterDrawerInstance = {
   hide: () => void;
 };
 
+export type FilterValue = {
+  isRare: true | false | null;
+  classJob: string | null;
+  exVersion: number | null;
+  gatheringItemLevel: number | null;
+  mapId: number | null;
+};
+
 const FilterDrawer: ForwardRefRenderFunction<
   FilterDrawerInstance,
   FilterDrawer.Props
 > = (props, ref) => {
-  const [filterValue, setFilterValue] = useState<FilterDrawer.FilterValue>({
-    isRare: null,
-    classJob: null,
-    exVersion: null,
-    gatheringItemLevel: null,
-    mapId: null,
-  });
+  const {value, onChange} = props;
+  const [tempFilterValue, setTempFilterValue] =
+    useState<FilterDrawer.FilterValue>(value);
   const updateFilterValue = useCallback<
     <T extends keyof FilterDrawer.FilterValue>(
       key: T,
       value: FilterDrawer.FilterValue[T],
     ) => void
   >(
-    (key, value) =>
-      setFilterValue(state =>
+    (key, newValue) =>
+      setTempFilterValue(state =>
         produce(state, draft => {
-          draft[key] = value;
+          draft[key] = newValue;
         }),
       ),
     [],
   );
   const [collapsedRegionGroupId, setCollapsedRegionGroupId] = useState(0);
   const [activatedRegionGroupId, setActivatedRegionGroupId] = useState(0);
-  const saveFilter = useCallback(() => {}, []);
+  const drawerInstance = useRef<DrawerInstance | null>(null);
+  const showDrawer = () => {
+    setTempFilterValue(state =>
+      produce(state, draft => {
+        draft.classJob = value.classJob;
+        draft.exVersion = value.exVersion;
+        draft.gatheringItemLevel = value.gatheringItemLevel;
+        draft.isRare = value.isRare;
+        draft.mapId = value.mapId;
+      }),
+    );
+    drawerInstance.current?.show();
+  };
+  const onDrawerClosed = useCallback(() => {
+    if (activatedRegionGroupId !== collapsedRegionGroupId) {
+      setCollapsedRegionGroupId(activatedRegionGroupId);
+    }
+    drawerInstance.current?.hide();
+  }, [activatedRegionGroupId, collapsedRegionGroupId]);
+  const hideDrawer = useCallback(() => {
+    drawerInstance.current?.hide();
+  }, []);
+  const saveFilter = useCallback(
+    () => {
+      drawerInstance.current?.hide();
+      onChange(
+        produce(value, draft => {
+          draft.classJob = tempFilterValue.classJob;
+          draft.exVersion = tempFilterValue.exVersion;
+          draft.gatheringItemLevel = tempFilterValue.gatheringItemLevel;
+          draft.isRare = tempFilterValue.isRare;
+          draft.mapId = tempFilterValue.mapId;
+        }),
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      tempFilterValue.classJob,
+      tempFilterValue.exVersion,
+      tempFilterValue.gatheringItemLevel,
+      tempFilterValue.isRare,
+      tempFilterValue.mapId,
+      value,
+    ],
+  );
   const resetFilter = useCallback(() => {
-    setFilterValue(state =>
+    setTempFilterValue(state =>
+      produce(state, draft => {
+        draft.isRare = null;
+        draft.classJob = null;
+        draft.exVersion = null;
+        draft.gatheringItemLevel = null;
+        draft.mapId = null;
+      }),
+    );
+    onChange(state =>
       produce(state, draft => {
         draft.isRare = null;
         draft.classJob = null;
@@ -150,15 +209,8 @@ const FilterDrawer: ForwardRefRenderFunction<
       }),
     );
     setCollapsedRegionGroupId(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const [visible, setVisible] = useState(false);
-  const showDrawer = () => setVisible(true);
-  const hideDrawer = useCallback(() => {
-    if (activatedRegionGroupId !== collapsedRegionGroupId) {
-      setCollapsedRegionGroupId(activatedRegionGroupId);
-    }
-    setVisible(false);
-  }, [activatedRegionGroupId, collapsedRegionGroupId]);
   const drawerFooter = useMemo(
     () => <DrawerActions onCancel={resetFilter} onConfirm={saveFilter} />,
     [resetFilter, saveFilter],
@@ -169,13 +221,13 @@ const FilterDrawer: ForwardRefRenderFunction<
         <View style={styles.itemContainer}>
           <RadioTagGroup<FilterDrawer.FilterValue['isRare']>
             items={isRareRadioItems}
-            value={filterValue.isRare}
-            setValue={value => updateFilterValue('isRare', value)}
+            value={tempFilterValue.isRare}
+            setValue={newValue => updateFilterValue('isRare', newValue)}
           />
         </View>
       </DrawerItem>
     ),
-    [filterValue.isRare, updateFilterValue],
+    [tempFilterValue.isRare, updateFilterValue],
   );
   const classJobRadioGroup = useMemo(
     () => (
@@ -183,13 +235,13 @@ const FilterDrawer: ForwardRefRenderFunction<
         <View style={styles.itemContainer}>
           <RadioTagGroup<FilterDrawer.FilterValue['classJob']>
             items={classJobs}
-            value={filterValue.classJob}
-            setValue={value => updateFilterValue('classJob', value)}
+            value={tempFilterValue.classJob}
+            setValue={newValue => updateFilterValue('classJob', newValue)}
           />
         </View>
       </DrawerItem>
     ),
-    [filterValue.classJob, updateFilterValue],
+    [tempFilterValue.classJob, updateFilterValue],
   );
   const exVersionRadioGroup = useMemo(
     () => (
@@ -197,22 +249,24 @@ const FilterDrawer: ForwardRefRenderFunction<
         <View style={styles.itemContainer}>
           <RadioTagGroup<FilterDrawer.FilterValue['exVersion']>
             items={exVersions}
-            value={filterValue.exVersion}
+            value={tempFilterValue.exVersion}
             showSelectedIcon
-            setValue={value => updateFilterValue('exVersion', value)}
+            setValue={newValue => updateFilterValue('exVersion', newValue)}
           />
         </View>
       </DrawerItem>
     ),
-    [filterValue.exVersion, updateFilterValue],
+    [tempFilterValue.exVersion, updateFilterValue],
   );
   const gatheringItemLevelRadioGroup = useMemo(
     () => (
       <DrawerItem title="等级">
         <View style={styles.itemContainer}>
           <NumberInput
-            value={filterValue.gatheringItemLevel}
-            setValue={value => updateFilterValue('gatheringItemLevel', value)}
+            value={tempFilterValue.gatheringItemLevel}
+            setValue={newValue =>
+              updateFilterValue('gatheringItemLevel', newValue)
+            }
             min={5}
             max={90}
             step={5}
@@ -221,15 +275,15 @@ const FilterDrawer: ForwardRefRenderFunction<
         </View>
       </DrawerItem>
     ),
-    [filterValue.gatheringItemLevel, updateFilterValue],
+    [tempFilterValue.gatheringItemLevel, updateFilterValue],
   );
   const gatheringPointMapRadioGroup = useMemo(
     () => (
       <DrawerItem title="地图">
         <View style={styles.itemContainer}>
           <RegionSelectorMenu
-            value={filterValue.mapId}
-            onChange={value => updateFilterValue('mapId', value)}
+            value={tempFilterValue.mapId}
+            onChange={newValue => updateFilterValue('mapId', newValue)}
             collapsedGroupId={collapsedRegionGroupId}
             onCollapseGroup={setCollapsedRegionGroupId}
             activatedGroupId={activatedRegionGroupId}
@@ -241,7 +295,7 @@ const FilterDrawer: ForwardRefRenderFunction<
     [
       activatedRegionGroupId,
       collapsedRegionGroupId,
-      filterValue.mapId,
+      tempFilterValue.mapId,
       updateFilterValue,
     ],
   );
@@ -253,8 +307,8 @@ const FilterDrawer: ForwardRefRenderFunction<
     <Drawer
       closeOverlayClick
       footer={drawerFooter}
-      visible={visible}
-      onClose={hideDrawer}>
+      onClosed={onDrawerClosed}
+      ref={drawerInstance}>
       <View>
         {isRareRadioGroup}
         {classJobRadioGroup}

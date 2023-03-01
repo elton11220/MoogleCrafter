@@ -5,15 +5,24 @@ import {
   Easing,
   ScrollView,
 } from 'react-native';
-import {memo, useRef} from 'react';
-import type {FC} from 'react';
+import {forwardRef, useImperativeHandle, useRef, useState} from 'react';
+import type {ForwardRefRenderFunction} from 'react';
 import {Portal, useTheme} from 'react-native-paper';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-const Drawer: FC<Drawer.Props> = props => {
-  const {visible, onClose, closeOverlayClick, children, footer} = props;
+export type DrawerInstance = {
+  show: () => void;
+  hide: () => void;
+};
+
+const Drawer: ForwardRefRenderFunction<DrawerInstance, Drawer.Props> = (
+  props,
+  ref,
+) => {
+  const {onClosed, closeOverlayClick, children, footer} = props;
+  const [visible, setVisible] = useState(false);
   const theme = useTheme<typeof DefaultLightTheme>();
   const insets = useSafeAreaInsets();
   const overlayOpacityAnimValue = useRef(new Animated.Value(0)).current;
@@ -55,12 +64,18 @@ const Drawer: FC<Drawer.Props> = props => {
   const hideOverlay = () =>
     hideOverlayAnim(({finished}) => {
       if (finished) {
-        onClose();
+        setVisible(false);
+        onClosed();
       }
     });
-  if (visible) {
+  const showDrawer = () => {
+    setVisible(true);
     showOverlayAnim();
-  }
+  };
+  useImperativeHandle(ref, () => ({
+    hide: hideOverlay,
+    show: showDrawer,
+  }));
   return (
     <Portal>
       {visible ? (
@@ -131,4 +146,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(Drawer);
+export default forwardRef(Drawer);
