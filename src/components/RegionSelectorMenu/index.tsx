@@ -19,13 +19,11 @@ const RegionSelectorMenu: FC<RegionSelectorMenu.Props> = props => {
       onActivateGroup(0);
     }
   }, [onActivateGroup, value]);
-  const onItemSelected = useCallback(
-    (groupId: number, itemId: number) => {
-      onActivateGroup(groupId);
-      onChange(itemId);
-    },
-    [onActivateGroup, onChange],
-  );
+  const onItemSelected = useCallback((groupId: number, itemId: number) => {
+    onActivateGroup(groupId);
+    onChange(itemId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <View>
       {regions.map((region, index) => (
@@ -34,7 +32,7 @@ const RegionSelectorMenu: FC<RegionSelectorMenu.Props> = props => {
           id={index}
           label={region.regionName}
           items={region.maps}
-          activatedItemId={value || 92}
+          activatedItemId={index === activatedGroupId ? value || 92 : 0}
           activated={index === activatedGroupId}
           collapsed={collapsedGroupId === index}
           onCollapse={onCollapseGroup}
