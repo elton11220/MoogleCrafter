@@ -4,8 +4,16 @@ import {
   Pressable,
   Easing,
   ScrollView,
+  BackHandler,
 } from 'react-native';
-import {forwardRef, useImperativeHandle, useRef, useState} from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import type {ForwardRefRenderFunction} from 'react';
 import {Portal, useTheme} from 'react-native-paper';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
@@ -61,7 +69,23 @@ const Drawer: ForwardRefRenderFunction<DrawerInstance, Drawer.Props> = (
       }),
     ]).start(callback);
   };
-  const hideOverlay = () =>
+  const onBackPress = useCallback(() => {
+    if (visible) {
+      hideDrawer();
+      return true;
+    } else {
+      return false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
+  useEffect(() => {
+    const backPressSubscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress,
+    );
+    return () => backPressSubscription.remove();
+  }, [onBackPress]);
+  const hideDrawer = () =>
     hideOverlayAnim(({finished}) => {
       if (finished) {
         setVisible(false);
@@ -73,7 +97,7 @@ const Drawer: ForwardRefRenderFunction<DrawerInstance, Drawer.Props> = (
     showOverlayAnim();
   };
   useImperativeHandle(ref, () => ({
-    hide: hideOverlay,
+    hide: hideDrawer,
     show: showDrawer,
   }));
   return (
@@ -85,7 +109,7 @@ const Drawer: ForwardRefRenderFunction<DrawerInstance, Drawer.Props> = (
           />
           <Pressable
             style={styles.overlayPressableArea}
-            onPress={closeOverlayClick ? hideOverlay : undefined}
+            onPress={closeOverlayClick ? hideDrawer : undefined}
           />
           <Animated.View
             style={[
