@@ -1,4 +1,4 @@
-declare namespace RegionDropdownMenuItem {
+declare namespace RegionSelectorMenuItem {
   interface Props {
     selected: boolean;
     onSelected: (key: number) => void;

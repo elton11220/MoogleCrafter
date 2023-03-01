@@ -5,7 +5,7 @@ import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import {Text, useTheme} from 'react-native-paper';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 
-const RegionDropdownMenuItem: FC<RegionDropdownMenuItem.Props> = props => {
+const RegionSelectorMenuItem: FC<RegionSelectorMenuItem.Props> = props => {
   const {selected, onSelected, label, id} = props;
   const theme = useTheme<typeof DefaultLightTheme>();
   return (
@@ -61,4 +61,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(RegionDropdownMenuItem);
+export default memo(RegionSelectorMenuItem);

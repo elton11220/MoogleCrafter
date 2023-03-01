@@ -2,9 +2,9 @@ import {View} from 'react-native';
 import {useCallback, useEffect, useState} from 'react';
 import type {FC} from 'react';
 import {regionItemsSelector, useStore} from '../../store';
-import RegionDropdownMenuSection from '../RegionDropdownMenuSection';
+import RegionSelectorMenuGroup from '../RegionSelectorMenuGroup';
 
-const RegionDropdownSelector: FC<RegionDropdownSelector.Props> = props => {
+const RegionSelectorMenu: FC<RegionSelectorMenu.Props> = props => {
   const {value, onChange, collapsedSectionId, onCollapseSection} = props;
   const regions = useStore(regionItemsSelector);
   const [activatedSectionId, setActivatedSectionId] =
@@ -24,7 +24,7 @@ const RegionDropdownSelector: FC<RegionDropdownSelector.Props> = props => {
   return (
     <View>
       {regions.map((region, index) => (
-        <RegionDropdownMenuSection
+        <RegionSelectorMenuGroup
           key={index}
           id={index}
           label={region.regionName}
@@ -40,4 +40,4 @@ const RegionDropdownSelector: FC<RegionDropdownSelector.Props> = props => {
   );
 };
 
-export default RegionDropdownSelector;
+export default RegionSelectorMenu;

@@ -1,4 +1,4 @@
-declare namespace RegionDropdownMenuSection {
+declare namespace RegionSelectorMenuGroup {
   interface Props {
     id: number;
     label: string;

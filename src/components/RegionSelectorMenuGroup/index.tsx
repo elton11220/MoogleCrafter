@@ -5,11 +5,9 @@ import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import {Text, useTheme} from 'react-native-paper';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import RegionDropdownMenuItem from '../RegionDropdownMenuItem';
+import RegionSelectorMenuItem from '../RegionSelectorMenuItem';
 
-const RegionDropdownMenuSection: FC<
-  RegionDropdownMenuSection.Props
-> = props => {
+const RegionSelectorMenuGroup: FC<RegionSelectorMenuGroup.Props> = props => {
   const {
     id,
     label,
@@ -117,7 +115,7 @@ const RegionDropdownMenuSection: FC<
       {collapsed ? (
         <View>
           {items.map(item => (
-            <RegionDropdownMenuItem
+            <RegionSelectorMenuItem
               key={item.key}
               id={item.key}
               label={item.name}
@@ -160,4 +158,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(RegionDropdownMenuSection);
+export default memo(RegionSelectorMenuGroup);
