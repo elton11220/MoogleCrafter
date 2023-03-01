@@ -128,8 +128,8 @@ const styles = StyleSheet.create({
   headerItem: {
     paddingLeft: px2DpX(10),
     paddingRight: px2DpX(5),
-    paddingTop: px2DpY(7),
-    paddingBottom: px2DpY(7),
+    paddingTop: px2DpY(8),
+    paddingBottom: px2DpY(8),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
