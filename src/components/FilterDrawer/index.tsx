@@ -14,6 +14,7 @@ import RadioTagGroup from '../RadioTagGroup';
 import produce from 'immer';
 import {px2DpX} from '../../utils/dimensionConverter';
 import NumberInput from '../NumberInput';
+import RegionSelectorMenu from '../RegionSelectorMenu';
 
 const isRareRadioItems = [
   {
@@ -135,23 +136,29 @@ const FilterDrawer: ForwardRefRenderFunction<
       ),
     [],
   );
+  const [collapsedRegionGroupId, setCollapsedRegionGroupId] = useState(0);
+  const [activatedRegionGroupId, setActivatedRegionGroupId] = useState(0);
   const saveFilter = useCallback(() => {}, []);
-  const resetFilter = useCallback(
-    () =>
-      setFilterValue(state =>
-        produce(state, draft => {
-          draft.isRare = null;
-          draft.classJob = null;
-          draft.exVersion = null;
-          draft.gatheringItemLevel = null;
-          draft.mapId = null;
-        }),
-      ),
-    [],
-  );
+  const resetFilter = useCallback(() => {
+    setFilterValue(state =>
+      produce(state, draft => {
+        draft.isRare = null;
+        draft.classJob = null;
+        draft.exVersion = null;
+        draft.gatheringItemLevel = null;
+        draft.mapId = null;
+      }),
+    );
+    setCollapsedRegionGroupId(0);
+  }, []);
   const [visible, setVisible] = useState(false);
   const showDrawer = () => setVisible(true);
-  const hideDrawer = useCallback(() => setVisible(false), []);
+  const hideDrawer = useCallback(() => {
+    if (activatedRegionGroupId !== collapsedRegionGroupId) {
+      setCollapsedRegionGroupId(activatedRegionGroupId);
+    }
+    setVisible(false);
+  }, [activatedRegionGroupId, collapsedRegionGroupId]);
   const drawerFooter = useMemo(
     () => <DrawerActions onCancel={resetFilter} onConfirm={saveFilter} />,
     [resetFilter, saveFilter],
@@ -216,6 +223,28 @@ const FilterDrawer: ForwardRefRenderFunction<
     ),
     [filterValue.gatheringItemLevel, updateFilterValue],
   );
+  const gatheringPointMapRadioGroup = useMemo(
+    () => (
+      <DrawerItem title="地图">
+        <View style={styles.itemContainer}>
+          <RegionSelectorMenu
+            value={filterValue.mapId}
+            onChange={value => updateFilterValue('mapId', value)}
+            collapsedGroupId={collapsedRegionGroupId}
+            onCollapseGroup={setCollapsedRegionGroupId}
+            activatedGroupId={activatedRegionGroupId}
+            onActivateGroup={setActivatedRegionGroupId}
+          />
+        </View>
+      </DrawerItem>
+    ),
+    [
+      activatedRegionGroupId,
+      collapsedRegionGroupId,
+      filterValue.mapId,
+      updateFilterValue,
+    ],
+  );
   useImperativeHandle(ref, () => ({
     show: showDrawer,
     hide: hideDrawer,
@@ -234,6 +263,7 @@ const FilterDrawer: ForwardRefRenderFunction<
         {exVersionRadioGroup}
         {gatheringItemLevelRadioGroup}
       </View>
+      <View>{gatheringPointMapRadioGroup}</View>
     </Drawer>
   );
 };
