@@ -21,24 +21,20 @@ const RegionSelectorMenuGroup: FC<RegionSelectorMenuGroup.Props> = props => {
   const theme = useTheme<typeof DefaultLightTheme>();
   const collapsedIconRotateAnimValue = useRef(new Animated.Value(90)).current;
   const unfoldAnim = (callback?: Animated.EndCallback) => {
-    Animated.parallel([
-      Animated.timing(collapsedIconRotateAnimValue, {
-        toValue: 0,
-        duration: 150,
-        easing: Easing.in(Easing.poly(1)),
-        useNativeDriver: true,
-      }),
-    ]).start(callback);
+    Animated.timing(collapsedIconRotateAnimValue, {
+      toValue: 0,
+      duration: 150,
+      easing: Easing.in(Easing.poly(1)),
+      useNativeDriver: true,
+    }).start(callback);
   };
   const foldAnim = (callback?: Animated.EndCallback) => {
-    Animated.parallel([
-      Animated.timing(collapsedIconRotateAnimValue, {
-        toValue: 90,
-        duration: 150,
-        easing: Easing.in(Easing.poly(1)),
-        useNativeDriver: true,
-      }),
-    ]).start(callback);
+    Animated.timing(collapsedIconRotateAnimValue, {
+      toValue: 90,
+      duration: 150,
+      easing: Easing.in(Easing.poly(1)),
+      useNativeDriver: true,
+    }).start(callback);
   };
   const onSelectedItem = useCallback(
     (key: number) => {
