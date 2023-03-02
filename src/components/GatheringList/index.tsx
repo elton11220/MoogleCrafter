@@ -4,12 +4,11 @@ import GatheringItem from '../../components/GatheringItem';
 import {getTimeTableFromGatheringPoints} from '../../utils/eorzeaTime';
 import {px2DpY} from '../../utils/dimensionConverter';
 import {memo, useCallback} from 'react';
-import {useStore} from '../../store';
-import {gatheringItemsSelector} from '../../store';
+import type {FC} from 'react';
 
-const GatheringList = () => {
+const GatheringList: FC<GatheringList.Props> = props => {
+  const {data: gatheringItems} = props;
   const eorzeaTime = useEorzeaTimer();
-  const gatheringItems = useStore(gatheringItemsSelector);
   const renderItem: (info: {item: AppGlobal.GatheringItem}) => JSX.Element = ({
     item,
   }) => (

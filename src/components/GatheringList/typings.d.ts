@@ -1,3 +1,5 @@
 declare namespace GatheringList {
-  interface Props {}
+  interface Props {
+    data: AppGlobal.GatheringItem[];
+  }
 }

@@ -1,15 +1,35 @@
-import {FC, useState} from 'react';
+import {useRef, useState} from 'react';
+import type {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Appbar, useTheme, IconButton, Searchbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import GatheringList from '../../components/GatheringList';
+import FilterDrawer from '../../components/FilterDrawer';
+import type {FilterValue} from '../../components/FilterDrawer';
+import type {FilterDrawerInstance} from '../../components/FilterDrawer';
+import {gatheringItemsSelector, useStore} from '../../store';
+import {useGatheringDataFilter} from '../../hooks/useGatheringDataFilter';
 
 const MaterialList: FC = () => {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
+  const filterDrawerInstance = useRef<FilterDrawerInstance | null>(null);
+  const [filterValue, setFilterValue] = useState<FilterValue>({
+    isRare: null,
+    classJob: null,
+    exVersion: null,
+    gatheringItemLevel: null,
+    mapId: null,
+  });
+  const gatheringItems = useStore(gatheringItemsSelector);
+  const [, filteredGatheringItems] = useGatheringDataFilter(
+    gatheringItems,
+    filterValue,
+    searchQuery,
+  );
   return (
     <View
       style={{
@@ -17,6 +37,11 @@ const MaterialList: FC = () => {
         paddingBottom: insets.bottom,
         backgroundColor: theme.colors.background,
       }}>
+      <FilterDrawer
+        ref={filterDrawerInstance}
+        value={filterValue}
+        onChange={setFilterValue}
+      />
       <Appbar.Header>
         <Appbar.Content title="素材列表" />
       </Appbar.Header>
@@ -47,9 +72,12 @@ const MaterialList: FC = () => {
           mode="contained"
           size={px2DpY(18)}
           style={styles.searchBarFilterButton}
+          onPress={() => {
+            filterDrawerInstance.current?.show();
+          }}
         />
       </View>
-      <GatheringList />
+      <GatheringList data={filteredGatheringItems} />
     </View>
   );
 };

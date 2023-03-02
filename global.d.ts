@@ -8,6 +8,7 @@ declare namespace AppGlobal {
     gatheringItemLevel: number;
     gatheringItemStars: number;
     gatheringPoints: GatheringPoint[];
+    isRare: boolean;
   }
 
   interface GatheringPoint {
