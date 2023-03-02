@@ -25,11 +25,8 @@ const MaterialList: FC = () => {
     mapId: null,
   });
   const gatheringItems = useStore(gatheringItemsSelector);
-  const [, filteredGatheringItems] = useGatheringDataFilter(
-    gatheringItems,
-    filterValue,
-    searchQuery,
-  );
+  const [, filteredGatheringItems, effectiveFilterAmount] =
+    useGatheringDataFilter(gatheringItems, filterValue, searchQuery);
   return (
     <View
       style={{
@@ -69,6 +66,16 @@ const MaterialList: FC = () => {
               size={size}
             />
           )}
+          iconColor={
+            effectiveFilterAmount > 0
+              ? theme.colors.surfaceVariant
+              : theme.colors.primary
+          }
+          containerColor={
+            effectiveFilterAmount > 0
+              ? theme.colors.primary
+              : theme.colors.surfaceVariant
+          }
           mode="contained"
           size={px2DpY(18)}
           style={styles.searchBarFilterButton}

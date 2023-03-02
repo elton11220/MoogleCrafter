@@ -5,10 +5,20 @@ export function useGatheringDataFilter(
   gatheringItems: AppGlobal.GatheringItem[],
   filterValue: FilterValue,
   searchName: string,
-): [boolean, AppGlobal.GatheringItem[]] {
+): [
+  isPending: boolean,
+  filteredGatheringItems: AppGlobal.GatheringItem[],
+  effectiveFilterAmount: number,
+] {
   const [filteredGatheringItems, setFilteredGatheringItems] =
     useState(gatheringItems);
   const [isPending, startTransition] = useTransition();
+  let filterAmount = 0;
+  for (const filterVal of Object.values(filterValue)) {
+    if (filterVal !== null) {
+      filterAmount++;
+    }
+  }
   useEffect(() => {
     startTransition(() => {
       const filterResult = gatheringItems.filter(item => {
@@ -67,5 +77,5 @@ export function useGatheringDataFilter(
       setFilteredGatheringItems(filterResult);
     });
   }, [filterValue, gatheringItems, searchName]);
-  return [isPending, filteredGatheringItems];
+  return [isPending, filteredGatheringItems, filterAmount];
 }
