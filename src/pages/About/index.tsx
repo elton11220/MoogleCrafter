@@ -52,7 +52,7 @@ const About = () => {
               styles.appVersion,
               {color: theme.colors.secondaryContentText},
             ]}>
-            数据版本：2023.01.25.0000.0000-6.2-chs
+            数据版本：2023.02.16.0000.0000-6.25-chs
           </Text>
         </View>
         <View>
