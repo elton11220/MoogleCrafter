@@ -1,6 +1,7 @@
 import React, {FC, memo, useMemo} from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Avatar, Text, useTheme} from 'react-native-paper';
+import FastImage from 'react-native-fast-image';
+import {Text, useTheme} from 'react-native-paper';
 import {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {itemIcons} from '../../images/gameResource';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
@@ -42,9 +43,10 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
   );
   return (
     <View style={styles.container}>
-      <Avatar.Image
-        size={px2DpY(56)}
+      <FastImage
+        style={styles.itemIcon}
         source={itemIcons.get(gatheringItem.icon.toString())}
+        resizeMode={FastImage.resizeMode.stretch}
       />
       <View style={styles.contentContainer}>
         <View style={styles.contentTitleRow}>
@@ -137,6 +139,11 @@ const styles = StyleSheet.create({
   },
   rightContainer: {
     width: px2DpX(72),
+  },
+  itemIcon: {
+    height: px2DpY(56),
+    width: px2DpY(56),
+    borderRadius: px2DpY(28),
   },
 });
 

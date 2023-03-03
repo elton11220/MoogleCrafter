@@ -7,7 +7,7 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import {Avatar, Text, useTheme} from 'react-native-paper';
+import {Text, useTheme} from 'react-native-paper';
 import {itemIcons} from '../../images/gameResource';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import {
@@ -18,6 +18,7 @@ import {
 import CountdownIndicator, {IndicatorType} from '../CountdownIndicator';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
+import FastImage from 'react-native-fast-image';
 
 const TopItem: FC<TopItemTypes.Props> = props => {
   const {gatheringItem, eorzeaTime, onRemovePressed, longPresssable} = props;
@@ -86,9 +87,10 @@ const TopItem: FC<TopItemTypes.Props> = props => {
       delayLongPress={300}>
       <View style={styles.topItemContainer}>
         <View>
-          <Avatar.Image
-            size={px2DpY(50)}
+          <FastImage
+            style={styles.itemIcon}
             source={itemIcons.get(gatheringItem.icon.toString())}
+            resizeMode={FastImage.resizeMode.stretch}
           />
           {longPressed ? (
             <Pressable
@@ -177,6 +179,11 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  itemIcon: {
+    height: px2DpY(50),
+    width: px2DpY(50),
+    borderRadius: px2DpY(25),
   },
 });
 
