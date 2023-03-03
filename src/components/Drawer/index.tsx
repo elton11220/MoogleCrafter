@@ -5,6 +5,7 @@ import {
   Easing,
   ScrollView,
   BackHandler,
+  Keyboard,
 } from 'react-native';
 import {
   forwardRef,
@@ -93,6 +94,7 @@ const Drawer: ForwardRefRenderFunction<DrawerInstance, Drawer.Props> = (
       }
     });
   const showDrawer = () => {
+    Keyboard.dismiss();
     setVisible(true);
     showOverlayAnim();
   };
