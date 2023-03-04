@@ -4,6 +4,7 @@ declare namespace AppGlobal {
     name: string;
     icon: number;
     exVersion: number;
+    itemCategory: string;
     folkloreBook: string | null;
     gatheringItemLevel: number;
     gatheringItemStars: number;
