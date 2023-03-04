@@ -12,6 +12,9 @@ export type RootStackParamList = {
   LanguageSettings: undefined;
   GeneralSettings: undefined;
   About: undefined;
+  Detail: {
+    gatheringItem: AppGlobal.GatheringItem;
+  };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

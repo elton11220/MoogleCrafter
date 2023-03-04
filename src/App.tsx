@@ -24,6 +24,7 @@ import NotificationSettings from './pages/NotificationSettings';
 import ThemeSettings from './pages/ThemeSettings';
 import LanguageSettings from './pages/LanguageSettings';
 import GeneralSettings from './pages/GeneralSettings';
+import Detail from './pages/Detail';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -131,6 +132,15 @@ const App: FC = () => {
             <Stack.Screen
               name="About"
               component={About}
+              options={{
+                headerShown: false,
+                orientation: 'portrait',
+                animation: 'slide_from_right',
+              }}
+            />
+            <Stack.Screen
+              name="Detail"
+              component={Detail}
               options={{
                 headerShown: false,
                 orientation: 'portrait',

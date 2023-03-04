@@ -1,5 +1,6 @@
-import React, {FC, memo, useMemo} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {memo, useCallback, useMemo} from 'react';
+import type {FC} from 'react';
+import {View, StyleSheet, Pressable} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {Text, useTheme} from 'react-native-paper';
 import {DefaultLightTheme} from '../../config/themes/defaultTheme';
@@ -13,10 +14,12 @@ import {
   parseGatheringRarePopEvents,
 } from '../../utils/eorzeaTime';
 import GatheringItemTimerGroup from '../GatheringItemTimerGroup';
+import {useNavigation} from '@react-navigation/native';
 
 const GatheringItem: FC<GatheringItem.Props> = props => {
   const {timeTable, gatheringItem, eorzeaTime} = props;
   const theme = useTheme<typeof DefaultLightTheme>();
+  const navigation = useNavigation();
   const parsedGatheringRarePopEvents = parseGatheringRarePopEvents(
     timeTable,
     eorzeaTime.currentEt,
@@ -41,8 +44,13 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
     gatheringItem.gatheringPoints,
     parsedGatheringRarePopEvents,
   );
+  const navigateToDetail = useCallback(() => {
+    navigation.navigate('Detail', {
+      gatheringItem,
+    });
+  }, [gatheringItem, navigation]);
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={navigateToDetail}>
       <FastImage
         style={styles.itemIcon}
         source={itemIcons.get(gatheringItem.icon.toString())}
@@ -105,7 +113,7 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
           }
         />
       </View>
-    </View>
+    </Pressable>
   );
 };
 
