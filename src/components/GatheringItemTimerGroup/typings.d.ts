@@ -9,5 +9,6 @@ declare namespace GatheringItemTimerGroup {
     startTimeEt: string;
     countdownValue: string;
     countdownActivate: boolean;
+    theme?: 'light' | 'dark';
   }
 }

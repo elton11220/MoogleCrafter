@@ -25,6 +25,7 @@ import ThemeSettings from './pages/ThemeSettings';
 import LanguageSettings from './pages/LanguageSettings';
 import GeneralSettings from './pages/GeneralSettings';
 import Detail from './pages/Detail';
+import FullScreenReminder from './pages/FullScreenReminder';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -145,6 +146,16 @@ const App: FC = () => {
                 headerShown: false,
                 orientation: 'portrait',
                 animation: 'slide_from_right',
+              }}
+            />
+            <Stack.Screen
+              name="FullScreenReminder"
+              component={FullScreenReminder}
+              options={{
+                headerShown: false,
+                orientation: 'portrait',
+                animation: 'fade',
+                presentation: 'transparentModal',
               }}
             />
           </Stack.Navigator>

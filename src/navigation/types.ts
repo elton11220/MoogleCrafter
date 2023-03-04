@@ -15,6 +15,9 @@ export type RootStackParamList = {
   Detail: {
     gatheringItem: AppGlobal.GatheringItem;
   };
+  FullScreenReminder: {
+    gatheringItem: AppGlobal.GatheringItem;
+  };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

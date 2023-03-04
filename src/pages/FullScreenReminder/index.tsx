@@ -1,0 +1,198 @@
+import {View, StyleSheet} from 'react-native';
+import {useMemo} from 'react';
+import type {FC} from 'react';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {Appbar, Text, useTheme} from 'react-native-paper';
+import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
+import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
+import {useRoute} from '@react-navigation/native';
+import {extendedDarkColors} from '../../config/themes/extension';
+import useEorzeaTimer from '../../hooks/useEorzeaTimer';
+import type {RootStackScreenProps} from '../../navigation/types';
+import {
+  getTimeTableFromGatheringPoints,
+  parseGatheringRarePopEvents,
+  getPoppingEvent,
+  getPoppingGatheringPointByParsedEvents,
+  GatheringRarePopEventState,
+  getCountdownValueByParsedEvents,
+} from '../../utils/eorzeaTime';
+import FastImage from 'react-native-fast-image';
+import {GatheringTypes} from '../../utils/eorzeaConstant';
+import {itemIcons} from '../../images/gameResource';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import GatheringItemDetail from '../../components/GatheringItemDetail';
+import GatheringItemTimerGroup from '../../components/GatheringItemTimerGroup';
+
+const FullScreenReminder: FC = () => {
+  const insets = useSafeAreaInsets();
+  const theme = useTheme<typeof DefaultLightTheme>();
+  const {
+    params: {gatheringItem},
+  } = useRoute<RootStackScreenProps<'Detail'>['route']>();
+  const timeTable = useMemo(
+    () => getTimeTableFromGatheringPoints(gatheringItem.gatheringPoints),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+  const eorzeaTime = useEorzeaTimer();
+  const parsedGatheringRarePopEvents = parseGatheringRarePopEvents(
+    timeTable,
+    eorzeaTime.currentEt,
+  );
+  const eventInfo = useMemo(() => {
+    const poppingEvent = getPoppingEvent(parsedGatheringRarePopEvents);
+    if (poppingEvent !== null) {
+      return {
+        startTimeLt: poppingEvent.startTimeLt.format('HH:mm'),
+        startTimeEt: poppingEvent.startTimeEt.format('HH:mm'),
+        state: poppingEvent.state,
+      };
+    } else {
+      return {
+        startTimeLt: '--',
+        startTimeEt: '--',
+        state: null,
+      };
+    }
+  }, [parsedGatheringRarePopEvents]);
+  const gatheringPointDetail = getPoppingGatheringPointByParsedEvents(
+    gatheringItem.gatheringPoints,
+    parsedGatheringRarePopEvents,
+  );
+  const appBarHeader = useMemo(
+    () => (
+      <Appbar.Header style={{backgroundColor: 'transparent'}}>
+        <Appbar.Content
+          title="素材已出现"
+          titleStyle={styles.titleStyle}
+          color={extendedDarkColors.primaryContentText}
+        />
+      </Appbar.Header>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [theme.colors.rippleBackgroundColor],
+  );
+  const infoCardContent = useMemo(() => {
+    const starsEle = [];
+    for (let i = 0; i < gatheringItem.gatheringItemStars; i++) {
+      starsEle.push(
+        <MaterialIcons
+          key={i}
+          name="star"
+          size={px2DpY(16)}
+          color={theme.colors.tertiaryContentText}
+        />,
+      );
+    }
+    return (
+      <>
+        <FastImage
+          style={styles.itemIcon}
+          source={itemIcons.get(gatheringItem.icon.toString())}
+          resizeMode={FastImage.resizeMode.stretch}
+        />
+        <View style={styles.infoCardContent}>
+          <Text allowFontScaling={false} style={styles.infoCardTitle}>
+            {gatheringItem.name}
+          </Text>
+          <View style={styles.infoCardDescRow}>
+            <Text allowFontScaling={false} style={styles.infoCardDesc}>
+              {`${GatheringTypes[gatheringPointDetail.gatheringType]} | ${
+                gatheringItem.gatheringItemLevel
+              }`}
+            </Text>
+            <View style={styles.starContainer}>
+              {starsEle.map(item => item)}
+            </View>
+          </View>
+        </View>
+      </>
+    );
+  }, [
+    gatheringItem.gatheringItemLevel,
+    gatheringItem.gatheringItemStars,
+    gatheringItem.icon,
+    gatheringItem.name,
+    gatheringPointDetail.gatheringType,
+    theme.colors.tertiaryContentText,
+  ]);
+  return (
+    <View
+      style={{
+        flex: 1,
+        paddingBottom: insets.bottom,
+        backgroundColor: 'rgba(0,0,0,.8)',
+      }}>
+      {appBarHeader}
+      <View style={styles.infoCard}>
+        {infoCardContent}
+        <GatheringItemTimerGroup
+          startTimeEt={eventInfo.startTimeEt}
+          startTimeLt={eventInfo.startTimeLt}
+          countdownValue={
+            getCountdownValueByParsedEvents(
+              parsedGatheringRarePopEvents,
+              eorzeaTime.currentLt,
+            ) ?? '通常'
+          }
+          countdownActivate={
+            eventInfo.state === GatheringRarePopEventState.OCCURRING
+          }
+          theme="dark"
+        />
+      </View>
+      <GatheringItemDetail
+        gatheringItem={gatheringItem}
+        poppingGatheringPoint={gatheringPointDetail}
+        theme="dark"
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  titleStyle: {
+    fontSize: px2DpY(22),
+  },
+  infoCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px2DpX(16),
+    paddingLeft: px2DpX(24),
+    paddingRight: px2DpX(24),
+    paddingTop: px2DpY(14),
+    paddingBottom: px2DpY(14),
+  },
+  infoCardContent: {
+    justifyContent: 'center',
+    gap: px2DpY(5),
+    flexGrow: 1,
+  },
+  infoCardTitle: {
+    fontSize: px2DpY(14),
+    lineHeight: px2DpY(16),
+    color: extendedDarkColors.primaryContentText,
+  },
+  infoCardDescRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px2DpX(3),
+  },
+  starContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  infoCardDesc: {
+    fontSize: px2DpY(14),
+    lineHeight: px2DpY(18),
+    color: extendedDarkColors.tertiaryContentText,
+  },
+  itemIcon: {
+    height: px2DpY(56),
+    width: px2DpY(56),
+    borderRadius: px2DpY(28),
+  },
+});
+
+export default FullScreenReminder;

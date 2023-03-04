@@ -3,5 +3,6 @@ declare namespace GatheringItemDetail {
     gatheringItem: AppGlobal.GatheringItem;
     poppingGatheringPoint: AppGlobal.GatheringPoint;
     footerTip?: string;
+    theme?: 'light' | 'dark';
   }
 }

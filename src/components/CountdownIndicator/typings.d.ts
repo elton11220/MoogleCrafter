@@ -5,6 +5,7 @@ declare namespace CountdownIndicatorTypes {
     value: string;
     type: IndicatorType;
     activated: boolean;
+    theme?: 'light' | 'dark';
   }
 }
 

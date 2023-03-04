@@ -1,15 +1,49 @@
 import {View, StyleSheet} from 'react-native';
 import type {FC} from 'react';
+import {useMemo} from 'react';
 import {memo} from 'react';
 import {px2DpY} from '../../utils/dimensionConverter';
 import {Text, useTheme} from 'react-native-paper';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import Tip from '../Tip';
 import {ExVersions} from '../../utils/eorzeaConstant';
+import {
+  extendedDarkColors,
+  extendedLightColors,
+} from '../../config/themes/extension';
 
 const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
-  const {gatheringItem, poppingGatheringPoint, footerTip} = props;
+  const {
+    gatheringItem,
+    poppingGatheringPoint,
+    footerTip,
+    theme: themeType,
+  } = props;
   const theme = useTheme<typeof DefaultLightTheme>();
+  const themeColors = useMemo(
+    () =>
+      themeType
+        ? {
+            primaryContentText:
+              themeType === 'light'
+                ? extendedLightColors.primaryContentText
+                : themeType === 'dark'
+                ? extendedDarkColors.primaryContentText
+                : theme.colors.primaryContentText,
+            secondaryContentText:
+              themeType === 'light'
+                ? extendedLightColors.secondaryContentText
+                : themeType === 'dark'
+                ? extendedDarkColors.secondaryContentText
+                : theme.colors.secondaryContentText,
+          }
+        : {
+            primaryContentText: theme.colors.primaryContentText,
+            secondaryContentText: theme.colors.secondaryContentText,
+          },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [theme.colors.primaryContentText, theme.colors.secondaryContentText],
+  );
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -17,7 +51,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemTitle,
-              {color: theme.colors.secondaryContentText},
+              {color: themeColors.secondaryContentText},
             ]}
             allowFontScaling={false}>
             采集职业
@@ -25,7 +59,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemContent,
-              {color: theme.colors.primaryContentText},
+              {color: themeColors.primaryContentText},
             ]}
             allowFontScaling={false}>
             {poppingGatheringPoint.classJob ?? '--'}
@@ -35,7 +69,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemTitle,
-              {color: theme.colors.secondaryContentText},
+              {color: themeColors.secondaryContentText},
             ]}
             allowFontScaling={false}>
             采集等级
@@ -43,7 +77,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemContent,
-              {color: theme.colors.primaryContentText},
+              {color: themeColors.primaryContentText},
             ]}
             allowFontScaling={false}>
             {gatheringItem.gatheringItemLevel}
@@ -53,7 +87,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemTitle,
-              {color: theme.colors.secondaryContentText},
+              {color: themeColors.secondaryContentText},
             ]}
             allowFontScaling={false}>
             素材类别
@@ -61,7 +95,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemContent,
-              {color: theme.colors.primaryContentText},
+              {color: themeColors.primaryContentText},
             ]}
             allowFontScaling={false}>
             {gatheringItem.itemCategory}
@@ -73,7 +107,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemTitle,
-              {color: theme.colors.secondaryContentText},
+              {color: themeColors.secondaryContentText},
             ]}
             allowFontScaling={false}>
             出现版本
@@ -81,7 +115,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemContent,
-              {color: theme.colors.primaryContentText},
+              {color: themeColors.primaryContentText},
             ]}
             allowFontScaling={false}>
             {ExVersions[gatheringItem.exVersion]}
@@ -91,7 +125,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemTitle,
-              {color: theme.colors.secondaryContentText},
+              {color: themeColors.secondaryContentText},
             ]}
             allowFontScaling={false}>
             所在地图
@@ -99,7 +133,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemContent,
-              {color: theme.colors.primaryContentText},
+              {color: themeColors.primaryContentText},
             ]}
             allowFontScaling={false}>
             {poppingGatheringPoint.placeName}
@@ -109,7 +143,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemTitle,
-              {color: theme.colors.secondaryContentText},
+              {color: themeColors.secondaryContentText},
             ]}
             allowFontScaling={false}>
             采集坐标
@@ -117,7 +151,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemContent,
-              {color: theme.colors.primaryContentText},
+              {color: themeColors.primaryContentText},
             ]}
             allowFontScaling={false}>
             {`X:${poppingGatheringPoint.x}, Y:${poppingGatheringPoint.y}`}
@@ -129,7 +163,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemTitle,
-              {color: theme.colors.secondaryContentText},
+              {color: themeColors.secondaryContentText},
             ]}
             allowFontScaling={false}>
             传承录 / 采集类别
@@ -137,7 +171,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemContent,
-              {color: theme.colors.primaryContentText},
+              {color: themeColors.primaryContentText},
             ]}
             allowFontScaling={false}>
             {gatheringItem.folkloreBook ?? '--'}
@@ -149,7 +183,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
           <Text
             style={[
               styles.itemTitle,
-              {color: theme.colors.secondaryContentText},
+              {color: themeColors.secondaryContentText},
             ]}
             allowFontScaling={false}>
             特性
@@ -160,7 +194,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
                 key={index}
                 style={[
                   styles.itemContent,
-                  {color: theme.colors.primaryContentText},
+                  {color: themeColors.primaryContentText},
                 ]}
                 allowFontScaling={false}>
                 {`${bonus.condition}, ${bonus.bonusType}`}
@@ -170,7 +204,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
             <Text
               style={[
                 styles.itemContent,
-                {color: theme.colors.primaryContentText},
+                {color: themeColors.primaryContentText},
               ]}
               allowFontScaling={false}>
               --
