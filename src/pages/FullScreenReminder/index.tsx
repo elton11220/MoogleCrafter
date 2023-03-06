@@ -2,7 +2,7 @@ import {View, StyleSheet} from 'react-native';
 import {useMemo} from 'react';
 import type {FC} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Appbar, Text, useTheme} from 'react-native-paper';
+import {Appbar, List, Text, useTheme} from 'react-native-paper';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import {useRoute} from '@react-navigation/native';
@@ -23,6 +23,7 @@ import {itemIcons} from '../../images/gameResource';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import GatheringItemDetail from '../../components/GatheringItemDetail';
 import GatheringItemTimerGroup from '../../components/GatheringItemTimerGroup';
+import WebView from 'react-native-webview';
 
 const FullScreenReminder: FC = () => {
   const insets = useSafeAreaInsets();
@@ -117,6 +118,32 @@ const FullScreenReminder: FC = () => {
     gatheringPointDetail.gatheringType,
     theme.colors.tertiaryContentText,
   ]);
+  const ffCafeMap = useMemo(
+    () => (
+      <List.Section
+        style={[styles.listSectionContainer, {height: px2DpY(310)}]}>
+        <List.Subheader style={styles.listSectionTitleStyle}>
+          采集位置
+        </List.Subheader>
+        <View style={styles.ffCafeMapContainer}>
+          <WebView
+            source={{
+              uri: `https://map.wakingsands.com/#f=mark&id=${gatheringPointDetail.mapId}&x=${gatheringPointDetail.x}&y=${gatheringPointDetail.y}`,
+            }}
+            scrollEnabled={false}
+            overScrollMode="never"
+            startInLoadingState
+            cacheMode="LOAD_CACHE_ELSE_NETWORK"
+          />
+        </View>
+      </List.Section>
+    ),
+    [
+      gatheringPointDetail.mapId,
+      gatheringPointDetail.x,
+      gatheringPointDetail.y,
+    ],
+  );
   return (
     <View
       style={{
@@ -147,6 +174,7 @@ const FullScreenReminder: FC = () => {
         poppingGatheringPoint={gatheringPointDetail}
         theme="dark"
       />
+      {ffCafeMap}
     </View>
   );
 };
@@ -192,6 +220,23 @@ const styles = StyleSheet.create({
     height: px2DpY(56),
     width: px2DpY(56),
     borderRadius: px2DpY(28),
+  },
+  listSectionContainer: {
+    paddingHorizontal: px2DpX(8),
+    paddingVertical: px2DpY(10),
+  },
+  listSectionTitleStyle: {
+    fontSize: px2DpY(14),
+    paddingHorizontal: px2DpX(16),
+    paddingVertical: px2DpY(18),
+    color: '#d8d8d8',
+  },
+  ffCafeMapContainer: {
+    width: px2DpX(310),
+    height: px2DpY(230),
+    alignSelf: 'center',
+    borderRadius: px2DpY(3),
+    overflow: 'hidden',
   },
 });
 

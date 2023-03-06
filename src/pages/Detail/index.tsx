@@ -1,7 +1,7 @@
 import {View, StyleSheet} from 'react-native';
 import {FC, useMemo} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Appbar, Text, useTheme} from 'react-native-paper';
+import {Appbar, List, Text, useTheme} from 'react-native-paper';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import type {RootStackScreenProps} from '../../navigation/types';
@@ -21,6 +21,7 @@ import GatheringItemTimerGroup from '../../components/GatheringItemTimerGroup';
 import {GatheringTypes} from '../../utils/eorzeaConstant';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import WebView from 'react-native-webview';
 
 const Detail: FC = () => {
   const insets = useSafeAreaInsets();
@@ -134,6 +135,34 @@ const Detail: FC = () => {
     theme.colors.primaryContentText,
     theme.colors.tertiaryContentText,
   ]);
+  const ffCafeMap = useMemo(
+    () => (
+      <List.Section
+        style={[styles.listSectionContainer, {height: px2DpY(310)}]}>
+        <List.Subheader
+          style={[styles.listSectionTitleStyle, {color: theme.colors.primary}]}>
+          采集位置
+        </List.Subheader>
+        <View style={styles.ffCafeMapContainer}>
+          <WebView
+            source={{
+              uri: `https://map.wakingsands.com/#f=mark&id=${gatheringPointDetail.mapId}&x=${gatheringPointDetail.x}&y=${gatheringPointDetail.y}`,
+            }}
+            scrollEnabled={false}
+            overScrollMode="never"
+            startInLoadingState
+            cacheMode="LOAD_CACHE_ELSE_NETWORK"
+          />
+        </View>
+      </List.Section>
+    ),
+    [
+      gatheringPointDetail.mapId,
+      gatheringPointDetail.x,
+      gatheringPointDetail.y,
+      theme.colors.primary,
+    ],
+  );
   return (
     <View
       style={{
@@ -163,6 +192,7 @@ const Detail: FC = () => {
         poppingGatheringPoint={gatheringPointDetail}
         footerTip="当前展示的为将出现或出现中的采集信息"
       />
+      {ffCafeMap}
     </View>
   );
 };
@@ -206,6 +236,22 @@ const styles = StyleSheet.create({
     height: px2DpY(56),
     width: px2DpY(56),
     borderRadius: px2DpY(28),
+  },
+  listSectionContainer: {
+    paddingHorizontal: px2DpX(8),
+    paddingVertical: px2DpY(10),
+  },
+  listSectionTitleStyle: {
+    fontSize: px2DpY(14),
+    paddingHorizontal: px2DpX(16),
+    paddingVertical: px2DpY(18),
+  },
+  ffCafeMapContainer: {
+    width: px2DpX(310),
+    height: px2DpY(230),
+    alignSelf: 'center',
+    borderRadius: px2DpY(3),
+    overflow: 'hidden',
   },
 });
 
