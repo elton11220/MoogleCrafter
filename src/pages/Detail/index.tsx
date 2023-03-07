@@ -1,4 +1,4 @@
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {FC, useMemo} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Appbar, List, Text, useTheme} from 'react-native-paper';
@@ -187,12 +187,14 @@ const Detail: FC = () => {
           }
         />
       </View>
-      <GatheringItemDetail
-        gatheringItem={gatheringItem}
-        poppingGatheringPoint={gatheringPointDetail}
-        footerTip="当前展示的为将出现或出现中的采集信息"
-      />
-      {ffCafeMap}
+      <ScrollView>
+        <GatheringItemDetail
+          gatheringItem={gatheringItem}
+          poppingGatheringPoint={gatheringPointDetail}
+          footerTip="当前展示的为将出现或出现中的采集信息"
+        />
+        {ffCafeMap}
+      </ScrollView>
     </View>
   );
 };
