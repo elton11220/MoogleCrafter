@@ -1,8 +1,15 @@
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {useMemo} from 'react';
 import type {FC} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Appbar, List, Text, useTheme} from 'react-native-paper';
+import {
+  Appbar,
+  Button,
+  List,
+  MD3LightTheme,
+  Text,
+  useTheme,
+} from 'react-native-paper';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import {useRoute} from '@react-navigation/native';
@@ -24,6 +31,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import GatheringItemDetail from '../../components/GatheringItemDetail';
 import GatheringItemTimerGroup from '../../components/GatheringItemTimerGroup';
 import WebView from 'react-native-webview';
+import {generalSettingsSelector, useStore} from '../../store';
 
 const FullScreenReminder: FC = () => {
   const insets = useSafeAreaInsets();
@@ -61,6 +69,7 @@ const FullScreenReminder: FC = () => {
     gatheringItem.gatheringPoints,
     parsedGatheringRarePopEvents,
   );
+  const generalSettings = useStore(generalSettingsSelector);
   const appBarHeader = useMemo(
     () => (
       <Appbar.Header style={{backgroundColor: 'transparent'}}>
@@ -119,30 +128,52 @@ const FullScreenReminder: FC = () => {
     theme.colors.tertiaryContentText,
   ]);
   const ffCafeMap = useMemo(
-    () => (
-      <List.Section
-        style={[styles.listSectionContainer, {height: px2DpY(310)}]}>
-        <List.Subheader style={styles.listSectionTitleStyle}>
-          采集位置
-        </List.Subheader>
-        <View style={styles.ffCafeMapContainer}>
-          <WebView
-            source={{
-              uri: `https://map.wakingsands.com/#f=mark&id=${gatheringPointDetail.mapId}&x=${gatheringPointDetail.x}&y=${gatheringPointDetail.y}`,
-            }}
-            scrollEnabled={false}
-            overScrollMode="never"
-            startInLoadingState
-            cacheMode="LOAD_CACHE_ELSE_NETWORK"
-          />
-        </View>
-      </List.Section>
-    ),
+    () =>
+      generalSettings.enableFFCafeMapInFullScreen ? (
+        <List.Section
+          style={[styles.listSectionContainer, {height: px2DpY(310)}]}>
+          <List.Subheader style={styles.listSectionTitleStyle}>
+            采集位置
+          </List.Subheader>
+          <View style={styles.ffCafeMapContainer}>
+            <WebView
+              source={{
+                uri: `https://map.wakingsands.com/#f=mark&id=${gatheringPointDetail.mapId}&x=${gatheringPointDetail.x}&y=${gatheringPointDetail.y}`,
+              }}
+              scrollEnabled={false}
+              overScrollMode="never"
+              startInLoadingState
+              cacheMode="LOAD_CACHE_ELSE_NETWORK"
+            />
+          </View>
+        </List.Section>
+      ) : null,
     [
       gatheringPointDetail.mapId,
       gatheringPointDetail.x,
       gatheringPointDetail.y,
+      generalSettings.enableFFCafeMapInFullScreen,
     ],
+  );
+  const footer = useMemo(
+    () => (
+      <View style={styles.footer}>
+        <Button
+          style={styles.footerButton}
+          mode="contained"
+          theme={{
+            colors: {
+              primary: MD3LightTheme.colors.primary,
+            },
+          }}
+          textColor={MD3LightTheme.colors.onPrimary}
+          labelStyle={{fontSize: px2DpY(14), lineHeight: px2DpY(18)}}
+          onPress={() => {}}>
+          知道了
+        </Button>
+      </View>
+    ),
+    [],
   );
   return (
     <View
@@ -169,12 +200,15 @@ const FullScreenReminder: FC = () => {
           theme="dark"
         />
       </View>
-      <GatheringItemDetail
-        gatheringItem={gatheringItem}
-        poppingGatheringPoint={gatheringPointDetail}
-        theme="dark"
-      />
-      {ffCafeMap}
+      <ScrollView>
+        <GatheringItemDetail
+          gatheringItem={gatheringItem}
+          poppingGatheringPoint={gatheringPointDetail}
+          theme="dark"
+        />
+        {ffCafeMap}
+      </ScrollView>
+      {footer}
     </View>
   );
 };
@@ -237,6 +271,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: px2DpY(3),
     overflow: 'hidden',
+  },
+  footer: {
+    paddingBottom: px2DpY(50),
+    paddingTop: px2DpY(20),
+    alignItems: 'center',
+  },
+  footerButton: {
+    width: px2DpX(150),
+    height: px2DpY(40),
   },
 });
 
