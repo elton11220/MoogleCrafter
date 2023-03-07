@@ -1,17 +1,15 @@
 import {View, StyleSheet, ScrollView} from 'react-native';
-import {FC, useMemo} from 'react';
+import {useMemo} from 'react';
+import type {FC} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Appbar, List, Text, useTheme} from 'react-native-paper';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import type {RootStackScreenProps} from '../../navigation/types';
 import {
-  parseGatheringRarePopEvents,
-  getPoppingEvent,
-  getPoppingGatheringPointByParsedEvents,
-  getTimeTableFromGatheringPoints,
-  getCountdownValueByParsedEvents,
+  getCountdownValueByParsedEvent,
   GatheringRarePopEventState,
+  parseGatheringPoints,
 } from '../../utils/eorzeaTime';
 import useEorzeaTimer from '../../hooks/useEorzeaTimer';
 import GatheringItemDetail from '../../components/GatheringItemDetail';
@@ -22,6 +20,7 @@ import {GatheringTypes} from '../../utils/eorzeaConstant';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import WebView from 'react-native-webview';
+import GatheringPointSummary from '../../components/GatheringPointSummary';
 
 const Detail: FC = () => {
   const insets = useSafeAreaInsets();
@@ -30,35 +29,10 @@ const Detail: FC = () => {
     params: {gatheringItem},
   } = useRoute<RootStackScreenProps<'Detail'>['route']>();
   const navigation = useNavigation();
-  const timeTable = useMemo(
-    () => getTimeTableFromGatheringPoints(gatheringItem.gatheringPoints),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
   const eorzeaTime = useEorzeaTimer();
-  const parsedGatheringRarePopEvents = parseGatheringRarePopEvents(
-    timeTable,
-    eorzeaTime.currentEt,
-  );
-  const eventInfo = useMemo(() => {
-    const poppingEvent = getPoppingEvent(parsedGatheringRarePopEvents);
-    if (poppingEvent !== null) {
-      return {
-        startTimeLt: poppingEvent.startTimeLt.format('HH:mm'),
-        startTimeEt: poppingEvent.startTimeEt.format('HH:mm'),
-        state: poppingEvent.state,
-      };
-    } else {
-      return {
-        startTimeLt: '--',
-        startTimeEt: '--',
-        state: null,
-      };
-    }
-  }, [parsedGatheringRarePopEvents]);
-  const gatheringPointDetail = getPoppingGatheringPointByParsedEvents(
+  const parsedGatheringPoints = parseGatheringPoints(
     gatheringItem.gatheringPoints,
-    parsedGatheringRarePopEvents,
+    eorzeaTime.currentEt,
   );
   const appHeader = useMemo(
     () => (
@@ -115,9 +89,11 @@ const Detail: FC = () => {
                   color: theme.colors.tertiaryContentText,
                 },
               ]}>
-              {`${GatheringTypes[gatheringPointDetail.gatheringType]} | ${
-                gatheringItem.gatheringItemLevel
-              }`}
+              {`${
+                GatheringTypes[
+                  parsedGatheringPoints.poppingGatheringPoint.gatheringType
+                ]
+              } | ${gatheringItem.gatheringItemLevel}`}
             </Text>
             <View style={styles.starContainer}>
               {starsEle.map(item => item)}
@@ -131,7 +107,7 @@ const Detail: FC = () => {
     gatheringItem.gatheringItemStars,
     gatheringItem.icon,
     gatheringItem.name,
-    gatheringPointDetail.gatheringType,
+    parsedGatheringPoints.poppingGatheringPoint.gatheringType,
     theme.colors.primaryContentText,
     theme.colors.tertiaryContentText,
   ]);
@@ -146,10 +122,9 @@ const Detail: FC = () => {
         <View style={styles.ffCafeMapContainer}>
           <WebView
             source={{
-              uri: `https://map.wakingsands.com/#f=mark&id=${gatheringPointDetail.mapId}&x=${gatheringPointDetail.x}&y=${gatheringPointDetail.y}`,
+              uri: `https://map.wakingsands.com/#f=mark&id=${parsedGatheringPoints.poppingGatheringPoint.mapId}&x=${parsedGatheringPoints.poppingGatheringPoint.x}&y=${parsedGatheringPoints.poppingGatheringPoint.y}`,
             }}
             scrollEnabled={false}
-            overScrollMode="never"
             startInLoadingState
             cacheMode="LOAD_CACHE_ELSE_NETWORK"
           />
@@ -157,9 +132,9 @@ const Detail: FC = () => {
       </List.Section>
     ),
     [
-      gatheringPointDetail.mapId,
-      gatheringPointDetail.x,
-      gatheringPointDetail.y,
+      parsedGatheringPoints.poppingGatheringPoint.mapId,
+      parsedGatheringPoints.poppingGatheringPoint.x,
+      parsedGatheringPoints.poppingGatheringPoint.y,
       theme.colors.primary,
     ],
   );
@@ -174,25 +149,107 @@ const Detail: FC = () => {
       <View style={styles.infoCard}>
         {infoCardContent}
         <GatheringItemTimerGroup
-          startTimeEt={eventInfo.startTimeEt}
-          startTimeLt={eventInfo.startTimeLt}
+          startTimeEt={
+            parsedGatheringPoints.poppingGatheringPoint.rarePopEvent
+              ? parsedGatheringPoints.poppingGatheringPoint.rarePopEvent.startTimeEt.format(
+                  'HH:mm',
+                )
+              : '--:--'
+          }
+          startTimeLt={
+            parsedGatheringPoints.poppingGatheringPoint.rarePopEvent
+              ? parsedGatheringPoints.poppingGatheringPoint.rarePopEvent.startTimeLt.format(
+                  'HH:mm',
+                )
+              : '--:--'
+          }
           countdownValue={
-            getCountdownValueByParsedEvents(
-              parsedGatheringRarePopEvents,
+            getCountdownValueByParsedEvent(
+              parsedGatheringPoints.poppingGatheringPoint.rarePopEvent,
               eorzeaTime.currentLt,
             ) ?? '通常'
           }
           countdownActivate={
-            eventInfo.state === GatheringRarePopEventState.OCCURRING
+            parsedGatheringPoints.poppingGatheringPoint.state ===
+            GatheringRarePopEventState.OCCURRING
           }
         />
       </View>
-      <ScrollView>
+      <ScrollView overScrollMode="never">
         <GatheringItemDetail
           gatheringItem={gatheringItem}
-          poppingGatheringPoint={gatheringPointDetail}
+          poppingGatheringPoint={parsedGatheringPoints.poppingGatheringPoint}
           footerTip="当前展示的为将出现或出现中的采集信息"
         />
+        <List.Section style={[styles.listSectionContainer]}>
+          <List.Subheader
+            style={[
+              styles.listSectionTitleStyle,
+              {color: theme.colors.primary},
+            ]}>
+            全部采集点
+          </List.Subheader>
+          {parsedGatheringPoints.sortedOccurringGatheringPoints.map(
+            (point, index) => (
+              <GatheringPointSummary
+                key={index}
+                gatheringPointBaseId={point.gatheringPointBaseId}
+                startTimeEt={
+                  point.rarePopEvent
+                    ? point.rarePopEvent.startTimeEt.format('HH:mm')
+                    : null
+                }
+                startTimeLt={
+                  point.rarePopEvent
+                    ? point.rarePopEvent.startTimeLt.format('HH:mm')
+                    : null
+                }
+                countdownActivate
+                countdownValue={
+                  getCountdownValueByParsedEvent(
+                    point.rarePopEvent,
+                    eorzeaTime.currentLt,
+                  ) ?? null
+                }
+                regionName={point.placeName}
+                prefix={(index + 1).toString()}
+                coordinate={`X:${point.x}, Y:${point.y}`}
+              />
+            ),
+          )}
+          {parsedGatheringPoints.sortedPreparingGatheringPoints.map(
+            (point, index) => (
+              <GatheringPointSummary
+                key={index}
+                gatheringPointBaseId={point.gatheringPointBaseId}
+                startTimeEt={
+                  point.rarePopEvent
+                    ? point.rarePopEvent.startTimeEt.format('HH:mm')
+                    : null
+                }
+                startTimeLt={
+                  point.rarePopEvent
+                    ? point.rarePopEvent.startTimeLt.format('HH:mm')
+                    : null
+                }
+                countdownActivate={false}
+                countdownValue={
+                  getCountdownValueByParsedEvent(
+                    point.rarePopEvent,
+                    eorzeaTime.currentLt,
+                  ) ?? null
+                }
+                regionName={point.placeName}
+                prefix={(
+                  index +
+                  parsedGatheringPoints.sortedOccurringGatheringPoints.length +
+                  1
+                ).toString()}
+                coordinate={`X:${point.x}, Y:${point.y}`}
+              />
+            ),
+          )}
+        </List.Section>
         {ffCafeMap}
       </ScrollView>
     </View>

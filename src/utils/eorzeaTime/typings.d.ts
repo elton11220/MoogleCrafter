@@ -24,4 +24,16 @@ declare namespace EorzeaTimeUtils {
     sortedOccurringEvents: GatheringRarePopEvent[];
     sortedPreparingEvents: GatheringRarePopEvent[];
   }
+
+  interface ParsedGatheringPoint extends AppGlobal.GatheringPoint {
+    rarePopEvent: GatheringRarePopEvent;
+    state: GatheringRarePopEventState;
+  }
+
+  interface ParsedGatheringPoints {
+    gatheringPoints: ParsedGatheringPoint[];
+    sortedOccurringGatheringPoints: ParsedGatheringPoint[];
+    sortedPreparingGatheringPoints: ParsedGatheringPoint[];
+    poppingGatheringPoint: ParsedGatheringPoint;
+  }
 }

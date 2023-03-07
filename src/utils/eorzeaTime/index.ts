@@ -153,6 +153,27 @@ function getPoppingEvent(events: EorzeaTimeUtils.ParsedGatheringRarePopEvents) {
   }
 }
 
+function getCountdownValueByParsedEvent(
+  event: EorzeaTimeUtils.GatheringRarePopEvent,
+  currentLt: Date,
+) {
+  if (event !== null) {
+    if (event.state === GatheringRarePopEventState.OCCURRING) {
+      return moment(event.endTimeLt.valueOf() - currentLt.valueOf()).format(
+        'mm:ss',
+      );
+    } else if (event.state === GatheringRarePopEventState.PREPARING) {
+      return moment(event.startTimeLt.valueOf() - currentLt.valueOf()).format(
+        'mm:ss',
+      );
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
+}
+
 function getCountdownValueByParsedEvents(
   events: EorzeaTimeUtils.ParsedGatheringRarePopEvents,
   currentLt: Date,
@@ -187,6 +208,140 @@ function getPoppingGatheringPointByParsedEvents(
   }
 }
 
+function parseGatheringPoints(
+  gatheringPoints: AppGlobal.GatheringPoint[],
+  currentEt: Date,
+): EorzeaTimeUtils.ParsedGatheringPoints {
+  const parsedGatheringPoints: EorzeaTimeUtils.ParsedGatheringPoint[] =
+    gatheringPoints.map((point, pointIdx) => {
+      if (point.timeTable.length === 0) {
+        return {
+          ...point,
+          rarePopEvent: null,
+          state: GatheringRarePopEventState.OCCURRING,
+        };
+      } else {
+        const events: EorzeaTimeUtils.GatheringRarePopEvent[] =
+          point.timeTable.map(time => {
+            const parsedStartTime = parseStartTime(time.startTime);
+            const parsedDuration = parseStartTime(time.duration);
+            if (parsedStartTime !== null && parsedDuration !== null) {
+              const startTimeEt = new Date(currentEt.valueOf());
+              startTimeEt.setUTCHours(parsedStartTime.hour);
+              startTimeEt.setUTCMinutes(parsedStartTime.minute);
+              startTimeEt.setUTCSeconds(0);
+              if (
+                currentEt.getUTCHours() >
+                parsedStartTime.hour + parsedDuration.hour
+              ) {
+                startTimeEt.setUTCDate(startTimeEt.getUTCDate() + 1);
+              }
+              const endTimeEt = new Date(startTimeEt.valueOf());
+              endTimeEt.setUTCHours(
+                endTimeEt.getUTCHours() + parsedDuration.hour,
+              );
+              endTimeEt.setUTCMinutes(
+                endTimeEt.getUTCMinutes() + parsedDuration.minute,
+              );
+              return {
+                gatheringPointIndex: pointIdx,
+                gatheringPointBaseId: point.gatheringPointBaseId,
+                startTimeEt: moment(startTimeEt).utc(),
+                startTimeLt: moment(computeLocalDate(startTimeEt)),
+                endTimeEt: moment(endTimeEt).utc(),
+                endTimeLt: moment(computeLocalDate(endTimeEt)),
+                rawStartTime: parsedStartTime,
+                rawDuration: parsedDuration,
+                state:
+                  currentEt <= endTimeEt && currentEt >= startTimeEt
+                    ? GatheringRarePopEventState.OCCURRING
+                    : GatheringRarePopEventState.PREPARING,
+              };
+            } else {
+              return null;
+            }
+          });
+        const occurringEvents = events
+          .filter(
+            event =>
+              event !== null &&
+              event.state === GatheringRarePopEventState.OCCURRING,
+          )
+          .sort((a, b) => {
+            if (a === null || b === null) {
+              return -1;
+            }
+            return (
+              a.endTimeEt.valueOf() -
+              currentEt.valueOf() -
+              (b.endTimeEt.valueOf() - currentEt.valueOf())
+            );
+          });
+        if (occurringEvents.length > 0) {
+          return {
+            ...point,
+            rarePopEvent: occurringEvents[0],
+            state: GatheringRarePopEventState.OCCURRING,
+          };
+        }
+        const preparingEvents = events
+          .filter(
+            event =>
+              event !== null &&
+              event.state === GatheringRarePopEventState.PREPARING,
+          )
+          .sort((a, b) => {
+            if (a === null || b === null) {
+              return -1;
+            }
+            return (
+              currentEt.valueOf() -
+              b.startTimeEt.valueOf() -
+              (currentEt.valueOf() - a.startTimeEt.valueOf())
+            );
+          });
+        return {
+          ...point,
+          rarePopEvent: preparingEvents.length > 0 ? preparingEvents[0] : null,
+          state: GatheringRarePopEventState.PREPARING,
+        };
+      }
+    });
+  const sortedOccurringGatheringPoints = parsedGatheringPoints
+    .filter(point => point.state === GatheringRarePopEventState.OCCURRING)
+    .sort((a, b) => {
+      if (a.rarePopEvent === null || b.rarePopEvent === null) {
+        return -1;
+      }
+      return (
+        a.rarePopEvent.endTimeEt.valueOf() -
+        currentEt.valueOf() -
+        (b.rarePopEvent.endTimeEt.valueOf() - currentEt.valueOf())
+      );
+    });
+  const sortedPreparingGatheringPoints = parsedGatheringPoints
+    .filter(point => point.state === GatheringRarePopEventState.PREPARING)
+    .sort((a, b) => {
+      if (a.rarePopEvent === null || b.rarePopEvent === null) {
+        return -1;
+      }
+      return (
+        currentEt.valueOf() -
+        b.rarePopEvent.startTimeEt.valueOf() -
+        (currentEt.valueOf() - a.rarePopEvent.startTimeEt.valueOf())
+      );
+    });
+  return {
+    gatheringPoints: parsedGatheringPoints,
+    sortedOccurringGatheringPoints,
+    sortedPreparingGatheringPoints,
+    poppingGatheringPoint:
+      sortedOccurringGatheringPoints.length > 0
+        ? sortedOccurringGatheringPoints[0]
+        : sortedPreparingGatheringPoints[0],
+  };
+}
+
 export {
   computeEorzeaDate,
   computeLocalDate,
@@ -194,7 +349,9 @@ export {
   GatheringRarePopEventState,
   parseGatheringRarePopEvents,
   getPoppingEvent,
+  getCountdownValueByParsedEvent,
   getCountdownValueByParsedEvents,
   getPoppingGatheringPointByParsedEvents,
   getTimeTableFromGatheringPoints,
+  parseGatheringPoints,
 };
