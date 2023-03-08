@@ -1,4 +1,4 @@
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, Linking} from 'react-native';
 import {useMemo, useState} from 'react';
 import type {FC} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -22,6 +22,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import WebView from 'react-native-webview';
 import GatheringPointSummary from '../../components/GatheringPointSummary';
 import ShowMore from '../../components/ShowMore';
+import IconFont from '../../components/IconFont';
 
 const GATHERING_POINT_LIST_MAX_AMOUNT = 3;
 
@@ -89,6 +90,22 @@ const Detail: FC = () => {
           size={px2DpY(24)}
         />
         <Appbar.Content title="资源详情" titleStyle={styles.titleStyle} />
+        <Appbar.Action
+          icon={() => (
+            <IconFont
+              name="wiki"
+              size={px2DpY(24)}
+              color={theme.colors.secondaryContentText}
+            />
+          )}
+          onPress={() => {
+            Linking.openURL(
+              `https://ff14.huijiwiki.com/wiki/%E7%89%A9%E5%93%81:${encodeURIComponent(
+                gatheringItem.name,
+              )}`,
+            );
+          }}
+        />
       </Appbar.Header>
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
