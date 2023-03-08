@@ -257,7 +257,6 @@ const styles = StyleSheet.create({
   },
   listSectionContainer: {
     paddingHorizontal: px2DpX(8),
-    paddingVertical: px2DpY(10),
   },
   listSectionTitleStyle: {
     fontSize: px2DpY(14),
