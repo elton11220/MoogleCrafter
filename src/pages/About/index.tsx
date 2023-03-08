@@ -124,6 +124,32 @@ const About = () => {
                 styles.copyrightText,
                 {color: theme.colors.tertiaryContentText},
               ]}>
+              本应用涉及的游戏《最终幻想14》由SQUARE
+            </Text>
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.copyrightText,
+                {color: theme.colors.tertiaryContentText},
+              ]}>
+              ENIX制作，简体中文版由盛趣游戏运营。应用内使用
+            </Text>
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.copyrightText,
+                {color: theme.colors.tertiaryContentText},
+              ]}>
+              的游戏资源仅供识别，其版权为SQUARE ENIX所有
+            </Text>
+          </View>
+          <View>
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.copyrightText,
+                {color: theme.colors.tertiaryContentText},
+              ]}>
               肥肥咖啡交互地图
             </Text>
             <Text
@@ -141,6 +167,24 @@ const About = () => {
                 {color: theme.colors.tertiaryContentText},
               ]}>
               FFCafe 肥肥咖啡 & 亚拉戈科技（深圳）有限公司
+            </Text>
+          </View>
+          <View>
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.copyrightText,
+                {color: theme.colors.tertiaryContentText},
+              ]}>
+              最终幻想XIV中文维基
+            </Text>
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.copyrightText,
+                {color: theme.colors.tertiaryContentText},
+              ]}>
+              https://ff14.huijiwiki.com
             </Text>
           </View>
           <View>
@@ -177,24 +221,6 @@ const About = () => {
               FFXIV Gathering Data - Icons Collector by 绿胡子大叔
             </Text>
           </View>
-          <View>
-            <Text
-              allowFontScaling={false}
-              style={[
-                styles.copyrightText,
-                {color: theme.colors.tertiaryContentText},
-              ]}>
-              感谢以下伙伴的提点
-            </Text>
-            <Text
-              allowFontScaling={false}
-              style={[
-                styles.copyrightText,
-                {color: theme.colors.tertiaryContentText},
-              ]}>
-              u/Sove92 (Reddit)
-            </Text>
-          </View>
         </View>
       </ScrollView>
     </View>
@@ -209,6 +235,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: px2DpY(20),
     paddingTop: px2DpY(50),
+    paddingBottom: px2DpY(30),
   },
   appIcon: {
     height: px2DpY(70),
