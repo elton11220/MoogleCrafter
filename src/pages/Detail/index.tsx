@@ -1,5 +1,5 @@
 import {View, StyleSheet, ScrollView} from 'react-native';
-import {useMemo} from 'react';
+import {useMemo, useState} from 'react';
 import type {FC} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Appbar, List, Text, useTheme} from 'react-native-paper';
@@ -21,6 +21,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import WebView from 'react-native-webview';
 import GatheringPointSummary from '../../components/GatheringPointSummary';
+import ShowMore from '../../components/ShowMore';
+
+const GATHERING_POINT_LIST_MAX_AMOUNT = 3;
 
 const Detail: FC = () => {
   const insets = useSafeAreaInsets();
@@ -30,10 +33,51 @@ const Detail: FC = () => {
   } = useRoute<RootStackScreenProps<'Detail'>['route']>();
   const navigation = useNavigation();
   const eorzeaTime = useEorzeaTimer();
+  const [isShowAllGatheringPoints, setShowAllGatheringPoints] = useState(false);
   const parsedGatheringPoints = parseGatheringPoints(
     gatheringItem.gatheringPoints,
     eorzeaTime.currentEt,
   );
+  const gatheringPointAmount = useMemo(
+    () => parsedGatheringPoints.gatheringPoints.length,
+    [parsedGatheringPoints.gatheringPoints.length],
+  );
+  const gatheringPointGroupItemLimit = useMemo(() => {
+    const occurringGatheringPointAmount =
+      parsedGatheringPoints.sortedOccurringGatheringPoints.length;
+    const preparingGatheringPointAmount =
+      parsedGatheringPoints.sortedPreparingGatheringPoints.length;
+    if (isShowAllGatheringPoints) {
+      return {
+        occurring: occurringGatheringPointAmount,
+        preparing: preparingGatheringPointAmount,
+      };
+    } else {
+      if (occurringGatheringPointAmount > GATHERING_POINT_LIST_MAX_AMOUNT) {
+        return {
+          occurring: GATHERING_POINT_LIST_MAX_AMOUNT,
+          preparing: 0,
+        };
+      } else {
+        if (gatheringPointAmount > GATHERING_POINT_LIST_MAX_AMOUNT) {
+          return {
+            occurring: occurringGatheringPointAmount,
+            preparing: gatheringPointAmount - occurringGatheringPointAmount - 1,
+          };
+        } else {
+          return {
+            occurring: occurringGatheringPointAmount,
+            preparing: preparingGatheringPointAmount,
+          };
+        }
+      }
+    }
+  }, [
+    gatheringPointAmount,
+    isShowAllGatheringPoints,
+    parsedGatheringPoints.sortedOccurringGatheringPoints.length,
+    parsedGatheringPoints.sortedPreparingGatheringPoints.length,
+  ]);
   const appHeader = useMemo(
     () => (
       <Appbar.Header>
@@ -189,8 +233,9 @@ const Detail: FC = () => {
             ]}>
             全部采集点
           </List.Subheader>
-          {parsedGatheringPoints.sortedOccurringGatheringPoints.map(
-            (point, index) => (
+          {parsedGatheringPoints.sortedOccurringGatheringPoints
+            .slice(0, gatheringPointGroupItemLimit.occurring)
+            .map((point, index) => (
               <GatheringPointSummary
                 key={index}
                 gatheringPointBaseId={point.gatheringPointBaseId}
@@ -215,10 +260,10 @@ const Detail: FC = () => {
                 prefix={(index + 1).toString()}
                 coordinate={`X:${point.x}, Y:${point.y}`}
               />
-            ),
-          )}
-          {parsedGatheringPoints.sortedPreparingGatheringPoints.map(
-            (point, index) => (
+            ))}
+          {parsedGatheringPoints.sortedPreparingGatheringPoints
+            .slice(0, gatheringPointGroupItemLimit.preparing)
+            .map((point, index) => (
               <GatheringPointSummary
                 key={index}
                 gatheringPointBaseId={point.gatheringPointBaseId}
@@ -247,8 +292,13 @@ const Detail: FC = () => {
                 ).toString()}
                 coordinate={`X:${point.x}, Y:${point.y}`}
               />
-            ),
-          )}
+            ))}
+          {gatheringPointAmount > GATHERING_POINT_LIST_MAX_AMOUNT ? (
+            <ShowMore
+              unfold={isShowAllGatheringPoints}
+              onChange={setShowAllGatheringPoints}
+            />
+          ) : null}
         </List.Section>
         {ffCafeMap}
       </ScrollView>
