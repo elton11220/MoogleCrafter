@@ -186,11 +186,10 @@ const Detail: FC = () => {
         <View style={styles.ffCafeMapContainer}>
           <WebView
             source={{
-              uri: `https://map.wakingsands.com/#f=mark&id=${parsedGatheringPoints.poppingGatheringPoint.mapId}&x=${parsedGatheringPoints.poppingGatheringPoint.x}&y=${parsedGatheringPoints.poppingGatheringPoint.y}`,
+              uri: `https://map.elton11220.top/?mapId=${parsedGatheringPoints.poppingGatheringPoint.mapId}&x=${parsedGatheringPoints.poppingGatheringPoint.x}&y=${parsedGatheringPoints.poppingGatheringPoint.y}&zoom=-1`,
             }}
             scrollEnabled={false}
             startInLoadingState
-            cacheMode="LOAD_CACHE_ELSE_NETWORK"
           />
         </View>
       </List.Section>

@@ -138,11 +138,10 @@ const FullScreenReminder: FC = () => {
           <View style={styles.ffCafeMapContainer}>
             <WebView
               source={{
-                uri: `https://map.wakingsands.com/#f=mark&id=${gatheringPointDetail.mapId}&x=${gatheringPointDetail.x}&y=${gatheringPointDetail.y}`,
+                uri: `https://map.elton11220.top/?mapId=${gatheringPointDetail.mapId}&x=${gatheringPointDetail.x}&y=${gatheringPointDetail.y}&zoom=-1`,
               }}
               scrollEnabled={false}
               startInLoadingState
-              cacheMode="LOAD_CACHE_ELSE_NETWORK"
             />
           </View>
         </List.Section>
