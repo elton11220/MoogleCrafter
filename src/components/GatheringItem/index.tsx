@@ -65,6 +65,7 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
                 color: theme.colors.primaryContentText,
               },
             ]}
+            numberOfLines={1}
             allowFontScaling={false}>
             {gatheringItem.name}
           </Text>
