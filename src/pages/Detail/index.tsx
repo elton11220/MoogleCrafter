@@ -23,6 +23,8 @@ import WebView from 'react-native-webview';
 import GatheringPointSummary from '../../components/GatheringPointSummary';
 import ShowMore from '../../components/ShowMore';
 import IconFont from '../../components/IconFont';
+import {gatheringPointBasesSelector, useStore} from '../../store';
+import GatheringItemLite from '../../components/GatheringItemLite';
 
 const GATHERING_POINT_LIST_MAX_AMOUNT = 3;
 
@@ -79,6 +81,7 @@ const Detail: FC = () => {
     parsedGatheringPoints.sortedOccurringGatheringPoints.length,
     parsedGatheringPoints.sortedPreparingGatheringPoints.length,
   ]);
+  const gatheringPointBases = useStore(gatheringPointBasesSelector);
   const appHeader = useMemo(
     () => (
       <Appbar.Header>
@@ -199,6 +202,30 @@ const Detail: FC = () => {
       theme.colors.primary,
     ],
   );
+  const allGatheringPointItems = useMemo(
+    () => (
+      <List.Section style={styles.listSectionContainer}>
+        <List.Subheader
+          style={[styles.listSectionTitleStyle, {color: theme.colors.primary}]}>
+          当前采集点物品
+        </List.Subheader>
+        {gatheringPointBases[
+          parsedGatheringPoints.poppingGatheringPoint.gatheringPointBaseId
+        ].map((item, index) => (
+          <GatheringItemLite
+            key={index}
+            data={item}
+            prefix={(index + 1).toString()}
+          />
+        ))}
+      </List.Section>
+    ),
+    [
+      gatheringPointBases,
+      parsedGatheringPoints.poppingGatheringPoint.gatheringPointBaseId,
+      theme.colors.primary,
+    ],
+  );
   return (
     <View
       style={{
@@ -242,6 +269,7 @@ const Detail: FC = () => {
           poppingGatheringPoint={parsedGatheringPoints.poppingGatheringPoint}
           footerTip="当前展示的为将出现或出现中的采集信息"
         />
+        {allGatheringPointItems}
         <List.Section style={[styles.listSectionContainer]}>
           <List.Subheader
             style={[
