@@ -52,20 +52,24 @@ const GatheringItemLite: FC<GatheringItemLite.Props> = props => {
             {
               color: theme.colors.tertiaryContentText,
             },
-          ]}>{`LV${gatheringItemLevel}`}</Text>
-        <MaterialIcons
-          name="star"
-          size={px2DpY(13)}
-          color={theme.colors.tertiaryContentText}
-        />
-        <Text
-          allowFontScaling={false}
-          style={[
-            styles.rightText,
-            {
-              color: theme.colors.tertiaryContentText,
-            },
-          ]}>{`${gatheringItemStars}`}</Text>
+          ]}>{`Lv${gatheringItemLevel}`}</Text>
+        {gatheringItemStars > 0 ? (
+          <>
+            <MaterialIcons
+              name="star"
+              size={px2DpY(13)}
+              color={theme.colors.tertiaryContentText}
+            />
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.rightText,
+                {
+                  color: theme.colors.tertiaryContentText,
+                },
+              ]}>{`${gatheringItemStars}`}</Text>
+          </>
+        ) : null}
       </View>
     </View>
   );
