@@ -141,7 +141,6 @@ const FullScreenReminder: FC = () => {
                 uri: `https://map.wakingsands.com/#f=mark&id=${gatheringPointDetail.mapId}&x=${gatheringPointDetail.x}&y=${gatheringPointDetail.y}`,
               }}
               scrollEnabled={false}
-              overScrollMode="never"
               startInLoadingState
               cacheMode="LOAD_CACHE_ELSE_NETWORK"
             />
@@ -200,7 +199,7 @@ const FullScreenReminder: FC = () => {
           theme="dark"
         />
       </View>
-      <ScrollView>
+      <ScrollView overScrollMode="never">
         <GatheringItemDetail
           gatheringItem={gatheringItem}
           poppingGatheringPoint={gatheringPointDetail}
