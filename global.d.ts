@@ -55,4 +55,14 @@ declare namespace AppGlobal {
     regionName: string;
     subName: string;
   }
+
+  interface GatheringPointBaseItem {
+    id: number;
+    name: string;
+    icon: number;
+    gatheringItemLevel: number;
+    gatheringItemStars: number;
+  }
+
+  type GatheringPointBase = GatheringPointBaseItem[];
 }

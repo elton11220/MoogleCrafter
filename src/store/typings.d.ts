@@ -63,6 +63,7 @@ declare namespace ZustandStore {
 
   interface State {
     gatheringItems: AppGlobal.GatheringItem[];
+    gatheringPointBases: AppGlobal.GatheringPointBase[];
     regions: AppGlobal.RegionItem[];
     isSplashScreenShow: boolean;
     settings: {

@@ -1,8 +1,10 @@
 import gatheringItems from '../data/gatheringData.json';
+import gatheringPointBases from '../data/gatheringPointBase.json';
 import regions from '../data/region.json';
 
 export const initialState: ZustandStore.State = {
   gatheringItems,
+  gatheringPointBases,
   regions,
   isSplashScreenShow: true,
   settings: {
