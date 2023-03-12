@@ -5,6 +5,7 @@ import {Appbar, useTheme, IconButton, Searchbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import GatheringList from '../../components/GatheringList';
 import FilterDrawer from '../../components/FilterDrawer';
 import type {FilterValue} from '../../components/FilterDrawer';
@@ -13,10 +14,11 @@ import {gatheringItemsSelector, useStore} from '../../store';
 import {useGatheringDataFilter} from '../../hooks/useGatheringDataFilter';
 import produce from 'immer';
 import {useFocusEffect} from '@react-navigation/native';
+import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 
 const MaterialList: FC = () => {
   const insets = useSafeAreaInsets();
-  const theme = useTheme();
+  const theme = useTheme<typeof DefaultLightTheme>();
   const [searchQuery, setSearchQuery] = useState('');
   const filterDrawerInstance = useRef<FilterDrawerInstance | null>(null);
   const [filterValue, setFilterValue] = useState<FilterValue>({
@@ -52,6 +54,13 @@ const MaterialList: FC = () => {
     },
     [],
   );
+  const clearSelectedGatheringItems = useCallback(() => {
+    setSelectedGatheringItems(state =>
+      produce(state, draft => {
+        draft.clear();
+      }),
+    );
+  }, []);
   useFocusEffect(() => {
     const clearSelectionBackHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -70,13 +79,83 @@ const MaterialList: FC = () => {
     );
     return () => clearSelectionBackHandler.remove();
   });
+  const appHeaderActions = useMemo(
+    () => (
+      <>
+        <Appbar.Action
+          style={{
+            display: selectedGatheringItems.size > 0 ? undefined : 'none',
+          }}
+          disabled={selectedGatheringItems.size === 0}
+          size={px2DpY(25)}
+          iconColor={theme.colors.primaryContentText}
+          icon={({size, color}) => (
+            <MaterialIcons
+              name="notifications-none"
+              size={size}
+              color={color}
+            />
+          )}
+          onPress={() => {}}
+        />
+        <Appbar.Action
+          style={{
+            display: selectedGatheringItems.size > 0 ? undefined : 'none',
+          }}
+          disabled={!(selectedGatheringItems.size > 0)}
+          size={px2DpY(25)}
+          iconColor={theme.colors.primaryContentText}
+          icon={({size, color}) => (
+            <MaterialIcons name="favorite-border" size={size} color={color} />
+          )}
+          onPress={() => {}}
+        />
+        <Appbar.Action
+          style={{
+            display: selectedGatheringItems.size > 0 ? undefined : 'none',
+          }}
+          disabled={!(selectedGatheringItems.size > 0)}
+          size={px2DpY(25)}
+          iconColor={theme.colors.primaryContentText}
+          icon={({size, color}) => (
+            <MaterialIcons name="more-horiz" size={size} color={color} />
+          )}
+          onPress={() => {}}
+        />
+      </>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedGatheringItems.size > 0, theme.colors.primaryContentText],
+  );
   const appHeader = useMemo(
     () => (
-      <Appbar.Header>
-        <Appbar.Content title="素材列表" />
+      <Appbar.Header
+        style={{
+          paddingLeft: selectedGatheringItems.size > 0 ? undefined : 16,
+        }}>
+        <Appbar.BackAction
+          onPress={clearSelectedGatheringItems}
+          style={{
+            display: selectedGatheringItems.size > 0 ? undefined : 'none',
+          }}
+          size={px2DpY(25)}
+        />
+        <Appbar.Content
+          title={
+            selectedGatheringItems.size > 0
+              ? `已选择 ${selectedGatheringItems.size}`
+              : '素材列表'
+          }
+          titleStyle={styles.appBarHeaderTitle}
+        />
+        {appHeaderActions}
       </Appbar.Header>
     ),
-    [],
+    [
+      appHeaderActions,
+      clearSelectedGatheringItems,
+      selectedGatheringItems.size,
+    ],
   );
   const filterDrawer = useMemo(
     () => (
@@ -162,7 +241,7 @@ const MaterialList: FC = () => {
 
 const styles = StyleSheet.create({
   searchBarContainer: {
-    paddingTop: px2DpY(10),
+    paddingTop: px2DpY(5),
     paddingBottom: px2DpY(10),
     paddingLeft: px2DpX(16),
     paddingRight: px2DpX(16),
@@ -186,6 +265,10 @@ const styles = StyleSheet.create({
   },
   gatheringItemListContainer: {
     paddingTop: px2DpY(0),
+  },
+  appBarHeaderTitle: {
+    fontSize: px2DpY(22),
+    lineHeight: px2DpY(28),
   },
 });
 
