@@ -30,7 +30,10 @@ const Favorites: FC = () => {
         backgroundColor: theme.colors.background,
       }}>
       <Appbar.Header>
-        <Appbar.Content title="我的收藏" />
+        <Appbar.Content
+          title="我的收藏"
+          titleStyle={styles.appBarHeaderTitle}
+        />
       </Appbar.Header>
       <View style={styles.searchBarContainer}>
         <Searchbar
@@ -86,7 +89,7 @@ const Favorites: FC = () => {
 
 const styles = StyleSheet.create({
   searchBarContainer: {
-    paddingTop: px2DpY(10),
+    paddingTop: px2DpY(5),
     paddingBottom: px2DpY(10),
     paddingLeft: px2DpX(16),
     paddingRight: px2DpX(16),
@@ -128,6 +131,10 @@ const styles = StyleSheet.create({
   },
   gatheringItemListContainer: {
     paddingTop: px2DpY(0),
+  },
+  appBarHeaderTitle: {
+    fontSize: px2DpY(22),
+    lineHeight: px2DpY(28),
   },
 });
 

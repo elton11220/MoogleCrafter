@@ -20,7 +20,7 @@ const Settings: FC = () => {
         backgroundColor: theme.colors.background,
       }}>
       <Appbar.Header>
-        <Appbar.Content title="设置" />
+        <Appbar.Content title="设置" titleStyle={styles.appBarHeaderTitle} />
       </Appbar.Header>
       <ScrollView
         contentContainerStyle={styles.listScrollViewContentContainerStyle}>
@@ -212,6 +212,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: px2DpY(12),
     lineHeight: px2DpY(18),
+  },
+  appBarHeaderTitle: {
+    fontSize: px2DpY(22),
+    lineHeight: px2DpY(28),
   },
 });
 
