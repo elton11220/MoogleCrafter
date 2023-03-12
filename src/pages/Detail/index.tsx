@@ -94,12 +94,10 @@ const Detail: FC = () => {
         />
         <Appbar.Content title="资源详情" titleStyle={styles.titleStyle} />
         <Appbar.Action
-          icon={() => (
-            <IconFont
-              name="wiki"
-              size={px2DpY(24)}
-              color={theme.colors.secondaryContentText}
-            />
+          size={px2DpY(24)}
+          iconColor={theme.colors.secondaryContentText}
+          icon={({size, color}) => (
+            <IconFont name="wiki" size={size} color={color} />
           )}
           onPress={() => {
             Linking.openURL(
