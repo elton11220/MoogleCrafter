@@ -5,13 +5,41 @@ import {getTimeTableFromGatheringPoints} from '../../utils/eorzeaTime';
 import {px2DpY} from '../../utils/dimensionConverter';
 import {memo, useCallback, useRef} from 'react';
 import type {FC} from 'react';
-import {useScrollToTop} from '@react-navigation/native';
+import {useNavigation, useScrollToTop} from '@react-navigation/native';
 
 const GatheringList: FC<GatheringList.Props> = props => {
-  const {data: gatheringItems} = props;
+  const {
+    data: gatheringItems,
+    selectedItems,
+    onSelected,
+    onCancelSelection,
+  } = props;
   const eorzeaTime = useEorzeaTimer();
+  const navigation = useNavigation();
   const flatListRef = useRef<FlatList<AppGlobal.GatheringItem> | null>(null);
   useScrollToTop(flatListRef);
+  const onIconPressed = useCallback(
+    (item: AppGlobal.GatheringItem) => {
+      if (selectedItems.has(item.id)) {
+        onCancelSelection(item.id);
+      } else {
+        onSelected(item);
+      }
+    },
+    [onCancelSelection, onSelected, selectedItems],
+  );
+  const onItemPressed = useCallback(
+    (item: AppGlobal.GatheringItem) => {
+      if (selectedItems.size > 0) {
+        onIconPressed(item);
+      } else {
+        navigation.navigate('Detail', {
+          gatheringItem: item,
+        });
+      }
+    },
+    [navigation, onIconPressed, selectedItems.size],
+  );
   const renderItem: (info: {item: AppGlobal.GatheringItem}) => JSX.Element = ({
     item,
   }) => (
@@ -19,6 +47,10 @@ const GatheringList: FC<GatheringList.Props> = props => {
       gatheringItem={item}
       eorzeaTime={eorzeaTime}
       timeTable={getTimeTableFromGatheringPoints(item.gatheringPoints)}
+      onPressed={onItemPressed}
+      onLongPressed={onSelected}
+      onIconPressed={onIconPressed}
+      selected={selectedItems.has(item.id)}
     />
   );
   const getItemLayout = useCallback(

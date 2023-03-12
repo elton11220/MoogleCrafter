@@ -6,5 +6,9 @@ declare namespace GatheringItem {
       currentEt: Date;
     };
     timeTable: AppGlobal.TimeTableItem[];
+    onLongPressed: (item: AppGlobal.GatheringItem) => void;
+    onIconPressed: (item: AppGlobal.GatheringItem) => void;
+    onPressed: (item: AppGlobal.GatheringItem) => void;
+    selected: boolean;
   }
 }

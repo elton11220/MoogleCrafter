@@ -1,6 +1,6 @@
-import {useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 import type {FC} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {BackHandler, StyleSheet, View} from 'react-native';
 import {Appbar, useTheme, IconButton, Searchbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
@@ -11,6 +11,8 @@ import type {FilterValue} from '../../components/FilterDrawer';
 import type {FilterDrawerInstance} from '../../components/FilterDrawer';
 import {gatheringItemsSelector, useStore} from '../../store';
 import {useGatheringDataFilter} from '../../hooks/useGatheringDataFilter';
+import produce from 'immer';
+import {useFocusEffect} from '@react-navigation/native';
 
 const MaterialList: FC = () => {
   const insets = useSafeAreaInsets();
@@ -27,21 +29,67 @@ const MaterialList: FC = () => {
   const gatheringItems = useStore(gatheringItemsSelector);
   const [, filteredGatheringItems, effectiveFilterAmount] =
     useGatheringDataFilter(gatheringItems, filterValue, searchQuery);
-  return (
-    <View
-      style={{
-        flex: 1,
-        paddingBottom: insets.bottom,
-        backgroundColor: theme.colors.background,
-      }}>
+  const [selectedGatheringItems, setSelectedGatheringItems] = useState<
+    Map<AppGlobal.GatheringItem['id'], AppGlobal.GatheringItem>
+  >(new Map());
+  const onGatheringItemSelected = useCallback(
+    (item: AppGlobal.GatheringItem) => {
+      setSelectedGatheringItems(state =>
+        produce(state, draft => {
+          draft.set(item.id, item);
+        }),
+      );
+    },
+    [],
+  );
+  const onGatheringItemCancelSelection = useCallback(
+    (itemId: AppGlobal.GatheringItem['id']) => {
+      setSelectedGatheringItems(state =>
+        produce(state, draft => {
+          draft.delete(itemId);
+        }),
+      );
+    },
+    [],
+  );
+  useFocusEffect(() => {
+    const clearSelectionBackHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (selectedGatheringItems.size > 0) {
+          setSelectedGatheringItems(state =>
+            produce(state, draft => {
+              draft.clear();
+            }),
+          );
+          return true;
+        } else {
+          return false;
+        }
+      },
+    );
+    return () => clearSelectionBackHandler.remove();
+  });
+  const appHeader = useMemo(
+    () => (
+      <Appbar.Header>
+        <Appbar.Content title="素材列表" />
+      </Appbar.Header>
+    ),
+    [],
+  );
+  const filterDrawer = useMemo(
+    () => (
       <FilterDrawer
         ref={filterDrawerInstance}
         value={filterValue}
         onChange={setFilterValue}
       />
-      <Appbar.Header>
-        <Appbar.Content title="素材列表" />
-      </Appbar.Header>
+    ),
+    [filterValue],
+  );
+  const searchBar = useMemo(
+    () => (
       <View style={styles.searchBarContainer}>
         <Searchbar
           value={searchQuery}
@@ -84,7 +132,30 @@ const MaterialList: FC = () => {
           }}
         />
       </View>
-      <GatheringList data={filteredGatheringItems} />
+    ),
+    [
+      effectiveFilterAmount,
+      searchQuery,
+      theme.colors.primary,
+      theme.colors.surfaceVariant,
+    ],
+  );
+  return (
+    <View
+      style={{
+        flex: 1,
+        paddingBottom: insets.bottom,
+        backgroundColor: theme.colors.background,
+      }}>
+      {filterDrawer}
+      {appHeader}
+      {searchBar}
+      <GatheringList
+        data={filteredGatheringItems}
+        onSelected={onGatheringItemSelected}
+        selectedItems={selectedGatheringItems}
+        onCancelSelection={onGatheringItemCancelSelection}
+      />
     </View>
   );
 };

@@ -1,6 +1,13 @@
-import {memo, useCallback, useMemo} from 'react';
+import {memo, useEffect, useMemo, useRef} from 'react';
 import type {FC} from 'react';
-import {View, StyleSheet, Pressable} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Animated,
+  Easing,
+  Vibration,
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {Text, useTheme} from 'react-native-paper';
 import {DefaultLightTheme} from '../../config/themes/defaultTheme';
@@ -14,12 +21,19 @@ import {
   parseGatheringRarePopEvents,
 } from '../../utils/eorzeaTime';
 import GatheringItemTimerGroup from '../GatheringItemTimerGroup';
-import {useNavigation} from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const GatheringItem: FC<GatheringItem.Props> = props => {
-  const {timeTable, gatheringItem, eorzeaTime} = props;
+  const {
+    timeTable,
+    gatheringItem,
+    eorzeaTime,
+    selected,
+    onPressed,
+    onLongPressed,
+    onIconPressed,
+  } = props;
   const theme = useTheme<typeof DefaultLightTheme>();
-  const navigation = useNavigation();
   const parsedGatheringRarePopEvents = parseGatheringRarePopEvents(
     timeTable,
     eorzeaTime.currentEt,
@@ -44,18 +58,52 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
     gatheringItem.gatheringPoints,
     parsedGatheringRarePopEvents,
   );
-  const navigateToDetail = useCallback(() => {
-    navigation.navigate('Detail', {
-      gatheringItem,
-    });
-  }, [gatheringItem, navigation]);
-  return (
-    <Pressable style={styles.container} onPress={navigateToDetail}>
+  const selectedIconOpacityAnimValue = useRef(new Animated.Value(0)).current;
+  const showSelectedIcon = () => {
+    Animated.timing(selectedIconOpacityAnimValue, {
+      toValue: 1,
+      duration: 90,
+      easing: Easing.in(Easing.poly(1)),
+      useNativeDriver: true,
+    }).start();
+  };
+  const hideSelectedIcon = () => {
+    Animated.timing(selectedIconOpacityAnimValue, {
+      toValue: 0,
+      duration: 90,
+      easing: Easing.in(Easing.poly(1)),
+      useNativeDriver: true,
+    }).start();
+  };
+  const innerSelectionValue = useRef(false);
+  useEffect(() => {
+    if (selected !== innerSelectionValue.current) {
+      if (selected) {
+        innerSelectionValue.current = true;
+        Vibration.vibrate(100);
+        showSelectedIcon();
+      } else {
+        innerSelectionValue.current = false;
+        hideSelectedIcon();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected, innerSelectionValue]);
+  const pressIcon = () => {
+    onIconPressed(gatheringItem);
+  };
+  const itemIcon = useMemo(
+    () => (
       <FastImage
         style={styles.itemIcon}
         source={itemIcons.get(gatheringItem.icon.toString())}
         resizeMode={FastImage.resizeMode.stretch}
       />
+    ),
+    [gatheringItem.icon],
+  );
+  const itemDetail = useMemo(
+    () => (
       <View style={styles.contentContainer}>
         <View style={styles.contentTitleRow}>
           <Text
@@ -99,6 +147,54 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
           </Text>
         </View>
       </View>
+    ),
+    [
+      gatheringItem.gatheringItemLevel,
+      gatheringItem.name,
+      gatheringPointDetail.classJob,
+      gatheringPointDetail?.placeName,
+      gatheringPointDetail?.x,
+      gatheringPointDetail?.y,
+      theme.colors.primaryContentText,
+      theme.colors.secondaryContentText,
+    ],
+  );
+  return (
+    <Pressable
+      style={styles.container}
+      android_ripple={{color: theme.colors.rippleBackgroundColor}}
+      onPress={() => {
+        onPressed(gatheringItem);
+      }}
+      onLongPress={() => {
+        onLongPressed(gatheringItem);
+      }}
+      delayLongPress={150}
+      unstable_pressDelay={0}>
+      <View style={styles.itemIconContainer}>
+        <Pressable
+          android_ripple={{color: theme.colors.rippleBackgroundColor}}
+          onPress={pressIcon}
+          style={styles.itemIcon}>
+          {itemIcon}
+          <Animated.View
+            style={[
+              styles.itemIcon,
+              styles.selectedIcon,
+              {
+                backgroundColor: theme.colors.primaryContainer,
+                opacity: selectedIconOpacityAnimValue,
+              },
+            ]}>
+            <MaterialIcons
+              name="check"
+              size={px2DpY(28)}
+              color={theme.colors.primary}
+            />
+          </Animated.View>
+        </Pressable>
+      </View>
+      {itemDetail}
       <View style={styles.rightContainer}>
         <GatheringItemTimerGroup
           startTimeLt={eventInfo.startTimeLt}
@@ -154,11 +250,27 @@ const styles = StyleSheet.create({
     width: px2DpY(56),
     borderRadius: px2DpY(28),
   },
+  selectedIcon: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+  },
+  itemIconContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    height: px2DpY(56),
+    width: px2DpY(56),
+    borderRadius: px2DpY(28),
+  },
 });
 
 export default memo(
   GatheringItem,
   (prev, next) =>
-    prev.timeTable.length === 0 ||
-    prev.eorzeaTime.currentLt === next.eorzeaTime.currentLt,
+    (prev.timeTable.length === 0 ||
+      prev.eorzeaTime.currentLt === next.eorzeaTime.currentLt) &&
+    prev.selected === next.selected &&
+    prev.onPressed === next.onPressed,
 );
