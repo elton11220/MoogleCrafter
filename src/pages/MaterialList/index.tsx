@@ -165,15 +165,28 @@ const MaterialList: FC = () => {
       selectedGatheringItems.size,
     ],
   );
+  const onFilterDrawerChange = useCallback(
+    (action: FilterValue | ((value: FilterValue) => FilterValue)) => {
+      setFilterValue(action);
+      setSelectedGatheringItems(state =>
+        state.size > 0
+          ? produce(state, draft => {
+              draft.clear();
+            })
+          : state,
+      );
+    },
+    [],
+  );
   const filterDrawer = useMemo(
     () => (
       <FilterDrawer
         ref={filterDrawerInstance}
         value={filterValue}
-        onChange={setFilterValue}
+        onChange={onFilterDrawerChange}
       />
     ),
-    [filterValue],
+    [filterValue, onFilterDrawerChange],
   );
   const onChangeSearchBarText = useCallback((value: string) => {
     setSearchQuery(value);
