@@ -1,10 +1,9 @@
 import {useCallback, useMemo, useRef, useState} from 'react';
 import type {FC} from 'react';
 import {BackHandler, StyleSheet, View} from 'react-native';
-import {Appbar, useTheme, IconButton, Searchbar} from 'react-native-paper';
+import {Appbar, useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import GatheringList from '../../components/GatheringList';
 import FilterDrawer from '../../components/FilterDrawer';
@@ -15,6 +14,10 @@ import {useGatheringDataFilter} from '../../hooks/useGatheringDataFilter';
 import produce from 'immer';
 import {useFocusEffect} from '@react-navigation/native';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
+import AnimatedBgColorAppBarHeader from '../../components/AnimatedBgColorAppBarHeader';
+import AnimatedBackgroundColorView from '../../components/AnimatedBackgroundColorView';
+import AnimatedBgColorSearchBar from '../../components/AnimatedBgColorSearchBar';
+import AnimatedBgColorFilterButton from '../../components/AnimatedBgColorFilterButton';
 
 const MaterialList: FC = () => {
   const insets = useSafeAreaInsets();
@@ -79,6 +82,10 @@ const MaterialList: FC = () => {
     );
     return () => clearSelectionBackHandler.remove();
   });
+  const onFilterButtonPress = useCallback(
+    () => filterDrawerInstance.current?.show(),
+    [],
+  );
   const appHeaderActions = useMemo(
     () => (
       <>
@@ -129,7 +136,8 @@ const MaterialList: FC = () => {
   );
   const appHeader = useMemo(
     () => (
-      <Appbar.Header
+      <AnimatedBgColorAppBarHeader
+        activated={selectedGatheringItems.size > 0}
         style={{
           paddingLeft: selectedGatheringItems.size > 0 ? undefined : 16,
         }}>
@@ -149,7 +157,7 @@ const MaterialList: FC = () => {
           titleStyle={styles.appBarHeaderTitle}
         />
         {appHeaderActions}
-      </Appbar.Header>
+      </AnimatedBgColorAppBarHeader>
     ),
     [
       appHeaderActions,
@@ -167,58 +175,6 @@ const MaterialList: FC = () => {
     ),
     [filterValue],
   );
-  const searchBar = useMemo(
-    () => (
-      <View style={styles.searchBarContainer}>
-        <Searchbar
-          value={searchQuery}
-          onChangeText={text => {
-            setSearchQuery(text);
-          }}
-          elevation={0}
-          placeholder="输入素材名称进行搜索"
-          style={[
-            styles.searchBar,
-            {
-              backgroundColor: theme.colors.surfaceVariant,
-            },
-          ]}
-          inputStyle={styles.searchBarInput}
-        />
-        <IconButton
-          icon={({color, size}) => (
-            <MaterialCommunityIcons
-              name="image-filter-none"
-              color={color}
-              size={size}
-            />
-          )}
-          iconColor={
-            effectiveFilterAmount > 0
-              ? theme.colors.surfaceVariant
-              : theme.colors.primary
-          }
-          containerColor={
-            effectiveFilterAmount > 0
-              ? theme.colors.primary
-              : theme.colors.surfaceVariant
-          }
-          mode="contained"
-          size={px2DpY(18)}
-          style={styles.searchBarFilterButton}
-          onPress={() => {
-            filterDrawerInstance.current?.show();
-          }}
-        />
-      </View>
-    ),
-    [
-      effectiveFilterAmount,
-      searchQuery,
-      theme.colors.primary,
-      theme.colors.surfaceVariant,
-    ],
-  );
   return (
     <View
       style={{
@@ -228,7 +184,23 @@ const MaterialList: FC = () => {
       }}>
       {filterDrawer}
       {appHeader}
-      {searchBar}
+      <AnimatedBackgroundColorView
+        initialColor={theme.colors.background}
+        activeColor={theme.colors.surfaceVariant}
+        activated={selectedGatheringItems.size > 0}
+        style={styles.searchBarContainer}>
+        <AnimatedBgColorSearchBar
+          activated={selectedGatheringItems.size > 0}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="输入素材名称进行搜索"
+        />
+        <AnimatedBgColorFilterButton
+          activated={effectiveFilterAmount > 0}
+          activatedBg={selectedGatheringItems.size > 0}
+          onPress={onFilterButtonPress}
+        />
+      </AnimatedBackgroundColorView>
       <GatheringList
         data={filteredGatheringItems}
         onSelected={onGatheringItemSelected}
@@ -248,14 +220,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: px2DpX(8),
     width: '100%',
-  },
-  searchBar: {
-    flex: 1,
-    height: px2DpY(50),
-    borderRadius: px2DpY(25),
-  },
-  searchBarInput: {
-    fontSize: px2DpY(16),
   },
   searchBarFilterButton: {
     height: px2DpY(50),
