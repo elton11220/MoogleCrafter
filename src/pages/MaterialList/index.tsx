@@ -175,6 +175,16 @@ const MaterialList: FC = () => {
     ),
     [filterValue],
   );
+  const onChangeSearchBarText = useCallback((value: string) => {
+    setSearchQuery(value);
+    setSelectedGatheringItems(state =>
+      state.size > 0
+        ? produce(state, draft => {
+            draft.clear();
+          })
+        : state,
+    );
+  }, []);
   return (
     <View
       style={{
@@ -192,7 +202,7 @@ const MaterialList: FC = () => {
         <AnimatedBgColorSearchBar
           activated={selectedGatheringItems.size > 0}
           value={searchQuery}
-          onChangeText={setSearchQuery}
+          onChangeText={onChangeSearchBarText}
           placeholder="输入素材名称进行搜索"
         />
         <AnimatedBgColorFilterButton
