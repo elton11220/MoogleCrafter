@@ -65,22 +65,25 @@ const MaterialList: FC = () => {
     );
   }, []);
   useFocusEffect(() => {
-    const clearSelectionBackHandler = BackHandler.addEventListener(
+    const clearUserEffectBackHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
+        let effectiveFlag = false;
         if (selectedGatheringItems.size > 0) {
+          effectiveFlag = true;
           setSelectedGatheringItems(state =>
             produce(state, draft => {
               draft.clear();
             }),
           );
-          return true;
-        } else {
-          return false;
+        } else if (searchQuery.length > 0) {
+          effectiveFlag = true;
+          setSearchQuery('');
         }
+        return effectiveFlag;
       },
     );
-    return () => clearSelectionBackHandler.remove();
+    return () => clearUserEffectBackHandler.remove();
   });
   const onFilterButtonPress = useCallback(
     () => filterDrawerInstance.current?.show(),
