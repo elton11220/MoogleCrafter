@@ -82,6 +82,116 @@ const Detail: FC = () => {
     parsedGatheringPoints.sortedPreparingGatheringPoints.length,
   ]);
   const gatheringPointBases = useStore(gatheringPointBasesSelector);
+  const {
+    favoriteGatheringItemIds,
+    remindedGatheringItemIds,
+    addFavoriteGatheringItem,
+    addGatheringItemReminder,
+    removeFavoriteGatheringItem,
+    removeGatheringItemReminder,
+  } = useStore(s => ({
+    favoriteGatheringItemIds: s.favoriteGatheringItemIds,
+    remindedGatheringItemIds: s.remindedGatheringItemIds,
+    addFavoriteGatheringItem: s.addFavoriteGatheringItem,
+    addGatheringItemReminder: s.addGatheringItemReminder,
+    removeFavoriteGatheringItem: s.removeFavoriteGatheringItem,
+    removeGatheringItemReminder: s.removeGatheringItemReminder,
+  }));
+  const isFavoriteItem = useMemo(
+    () => favoriteGatheringItemIds.has(gatheringItem.id),
+    [favoriteGatheringItemIds, gatheringItem.id],
+  );
+  const isRemindedItem = useMemo(
+    () => remindedGatheringItemIds.has(gatheringItem.id),
+    [gatheringItem.id, remindedGatheringItemIds],
+  );
+  const wikiAction = useMemo(
+    () => (
+      <Appbar.Action
+        size={px2DpY(24)}
+        iconColor={theme.colors.secondaryContentText}
+        icon={({size, color}) => (
+          <IconFont name="wiki" size={size} color={color} />
+        )}
+        onPress={() => {
+          Linking.openURL(
+            `https://ff14.huijiwiki.com/wiki/%E7%89%A9%E5%93%81:${encodeURIComponent(
+              gatheringItem.name,
+            )}`,
+          );
+        }}
+      />
+    ),
+    [gatheringItem.name, theme.colors.secondaryContentText],
+  );
+  const favoriteAction = useMemo(
+    () => (
+      <Appbar.Action
+        size={px2DpY(24)}
+        iconColor={theme.colors.secondaryContentText}
+        icon={({size, color}) => (
+          <MaterialIcons
+            name={isFavoriteItem ? 'favorite' : 'favorite-border'}
+            size={size}
+            color={color}
+          />
+        )}
+        onPress={() => {
+          if (isFavoriteItem) {
+            removeFavoriteGatheringItem(
+              new Map([[gatheringItem.id, gatheringItem]]),
+            );
+          } else {
+            addFavoriteGatheringItem(
+              new Map([[gatheringItem.id, gatheringItem]]),
+            );
+          }
+        }}
+      />
+    ),
+    [
+      addFavoriteGatheringItem,
+      gatheringItem,
+      isFavoriteItem,
+      removeFavoriteGatheringItem,
+      theme.colors.secondaryContentText,
+    ],
+  );
+  const remindedAction = useMemo(
+    () => (
+      <Appbar.Action
+        size={px2DpY(24)}
+        iconColor={theme.colors.secondaryContentText}
+        icon={({size, color}) => (
+          <MaterialIcons
+            name={
+              isRemindedItem ? 'notifications-active' : 'notifications-none'
+            }
+            size={size}
+            color={color}
+          />
+        )}
+        onPress={() => {
+          if (isRemindedItem) {
+            removeGatheringItemReminder(
+              new Map([[gatheringItem.id, gatheringItem]]),
+            );
+          } else {
+            addGatheringItemReminder(
+              new Map([[gatheringItem.id, gatheringItem]]),
+            );
+          }
+        }}
+      />
+    ),
+    [
+      addGatheringItemReminder,
+      gatheringItem,
+      isRemindedItem,
+      removeGatheringItemReminder,
+      theme.colors.secondaryContentText,
+    ],
+  );
   const appHeader = useMemo(
     () => (
       <Appbar.Header>
@@ -93,24 +203,18 @@ const Detail: FC = () => {
           size={px2DpY(24)}
         />
         <Appbar.Content title="资源详情" titleStyle={styles.titleStyle} />
-        <Appbar.Action
-          size={px2DpY(24)}
-          iconColor={theme.colors.secondaryContentText}
-          icon={({size, color}) => (
-            <IconFont name="wiki" size={size} color={color} />
-          )}
-          onPress={() => {
-            Linking.openURL(
-              `https://ff14.huijiwiki.com/wiki/%E7%89%A9%E5%93%81:${encodeURIComponent(
-                gatheringItem.name,
-              )}`,
-            );
-          }}
-        />
+        {wikiAction}
+        {favoriteAction}
+        {remindedAction}
       </Appbar.Header>
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [theme.colors.rippleBackgroundColor],
+    [
+      favoriteAction,
+      navigation,
+      remindedAction,
+      theme.colors.rippleBackgroundColor,
+      wikiAction,
+    ],
   );
   const infoCardContent = useMemo(() => {
     const starsEle = [];
