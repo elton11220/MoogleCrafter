@@ -1,14 +1,18 @@
 import {useCallback, useMemo, useRef, useState} from 'react';
 import type {FC} from 'react';
 import {BackHandler, StyleSheet, View} from 'react-native';
-import {Appbar, useTheme} from 'react-native-paper';
+import {Text, useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import GatheringList from '../../components/GatheringList';
 import FilterDrawer from '../../components/FilterDrawer';
 import type {FilterValue} from '../../components/FilterDrawer';
 import type {FilterDrawerInstance} from '../../components/FilterDrawer';
-import {gatheringItemsSelector, useStore} from '../../store';
+import {
+  gatheringItemsSelector,
+  generalSettingsSelector,
+  useStore,
+} from '../../store';
 import {useGatheringDataFilter} from '../../hooks/useGatheringDataFilter';
 import produce from 'immer';
 import {useFocusEffect} from '@react-navigation/native';
@@ -19,6 +23,7 @@ import AnimatedBgColorSearchBar from '../../components/AnimatedBgColorSearchBar'
 import AnimatedBgColorFilterButton from '../../components/AnimatedBgColorFilterButton';
 import MaterialAppHeaderAction from '../../components/MaterialAppHeaderAction';
 import MaterialAppHeaderBackAction from '../../components/MaterialAppHeaderBackAction';
+import EorzeaTimeDisplayer from '../../components/EorzeaTimeDisplayer';
 
 const MaterialList: FC = () => {
   const insets = useSafeAreaInsets();
@@ -37,6 +42,7 @@ const MaterialList: FC = () => {
     addFavoriteGatheringItem: s.addFavoriteGatheringItem,
     addGatheringItemReminder: s.addGatheringItemReminder,
   }));
+  const generalSettings = useStore(generalSettingsSelector);
   const [, filteredGatheringItems, effectiveFilterAmount] =
     useGatheringDataFilter(gatheringItems, filterValue, searchQuery);
   const [selectedGatheringItems, setSelectedGatheringItems] = useState<
@@ -125,14 +131,20 @@ const MaterialList: FC = () => {
           onPress={clearSelectedGatheringItems}
           hide={!hasSelectedItem}
         />
-        <Appbar.Content
-          title={
-            hasSelectedItem
-              ? `已选择 ${selectedGatheringItems.size}`
-              : '素材列表'
-          }
-          titleStyle={styles.appBarHeaderTitle}
-        />
+        <Text
+          style={[
+            styles.appBarHeaderTitle,
+            {flex: hasSelectedItem ? 1 : undefined},
+          ]}
+          allowFontScaling={false}>
+          {hasSelectedItem
+            ? `已选择 ${selectedGatheringItems.size}`
+            : '素材列表'}
+        </Text>
+        {!generalSettings.enableEorzeaTimeDisplayer ||
+        hasSelectedItem ? null : (
+          <EorzeaTimeDisplayer />
+        )}
         <MaterialAppHeaderAction
           icon="notifications-none"
           onPress={onAddRemItemActionTriggered}
@@ -152,6 +164,7 @@ const MaterialList: FC = () => {
     ),
     [
       clearSelectedGatheringItems,
+      generalSettings.enableEorzeaTimeDisplayer,
       hasSelectedItem,
       onAddFavItemActionTriggered,
       onAddRemItemActionTriggered,
