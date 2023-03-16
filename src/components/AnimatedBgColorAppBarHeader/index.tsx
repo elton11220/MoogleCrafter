@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: px2DpX(4),
+    gap: px2DpX(10),
   },
 });
 

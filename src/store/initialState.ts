@@ -5,6 +5,9 @@ import regions from '../data/region.json';
 export const initialState: ZustandStore.State = {
   gatheringItems,
   gatheringPointBases,
+  favoriteGatheringItems: new Map(),
+  favoriteGatheringItemIds: new Set(),
+  remindedGatheringItemIds: new Set(),
   regions,
   isSplashScreenShow: true,
   settings: {

@@ -3,9 +3,10 @@ import useEorzeaTimer from '../../hooks/useEorzeaTimer';
 import GatheringItem from '../../components/GatheringItem';
 import {getTimeTableFromGatheringPoints} from '../../utils/eorzeaTime';
 import {px2DpY} from '../../utils/dimensionConverter';
-import {memo, useCallback, useRef} from 'react';
+import {memo, useCallback, useMemo, useRef} from 'react';
 import type {FC} from 'react';
 import {useNavigation, useScrollToTop} from '@react-navigation/native';
+import ListEmptyTip from '../ListEmptyTip';
 
 const GatheringList: FC<GatheringList.Props> = props => {
   const {
@@ -65,6 +66,10 @@ const GatheringList: FC<GatheringList.Props> = props => {
     (item: AppGlobal.GatheringItem) => `${item.id}-${item.name}`,
     [],
   );
+  const listEmptyComponent = useMemo(
+    () => <ListEmptyTip text="没有收藏任何素材库啵" />,
+    [],
+  );
   return (
     <FlatList
       ref={flatListRef}
@@ -75,6 +80,7 @@ const GatheringList: FC<GatheringList.Props> = props => {
       keyExtractor={keyExtractor}
       windowSize={2}
       initialNumToRender={7}
+      ListEmptyComponent={listEmptyComponent}
     />
   );
 };

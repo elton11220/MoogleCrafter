@@ -59,11 +59,29 @@ declare namespace ZustandStore {
       key: T,
       value: ZustandStore.GeneralSettings[T],
     ) => void;
+    addFavoriteGatheringItem: (
+      items: Map<AppGlobal.GatheringItem['id'], AppGlobal.GatheringItem>,
+    ) => void;
+    addGatheringItemReminder: (
+      items: Map<AppGlobal.GatheringItem['id'], AppGlobal.GatheringItem>,
+    ) => void;
+    removeFavoriteGatheringItem: (
+      items: Map<AppGlobal.GatheringItem['id'], AppGlobal.GatheringItem>,
+    ) => void;
+    removeGatheringItemReminder: (
+      items: Map<AppGlobal.GatheringItem['id'], AppGlobal.GatheringItem>,
+    ) => void;
   }
 
   interface State {
     gatheringItems: AppGlobal.GatheringItem[];
     gatheringPointBases: AppGlobal.GatheringPointBase[];
+    favoriteGatheringItems: Map<
+      AppGlobal.GatheringItem['id'],
+      AppGlobal.GatheringItem
+    >;
+    favoriteGatheringItemIds: Set<AppGlobal.GatheringItem['id']>;
+    remindedGatheringItemIds: Set<AppGlobal.GatheringItem['id']>;
     regions: AppGlobal.RegionItem[];
     isSplashScreenShow: boolean;
     settings: {
@@ -73,6 +91,10 @@ declare namespace ZustandStore {
       generalSettings: GeneralSettings;
     };
   }
+
+  type ComputedState = {
+    favoriteGatheringItemsArray: AppGlobal.GatheringItem[];
+  };
 
   type Store = State & Action;
 }

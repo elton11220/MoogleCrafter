@@ -4,7 +4,6 @@ import {BackHandler, StyleSheet, View} from 'react-native';
 import {Appbar, useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import GatheringList from '../../components/GatheringList';
 import FilterDrawer from '../../components/FilterDrawer';
 import type {FilterValue} from '../../components/FilterDrawer';
@@ -18,6 +17,8 @@ import AnimatedBgColorAppBarHeader from '../../components/AnimatedBgColorAppBarH
 import AnimatedBackgroundColorView from '../../components/AnimatedBackgroundColorView';
 import AnimatedBgColorSearchBar from '../../components/AnimatedBgColorSearchBar';
 import AnimatedBgColorFilterButton from '../../components/AnimatedBgColorFilterButton';
+import MaterialAppHeaderAction from '../../components/MaterialAppHeaderAction';
+import MaterialAppHeaderBackAction from '../../components/MaterialAppHeaderBackAction';
 
 const MaterialList: FC = () => {
   const insets = useSafeAreaInsets();
@@ -32,6 +33,10 @@ const MaterialList: FC = () => {
     mapId: null,
   });
   const gatheringItems = useStore(gatheringItemsSelector);
+  const {addFavoriteGatheringItem, addGatheringItemReminder} = useStore(s => ({
+    addFavoriteGatheringItem: s.addFavoriteGatheringItem,
+    addGatheringItemReminder: s.addGatheringItemReminder,
+  }));
   const [, filteredGatheringItems, effectiveFilterAmount] =
     useGatheringDataFilter(gatheringItems, filterValue, searchQuery);
   const [selectedGatheringItems, setSelectedGatheringItems] = useState<
@@ -64,12 +69,16 @@ const MaterialList: FC = () => {
       }),
     );
   }, []);
+  const hasSelectedItem = useMemo(
+    () => selectedGatheringItems.size > 0,
+    [selectedGatheringItems.size],
+  );
   useFocusEffect(() => {
     const clearUserEffectBackHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
         let effectiveFlag = false;
-        if (selectedGatheringItems.size > 0) {
+        if (hasSelectedItem) {
           effectiveFlag = true;
           setSelectedGatheringItems(state =>
             produce(state, draft => {
@@ -89,82 +98,63 @@ const MaterialList: FC = () => {
     () => filterDrawerInstance.current?.show(),
     [],
   );
-  const appHeaderActions = useMemo(
-    () => (
-      <>
-        <Appbar.Action
-          style={{
-            display: selectedGatheringItems.size > 0 ? undefined : 'none',
-          }}
-          disabled={selectedGatheringItems.size === 0}
-          size={px2DpY(25)}
-          iconColor={theme.colors.primaryContentText}
-          icon={({size, color}) => (
-            <MaterialIcons
-              name="notifications-none"
-              size={size}
-              color={color}
-            />
-          )}
-          onPress={() => {}}
-        />
-        <Appbar.Action
-          style={{
-            display: selectedGatheringItems.size > 0 ? undefined : 'none',
-          }}
-          disabled={!(selectedGatheringItems.size > 0)}
-          size={px2DpY(25)}
-          iconColor={theme.colors.primaryContentText}
-          icon={({size, color}) => (
-            <MaterialIcons name="favorite-border" size={size} color={color} />
-          )}
-          onPress={() => {}}
-        />
-        <Appbar.Action
-          style={{
-            display: selectedGatheringItems.size > 0 ? undefined : 'none',
-          }}
-          disabled={!(selectedGatheringItems.size > 0)}
-          size={px2DpY(25)}
-          iconColor={theme.colors.primaryContentText}
-          icon={({size, color}) => (
-            <MaterialIcons name="more-horiz" size={size} color={color} />
-          )}
-          onPress={() => {}}
-        />
-      </>
-    ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedGatheringItems.size > 0, theme.colors.primaryContentText],
-  );
+  const onAddRemItemActionTriggered = useCallback(() => {
+    addGatheringItemReminder(selectedGatheringItems);
+    setSelectedGatheringItems(state =>
+      produce(state, draft => {
+        draft.clear();
+      }),
+    );
+  }, [addGatheringItemReminder, selectedGatheringItems]);
+  const onAddFavItemActionTriggered = useCallback(() => {
+    addFavoriteGatheringItem(selectedGatheringItems);
+    setSelectedGatheringItems(state =>
+      produce(state, draft => {
+        draft.clear();
+      }),
+    );
+  }, [addFavoriteGatheringItem, selectedGatheringItems]);
   const appHeader = useMemo(
     () => (
       <AnimatedBgColorAppBarHeader
-        activated={selectedGatheringItems.size > 0}
+        activated={hasSelectedItem}
         style={{
-          paddingLeft: selectedGatheringItems.size > 0 ? undefined : 16,
+          paddingLeft: hasSelectedItem ? undefined : 16,
         }}>
-        <Appbar.BackAction
+        <MaterialAppHeaderBackAction
           onPress={clearSelectedGatheringItems}
-          style={{
-            display: selectedGatheringItems.size > 0 ? undefined : 'none',
-          }}
-          size={px2DpY(25)}
+          hide={!hasSelectedItem}
         />
         <Appbar.Content
           title={
-            selectedGatheringItems.size > 0
+            hasSelectedItem
               ? `已选择 ${selectedGatheringItems.size}`
               : '素材列表'
           }
           titleStyle={styles.appBarHeaderTitle}
         />
-        {appHeaderActions}
+        <MaterialAppHeaderAction
+          icon="notifications-none"
+          onPress={onAddRemItemActionTriggered}
+          hide={!hasSelectedItem}
+        />
+        <MaterialAppHeaderAction
+          icon="favorite-border"
+          onPress={onAddFavItemActionTriggered}
+          hide={!hasSelectedItem}
+        />
+        <MaterialAppHeaderAction
+          icon="more-horiz"
+          onPress={() => {}}
+          hide={!hasSelectedItem}
+        />
       </AnimatedBgColorAppBarHeader>
     ),
     [
-      appHeaderActions,
       clearSelectedGatheringItems,
+      hasSelectedItem,
+      onAddFavItemActionTriggered,
+      onAddRemItemActionTriggered,
       selectedGatheringItems.size,
     ],
   );
@@ -213,17 +203,17 @@ const MaterialList: FC = () => {
       <AnimatedBackgroundColorView
         initialColor={theme.colors.background}
         activeColor={theme.colors.surfaceVariant}
-        activated={selectedGatheringItems.size > 0}
+        activated={hasSelectedItem}
         style={styles.searchBarContainer}>
         <AnimatedBgColorSearchBar
-          activated={selectedGatheringItems.size > 0}
+          activated={hasSelectedItem}
           value={searchQuery}
           onChangeText={onChangeSearchBarText}
           placeholder="输入素材名称进行搜索"
         />
         <AnimatedBgColorFilterButton
           activated={effectiveFilterAmount > 0}
-          activatedBg={selectedGatheringItems.size > 0}
+          activatedBg={hasSelectedItem}
           onPress={onFilterButtonPress}
         />
       </AnimatedBackgroundColorView>
@@ -246,15 +236,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: px2DpX(8),
     width: '100%',
-  },
-  searchBarFilterButton: {
-    height: px2DpY(50),
-    width: px2DpY(50),
-    margin: 0,
-    borderRadius: px2DpY(25),
-  },
-  gatheringItemListContainer: {
-    paddingTop: px2DpY(0),
   },
   appBarHeaderTitle: {
     fontSize: px2DpY(22),

@@ -22,6 +22,7 @@ import {
 } from '../../utils/eorzeaTime';
 import GatheringItemTimerGroup from '../GatheringItemTimerGroup';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useStore} from '../../store';
 
 const GatheringItem: FC<GatheringItem.Props> = props => {
   const {
@@ -34,6 +35,10 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
     onIconPressed,
   } = props;
   const theme = useTheme<typeof DefaultLightTheme>();
+  const {favoriteGatheringItemIds, remindedGatheringItemIds} = useStore(s => ({
+    favoriteGatheringItemIds: s.favoriteGatheringItemIds,
+    remindedGatheringItemIds: s.remindedGatheringItemIds,
+  }));
   const parsedGatheringRarePopEvents = parseGatheringRarePopEvents(
     timeTable,
     eorzeaTime.currentEt,
@@ -117,6 +122,20 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
             allowFontScaling={false}>
             {gatheringItem.name}
           </Text>
+          {remindedGatheringItemIds.has(gatheringItem.id) ? (
+            <MaterialIcons
+              name="notifications-active"
+              size={px2DpY(14)}
+              color={theme.colors.tertiaryContentText}
+            />
+          ) : null}
+          {favoriteGatheringItemIds.has(gatheringItem.id) ? (
+            <MaterialIcons
+              name="favorite"
+              size={px2DpY(14)}
+              color={theme.colors.tertiaryContentText}
+            />
+          ) : null}
         </View>
         <View>
           <Text
@@ -149,14 +168,18 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
       </View>
     ),
     [
+      favoriteGatheringItemIds,
       gatheringItem.gatheringItemLevel,
+      gatheringItem.id,
       gatheringItem.name,
       gatheringPointDetail.classJob,
       gatheringPointDetail?.placeName,
       gatheringPointDetail?.x,
       gatheringPointDetail?.y,
+      remindedGatheringItemIds,
       theme.colors.primaryContentText,
       theme.colors.secondaryContentText,
+      theme.colors.tertiaryContentText,
     ],
   );
   return (
