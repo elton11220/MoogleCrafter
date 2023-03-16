@@ -1,4 +1,4 @@
-import {View, StyleSheet, ScrollView, Linking} from 'react-native';
+import {View, StyleSheet, ScrollView, Linking, Vibration} from 'react-native';
 import {useMemo, useState} from 'react';
 import type {FC} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -146,6 +146,7 @@ const Detail: FC = () => {
               new Map([[gatheringItem.id, gatheringItem]]),
             );
           }
+          Vibration.vibrate(100);
         }}
       />
     ),
@@ -181,6 +182,7 @@ const Detail: FC = () => {
               new Map([[gatheringItem.id, gatheringItem]]),
             );
           }
+          Vibration.vibrate(100);
         }}
       />
     ),
