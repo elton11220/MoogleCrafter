@@ -1,5 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {View, StyleSheet, ScrollView, DeviceEventEmitter} from 'react-native';
 import {
   Appbar,
   List,
@@ -15,6 +15,8 @@ import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import SoundChips from '../../components/SoundChips';
 import {notificationSettingsSelector, useStore} from '../../store';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useState} from 'react';
+import NotificationManager from '../../native/NotificationManager';
 
 const NotificationSettings = () => {
   const insets = useSafeAreaInsets();
@@ -25,6 +27,19 @@ const NotificationSettings = () => {
   const updateNotificationSettings = useStore(
     s => s.updateNotificationSettings,
   );
+  const [isSystemNotifacationEnabled, setSystemNotificationEnabled] =
+    useState(false);
+  useFocusEffect(() => {
+    const onResumeEventSubscription = DeviceEventEmitter.addListener(
+      'onActivityResume',
+      () => {
+        NotificationManager.areNotificationsEnabled().then(value =>
+          setSystemNotificationEnabled(value),
+        );
+      },
+    );
+    return () => onResumeEventSubscription.remove();
+  });
   return (
     <View
       style={{
@@ -114,7 +129,7 @@ const NotificationSettings = () => {
                     {color: theme.colors.tertiaryContentText},
                   ]}
                   allowFontScaling={false}>
-                  已开启
+                  {isSystemNotifacationEnabled ? '已开启' : '未开启'}
                 </Text>
                 <MaterialIcons
                   name="chevron-right"
@@ -123,7 +138,7 @@ const NotificationSettings = () => {
                 />
               </View>
             )}
-            onPress={() => {}}
+            onPress={() => NotificationManager.openNotificationSettings()}
           />
         </List.Section>
         <List.Section>
