@@ -33,7 +33,6 @@ declare namespace ZustandStore {
 
   interface GeneralSettings {
     enableEorzeaTimeDisplayer: boolean;
-    enableGatheringItemGesture: boolean;
     enableFFCafeMapInDetail: boolean;
     showAllItemsOfGatheringPoint: boolean;
     enableFFCafeMapInFullScreen: boolean;

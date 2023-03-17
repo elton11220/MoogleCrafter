@@ -12,7 +12,6 @@ const GeneralSettings = () => {
   const navigation = useNavigation();
   const {
     enableEorzeaTimeDisplayer,
-    enableGatheringItemGesture,
     enableFFCafeMapInDetail,
     showAllItemsOfGatheringPoint,
     enableFFCafeMapInFullScreen,
@@ -55,22 +54,6 @@ const GeneralSettings = () => {
                 value={enableEorzeaTimeDisplayer}
                 onValueChange={value =>
                   updateGeneralSettings('enableEorzeaTimeDisplayer', value)
-                }
-                style={styles.itemRightPatch}
-              />
-            )}
-          />
-          <List.Item
-            title={
-              <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
-                启用列表项左右划动手势
-              </Text>
-            }
-            right={() => (
-              <Switch
-                value={enableGatheringItemGesture}
-                onValueChange={value =>
-                  updateGeneralSettings('enableGatheringItemGesture', value)
                 }
                 style={styles.itemRightPatch}
               />
@@ -122,7 +105,7 @@ const GeneralSettings = () => {
           <List.Item
             title={
               <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
-                显示当前采集点其他素材
+                显示当前采集点所有物品
               </Text>
             }
             right={() => (

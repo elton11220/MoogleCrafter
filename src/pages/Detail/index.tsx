@@ -23,7 +23,11 @@ import WebView from 'react-native-webview';
 import GatheringPointSummary from '../../components/GatheringPointSummary';
 import ShowMore from '../../components/ShowMore';
 import IconFont from '../../components/IconFont';
-import {gatheringPointBasesSelector, useStore} from '../../store';
+import {
+  gatheringPointBasesSelector,
+  generalSettingsSelector,
+  useStore,
+} from '../../store';
 import GatheringItemLite from '../../components/GatheringItemLite';
 
 const GATHERING_POINT_LIST_MAX_AMOUNT = 3;
@@ -97,6 +101,9 @@ const Detail: FC = () => {
     removeFavoriteGatheringItem: s.removeFavoriteGatheringItem,
     removeGatheringItemReminder: s.removeGatheringItemReminder,
   }));
+  const {showAllItemsOfGatheringPoint, enableFFCafeMapInDetail} = useStore(
+    generalSettingsSelector,
+  );
   const isFavoriteItem = useMemo(
     () => favoriteGatheringItemIds.has(gatheringItem.id),
     [favoriteGatheringItemIds, gatheringItem.id],
@@ -285,7 +292,7 @@ const Detail: FC = () => {
         style={[styles.listSectionContainer, {height: px2DpY(310)}]}>
         <List.Subheader
           style={[styles.listSectionTitleStyle, {color: theme.colors.primary}]}>
-          采集位置
+          采集点位置
         </List.Subheader>
         <View style={styles.ffCafeMapContainer}>
           <WebView
@@ -372,7 +379,7 @@ const Detail: FC = () => {
           poppingGatheringPoint={parsedGatheringPoints.poppingGatheringPoint}
           footerTip="当前展示的为将出现或出现中的采集信息"
         />
-        {allGatheringPointItems}
+        {showAllItemsOfGatheringPoint ? allGatheringPointItems : null}
         <List.Section style={[styles.listSectionContainer]}>
           <List.Subheader
             style={[
@@ -448,7 +455,7 @@ const Detail: FC = () => {
             />
           ) : null}
         </List.Section>
-        {ffCafeMap}
+        {enableFFCafeMapInDetail ? ffCafeMap : null}
       </ScrollView>
     </View>
   );

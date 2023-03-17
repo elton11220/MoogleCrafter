@@ -4,7 +4,7 @@ import {
   DefaultTheme,
   DarkTheme,
 } from '@react-navigation/native';
-import {FC} from 'react';
+import type {FC} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {StatusBar} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,7 +12,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Provider as PaperProvider} from 'react-native-paper';
 import Favorites from './pages/Favorites';
 import MaterialList from './pages/MaterialList';
-import {useColorScheme} from 'react-native';
 import {
   DefaultDarkTheme,
   DefaultLightTheme,
@@ -26,6 +25,7 @@ import LanguageSettings from './pages/LanguageSettings';
 import GeneralSettings from './pages/GeneralSettings';
 import Detail from './pages/Detail';
 import FullScreenReminder from './pages/FullScreenReminder';
+import {useDarkMode} from './hooks/useDarkMode';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -72,18 +72,16 @@ const HomeTabs = () => {
 };
 
 const App: FC = () => {
-  const colorScheme = useColorScheme();
+  const isDarkMode = useDarkMode();
   return (
     <SafeAreaProvider>
-      <PaperProvider
-        theme={colorScheme === 'dark' ? DefaultDarkTheme : DefaultLightTheme}>
+      <PaperProvider theme={isDarkMode ? DefaultDarkTheme : DefaultLightTheme}>
         <StatusBar
           translucent={true}
           backgroundColor="rgba(0, 0, 0, 0)"
-          barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+          barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         />
-        <NavigationContainer
-          theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <NavigationContainer theme={isDarkMode ? DarkTheme : DefaultTheme}>
           <Stack.Navigator initialRouteName="HomeTabs">
             <Stack.Screen
               name="HomeTabs"
