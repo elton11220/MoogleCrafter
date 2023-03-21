@@ -1,6 +1,12 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import type {FC} from 'react';
-import {BackHandler, StyleSheet, View} from 'react-native';
+import {
+  BackHandler,
+  DeviceEventEmitter,
+  StyleSheet,
+  ToastAndroid,
+  View,
+} from 'react-native';
 import {Text, useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
@@ -21,6 +27,7 @@ import SplashScreen from 'react-native-splash-screen';
 import MaterialAppHeaderBackAction from '../../components/MaterialAppHeaderBackAction';
 import MaterialAppHeaderAction from '../../components/MaterialAppHeaderAction';
 import EorzeaTimeDisplayer from '../../components/EorzeaTimeDisplayer';
+import EorzeaEventNotification from '../../native/EorzeaEventNotification';
 
 const Favorites: FC = () => {
   const insets = useSafeAreaInsets();
@@ -206,7 +213,20 @@ const Favorites: FC = () => {
     );
   }, []);
   useEffect(() => {
-    SplashScreen.hide();
+    const onEorzeaEventNotificationServiceBound =
+      DeviceEventEmitter.addListener('onENServiceBound', () => {
+        ToastAndroid.show('采集监控服务加载成功', ToastAndroid.SHORT);
+        SplashScreen.hide();
+      });
+    const onEorzeaEventNotificationServiceUnbound =
+      DeviceEventEmitter.addListener('onENServiceUnbound', () => {
+        ToastAndroid.show('采集监控服务异常，请重启App', ToastAndroid.LONG);
+      });
+    EorzeaEventNotification.bindService();
+    return () => {
+      onEorzeaEventNotificationServiceBound.remove();
+      onEorzeaEventNotificationServiceUnbound.remove();
+    };
   }, []);
   return (
     <View
