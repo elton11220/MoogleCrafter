@@ -1,5 +1,11 @@
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {View, StyleSheet, ScrollView, DeviceEventEmitter} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  DeviceEventEmitter,
+  ToastAndroid,
+} from 'react-native';
 import {
   Appbar,
   List,
@@ -15,8 +21,9 @@ import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import SoundChips from '../../components/SoundChips';
 import {notificationSettingsSelector, useStore} from '../../store';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import NotificationManager from '../../native/NotificationManager';
+import type {NotificationManagerModule} from '../../native/NotificationManager/typings';
 
 const NotificationSettings = () => {
   const insets = useSafeAreaInsets();
@@ -27,19 +34,40 @@ const NotificationSettings = () => {
   const updateNotificationSettings = useStore(
     s => s.updateNotificationSettings,
   );
-  const [isSystemNotifacationEnabled, setSystemNotificationEnabled] =
-    useState(false);
-  useFocusEffect(() => {
+  const [notificationsEnabledState, setNotificationsEnabledState] =
+    useState<NotificationManagerModule.NotificationsEnabledStatus>({
+      areNotificationsEnabled: false,
+      isENChannelEnabled: false,
+      isENSChannelEnabled: true,
+    });
+  const isSystemNotificationEnabled = useMemo(() => {
+    if (notificationsEnabledState.isENSChannelEnabled === false) {
+      ToastAndroid.show(
+        '采集事件监控服务通知渠道已关闭，可能导致服务异常',
+        ToastAndroid.LONG,
+      );
+    }
+    return notificationsEnabledState.areNotificationsEnabled
+      ? notificationsEnabledState.isENChannelEnabled
+      : notificationsEnabledState.areNotificationsEnabled;
+  }, [
+    notificationsEnabledState.areNotificationsEnabled,
+    notificationsEnabledState.isENChannelEnabled,
+    notificationsEnabledState.isENSChannelEnabled,
+  ]);
+  const updateNotificationEnabledState = useCallback(() => {
+    NotificationManager.getNotificationsEnabledStatus().then(value =>
+      setNotificationsEnabledState(value),
+    );
+  }, []);
+  useEffect(() => {
+    updateNotificationEnabledState();
     const onResumeEventSubscription = DeviceEventEmitter.addListener(
       'onActivityResume',
-      () => {
-        NotificationManager.areNotificationsEnabled().then(value =>
-          setSystemNotificationEnabled(value),
-        );
-      },
+      updateNotificationEnabledState,
     );
     return () => onResumeEventSubscription.remove();
-  });
+  }, [updateNotificationEnabledState]);
   return (
     <View
       style={{
@@ -129,7 +157,7 @@ const NotificationSettings = () => {
                     {color: theme.colors.tertiaryContentText},
                   ]}
                   allowFontScaling={false}>
-                  {isSystemNotifacationEnabled ? '已开启' : '未开启'}
+                  {isSystemNotificationEnabled ? '已开启' : '未开启'}
                 </Text>
                 <MaterialIcons
                   name="chevron-right"

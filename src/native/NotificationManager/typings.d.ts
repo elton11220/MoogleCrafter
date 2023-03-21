@@ -1,9 +1,15 @@
 import 'react-native';
 
 declare namespace NotificationManagerModule {
+  interface NotificationsEnabledStatus {
+    areNotificationsEnabled: boolean;
+    isENSChannelEnabled: boolean;
+    isENChannelEnabled: boolean;
+  }
+
   interface NativeModuleStatic {
     openNotificationSettings: () => void;
-    areNotificationsEnabled: () => Promise<boolean>;
+    getNotificationsEnabledStatus: () => Promise<NotificationsEnabledStatus>;
   }
 }
 
