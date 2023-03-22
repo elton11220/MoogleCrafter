@@ -64,11 +64,13 @@ export const useStore = create<
         set(state =>
           produce(state, draft => {
             items.forEach((value, key) => {
-              if (!get().remindedGatheringItemIds.has(key)) {
-                draft.remindedGatheringItemIds.add(key);
-              }
-              if (!get().favoriteGatheringItems.has(key)) {
-                draft.favoriteGatheringItems.set(key, value);
+              if (value.isRare) {
+                if (!get().remindedGatheringItemIds.has(key)) {
+                  draft.remindedGatheringItemIds.add(key);
+                }
+                if (!get().favoriteGatheringItems.has(key)) {
+                  draft.favoriteGatheringItems.set(key, value);
+                }
               }
             });
           }),
