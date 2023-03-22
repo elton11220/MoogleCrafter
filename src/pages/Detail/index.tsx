@@ -214,11 +214,12 @@ const Detail: FC = () => {
         <Appbar.Content title="资源详情" titleStyle={styles.titleStyle} />
         {wikiAction}
         {favoriteAction}
-        {remindedAction}
+        {gatheringItem.isRare ? remindedAction : null}
       </Appbar.Header>
     ),
     [
       favoriteAction,
+      gatheringItem.isRare,
       navigation,
       remindedAction,
       theme.colors.rippleBackgroundColor,
