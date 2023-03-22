@@ -41,7 +41,11 @@ const Favorites: FC = () => {
     gatheringItemLevel: null,
     mapId: null,
   });
-  const gatheringItems = useStore(s => s.favoriteGatheringItemsArray);
+  const favoriteGatheringItems = useStore(s => s.favoriteGatheringItems);
+  const gatheringItems = useMemo(
+    () => [...favoriteGatheringItems.values()],
+    [favoriteGatheringItems],
+  );
   const {removeFavoriteGatheringItem, removeGatheringItemReminder} = useStore(
     s => ({
       removeFavoriteGatheringItem: s.removeFavoriteGatheringItem,

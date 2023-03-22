@@ -91,9 +91,13 @@ declare namespace ZustandStore {
     };
   }
 
-  type ComputedState = {
-    favoriteGatheringItemsArray: AppGlobal.GatheringItem[];
-  };
+  type PersistedState = Pick<
+    State,
+    | 'favoriteGatheringItems'
+    | 'favoriteGatheringItemIds'
+    | 'remindedGatheringItemIds'
+    | 'settings'
+  >;
 
   type Store = State & Action;
 }

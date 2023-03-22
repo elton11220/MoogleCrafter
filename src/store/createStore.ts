@@ -1,14 +1,15 @@
 import produce from 'immer';
 import SplashScreen from 'react-native-splash-screen';
 import {create} from 'zustand';
-import {computed} from 'zustand-computed';
+import {persist} from 'zustand/middleware';
 import {initialState} from './initialState';
+import {zustandPersistPartialize, zustandPersistStorage} from './persistStore';
 
 export const useStore = create<
   ZustandStore.Store,
-  [['chrisvander/zustand-computed', ZustandStore.ComputedState]]
+  [['zustand/persist', ZustandStore.PersistedState]]
 >(
-  computed(
+  persist(
     (set, get) => ({
       ...initialState,
       hideSplashScreen: () => {
@@ -108,8 +109,10 @@ export const useStore = create<
         );
       },
     }),
-    state => ({
-      favoriteGatheringItemsArray: [...state.favoriteGatheringItems.values()],
-    }),
+    {
+      name: 'zustand-storage',
+      storage: zustandPersistStorage,
+      partialize: zustandPersistPartialize,
+    },
   ),
 );
