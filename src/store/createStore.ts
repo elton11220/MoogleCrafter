@@ -2,6 +2,7 @@ import produce from 'immer';
 import SplashScreen from 'react-native-splash-screen';
 import {create} from 'zustand';
 import {persist} from 'zustand/middleware';
+import EorzeaEventNotification from '../native/EorzeaEventNotification';
 import {initialState} from './initialState';
 import {zustandPersistPartialize, zustandPersistStorage} from './persistStore';
 
@@ -61,6 +62,7 @@ export const useStore = create<
         );
       },
       addGatheringItemReminder: items => {
+        const validItems: AppGlobal.GatheringItem[] = [];
         set(state =>
           produce(state, draft => {
             items.forEach((value, key) => {
@@ -70,11 +72,15 @@ export const useStore = create<
                 }
                 if (!get().favoriteGatheringItems.has(key)) {
                   draft.favoriteGatheringItems.set(key, value);
+                  validItems.push(value);
                 }
               }
             });
           }),
         );
+        if (validItems.length > 0) {
+          EorzeaEventNotification.addSubscription(JSON.stringify(validItems));
+        }
       },
       removeFavoriteGatheringItem: items => {
         set(state =>
@@ -94,9 +100,10 @@ export const useStore = create<
         );
       },
       removeGatheringItemReminder: items => {
+        const validItems: AppGlobal.GatheringItem[] = [];
         set(state =>
           produce(state, draft => {
-            items.forEach((_, key) => {
+            items.forEach((value, key) => {
               if (get().remindedGatheringItemIds.has(key)) {
                 draft.remindedGatheringItemIds.delete(key);
               }
@@ -105,10 +112,16 @@ export const useStore = create<
                 get().favoriteGatheringItems.has(key)
               ) {
                 draft.favoriteGatheringItems.delete(key);
+                validItems.push(value);
               }
             });
           }),
         );
+        if (validItems.length > 0) {
+          EorzeaEventNotification.removeSubscription(
+            JSON.stringify(validItems),
+          );
+        }
       },
     }),
     {

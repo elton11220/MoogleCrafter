@@ -156,6 +156,8 @@ dependencies {
 
     implementation("androidx.appcompat:appcompat:1.4.1")
 
+    implementation("com.google.code.gson:gson:2.10.1")
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.squareup.okhttp3', module:'okhttp'

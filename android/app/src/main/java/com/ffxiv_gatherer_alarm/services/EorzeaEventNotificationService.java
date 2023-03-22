@@ -5,18 +5,22 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
 import com.ffxiv_gatherer_alarm.R;
 import com.ffxiv_gatherer_alarm.bean.EorzeaEventManager;
+import com.ffxiv_gatherer_alarm.bean.GatheringItem;
+
+import java.util.List;
 
 public class EorzeaEventNotificationService extends Service {
     public static final String EORZEA_EVENT_NOTIFICATION_SERVICE_CHANNEL_ID = "EorzeaEventNotificationService";
 
     public static final String EORZEA_EVENT_NOTIFICATION_CHANNEL_ID = "EorzeaEventNotification";
 
-    private EorzeaEventManager eorzeaEventManager;
+    private final EorzeaEventManager eorzeaEventManager = new EorzeaEventManager();
 
     public EorzeaEventNotificationService() {
     }
@@ -59,6 +63,12 @@ public class EorzeaEventNotificationService extends Service {
     private LocalBinder localBinder = new LocalBinder();
 
     public class LocalBinder extends Binder {
+        public void addGatheringEvents(List<GatheringItem> gatheringItems) {
+            eorzeaEventManager.insertItems(gatheringItems);
+        }
 
+        public void removeGatheringEvents(List<GatheringItem> gatheringItems) {
+            eorzeaEventManager.removeItems(gatheringItems);
+        }
     }
 }

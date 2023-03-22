@@ -5,13 +5,18 @@ import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 
 public class EorzeaEventManager {
     public static final BigDecimal EORZEA_CONVERT_CONSTANT = new BigDecimal("20.571428571428573");
+
+    public static final int INVALID_START_TIME = 65535;
 
     public static Calendar computeEorzeaDate(Date date) {
         long unixTime = (long) Math.floor(new BigDecimal(date.getTime()).multiply(EORZEA_CONVERT_CONSTANT).doubleValue());
@@ -30,7 +35,7 @@ public class EorzeaEventManager {
     }
 
     public static TimePair parseTimePair(int startTime) {
-        if (startTime == 65535) {
+        if (startTime == INVALID_START_TIME) {
             return null;
         }
         if (startTime == 0) {
@@ -66,18 +71,48 @@ public class EorzeaEventManager {
         return new GatheringEventTimeInfo(startTimeEt, computeLocalDate(startTimeEt), endTimeEt, computeLocalDate(endTimeEt), startTime, duration, currentEt.getTimeInMillis() <= endTimeEt.getTimeInMillis() && currentEt.getTimeInMillis() >= startTimeEt.getTimeInMillis() ? GatheringRarePopEventState.OCCURRING : GatheringRarePopEventState.PREPARING);
     }
 
-    private HashMap<Integer, GatheringEvent> eventMap = new HashMap<>();
+    private final HashMap<Integer, GatheringEvent> eventMap = new HashMap<>();
 
     public HashMap<Integer, GatheringEvent> getEventMap() {
         return eventMap;
     }
 
+    private Integer currentPendingEventKey = null;
+
+    public Integer getNearestGatheringEventKey() {
+        Integer bestEventKey = null;
+        Calendar now = Calendar.getInstance();
+        for (Map.Entry<Integer, GatheringEvent> gatheringEventEntry : this.eventMap.entrySet()) {
+            if (gatheringEventEntry.getValue().items.size() > 0) {
+                if (bestEventKey == null) {
+                    bestEventKey = gatheringEventEntry.getKey();
+                } else {
+                    Calendar workingNodeStartTimeLt = gatheringEventEntry.getValue().getTimeInfo().getStartTimeLt();
+                    Calendar bestStartTimeLt = this.eventMap.get(bestEventKey).getTimeInfo().getStartTimeLt();
+                    if (workingNodeStartTimeLt.compareTo(bestStartTimeLt) < 0 && workingNodeStartTimeLt.compareTo(now) > 0) {
+                        bestEventKey = gatheringEventEntry.getKey();
+                    }
+                }
+            }
+        }
+        return bestEventKey;
+    }
+
+    public void generateAlarm(Calendar startTimeLt) {
+    }
+
+    public void clearAlarm() {
+
+    }
+
     public void insertItems(List<GatheringItem> gatheringItems) {
+        Integer alterEventKey = null;
+        Calendar now = Calendar.getInstance();
         for (GatheringItem gatheringItem : gatheringItems) {
             for (GatheringPoint gatheringPoint : gatheringItem.getGatheringPoints()) {
                 if (gatheringPoint.getTimeTable().size() > 0) {
                     for (PoppingTime poppingTime : gatheringPoint.getTimeTable()) {
-                        if (poppingTime.getStartTime() != 65535) {
+                        if (poppingTime.getStartTime() != INVALID_START_TIME) {
                             if (this.eventMap.containsKey(poppingTime.getStartTime())) {
                                 if (!this.eventMap.get(poppingTime.getStartTime()).items.containsKey(gatheringItem.getId())) {
                                     this.eventMap.get(poppingTime.getStartTime()).items.put(gatheringItem.getId(), new GatheringEventItem(gatheringItem, gatheringPoint));
@@ -89,24 +124,60 @@ public class EorzeaEventManager {
                                 gatheringEventItemLinkedHashMap.put(gatheringItem.getId(), new GatheringEventItem(gatheringItem, gatheringPoint));
                                 gatheringEvent.items = gatheringEventItemLinkedHashMap;
                                 this.eventMap.put(poppingTime.getStartTime(), gatheringEvent);
+                                if (this.currentPendingEventKey != null) {
+                                    Calendar currentPendingEventTime = this.eventMap.get(this.currentPendingEventKey).timeInfo.getStartTimeLt();
+                                    if (gatheringEvent.timeInfo.getStartTimeLt().compareTo(currentPendingEventTime) < 0 && gatheringEvent.timeInfo.getStartTimeLt().compareTo(now) > 0) {
+                                        alterEventKey = poppingTime.getStartTime();
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
+        if (alterEventKey != null) {
+            this.currentPendingEventKey = alterEventKey;
+            generateAlarm(this.eventMap.get(alterEventKey).getTimeInfo().getStartTimeLt());
+        }
+        if (gatheringItems.size() > 0 && this.currentPendingEventKey == null) {
+            Integer nearestEventKey = getNearestGatheringEventKey();
+            if (nearestEventKey != null) {
+                this.currentPendingEventKey = nearestEventKey;
+                generateAlarm(this.eventMap.get(nearestEventKey).getTimeInfo().getStartTimeLt());
+            }
+        }
     }
 
     public void removeItems(List<GatheringItem> gatheringItems) {
+        boolean alarmNeedClear = currentPendingEventKey != null;
+        Set<Integer> startTimeTagSet = new HashSet<>();
         for (GatheringItem gatheringItem : gatheringItems) {
             for (GatheringPoint gatheringPoint : gatheringItem.getGatheringPoints()) {
                 if (gatheringPoint.getTimeTable().size() > 0) {
                     for (PoppingTime poppingTime : gatheringPoint.getTimeTable()) {
-                        if (poppingTime.getStartTime() != 65535) {
+                        if (poppingTime.getStartTime() != INVALID_START_TIME) {
                             if (this.eventMap.containsKey(poppingTime.getStartTime())) {
+                                startTimeTagSet.add(poppingTime.getStartTime());
                                 this.eventMap.get(poppingTime.getStartTime()).items.remove(gatheringItem.getId());
                             }
                         }
+                    }
+                }
+            }
+        }
+        if (alarmNeedClear) {
+            if (startTimeTagSet.contains(currentPendingEventKey)) {
+                if (this.eventMap.get(currentPendingEventKey).items.size() == 0) {
+                    this.currentPendingEventKey = null;
+                    clearAlarm();
+                    Integer nearestEventKey = getNearestGatheringEventKey();
+                    if (nearestEventKey != null) {
+                        // 其他时间存在有效的事件
+                        this.currentPendingEventKey = nearestEventKey;
+                        generateAlarm(this.eventMap.get(nearestEventKey).getTimeInfo().getStartTimeLt());
+                    } else {
+                        // 不存在其他事件，清空
                     }
                 }
             }
