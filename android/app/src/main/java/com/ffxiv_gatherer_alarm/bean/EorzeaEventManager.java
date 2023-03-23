@@ -141,6 +141,10 @@ public class EorzeaEventManager {
                 }
             }
         }
+        if (bestEventKey == null) {
+            // 当前只有1个有效时间，下一个事件仍然是当前时间。此时仅需要刷新当前事件并重新设置Alarm
+            bestEventKey = currentPendingEventKey;
+        }
         return bestEventKey;
     }
 
@@ -233,9 +237,16 @@ public class EorzeaEventManager {
                 if (gatheringPoint.getTimeTable().size() > 0) {
                     for (PoppingTime poppingTime : gatheringPoint.getTimeTable()) {
                         if (poppingTime.getStartTime() != INVALID_START_TIME) {
+                            GatheringEvent handlingEvent = this.eventMap.get(poppingTime.getStartTime());
                             if (this.eventMap.containsKey(poppingTime.getStartTime())) {
-                                if (!this.eventMap.get(poppingTime.getStartTime()).items.containsKey(gatheringItem.getId())) {
-                                    this.eventMap.get(poppingTime.getStartTime()).items.put(gatheringItem.getId(), new GatheringEventItem(gatheringItem, gatheringPoint));
+                                if (!handlingEvent.items.containsKey(gatheringItem.getId())) {
+                                    handlingEvent.items.put(gatheringItem.getId(), new GatheringEventItem(gatheringItem, gatheringPoint));
+                                    if (handlingEvent.items.size() == 0 && this.currentPendingEventKey != null) {
+                                        Calendar currentPendingEventTime = this.eventMap.get(this.currentPendingEventKey).timeInfo.getStartTimeLt();
+                                        if (handlingEvent.timeInfo.getStartTimeLt().compareTo(currentPendingEventTime) < 0 && handlingEvent.timeInfo.getStartTimeLt().compareTo(now) > 0) {
+                                            alterEventKey = poppingTime.getStartTime();
+                                        }
+                                    }
                                 }
                             } else {
                                 GatheringEvent gatheringEvent = new GatheringEvent();
