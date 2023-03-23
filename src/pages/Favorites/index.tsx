@@ -31,7 +31,7 @@ import SplashScreen from 'react-native-splash-screen';
 import MaterialAppHeaderBackAction from '../../components/MaterialAppHeaderBackAction';
 import MaterialAppHeaderAction from '../../components/MaterialAppHeaderAction';
 import EorzeaTimeDisplayer from '../../components/EorzeaTimeDisplayer';
-import EorzeaEventNotification from '../../native/EorzeaEventNotification';
+import {bindService} from '../../native/EorzeaEventNotification';
 import {gatheringItemsMap} from '../../store/persistStore';
 
 const Favorites: FC = () => {
@@ -232,7 +232,7 @@ const Favorites: FC = () => {
       DeviceEventEmitter.addListener('onENServiceUnbound', () => {
         ToastAndroid.show('采集监控服务异常，请重启App', ToastAndroid.LONG);
       });
-    EorzeaEventNotification.bindService();
+    bindService();
     return () => {
       onEorzeaEventNotificationServiceBound.remove();
       onEorzeaEventNotificationServiceUnbound.remove();

@@ -1,3 +1,7 @@
 import {NativeModules} from 'react-native';
 
-export default NativeModules.NotificationManager;
+export const openNotificationSettings =
+  NativeModules.NotificationManager.openNotificationSettings;
+
+export const getNotificationsEnabledStatus =
+  NativeModules.NotificationManager.getNotificationsEnabledStatus;

@@ -22,7 +22,10 @@ import SoundChips from '../../components/SoundChips';
 import {notificationSettingsSelector, useStore} from '../../store';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import NotificationManager from '../../native/NotificationManager';
+import {
+  openNotificationSettings,
+  getNotificationsEnabledStatus,
+} from '../../native/NotificationManager';
 import type {NotificationManagerModule} from '../../native/NotificationManager/typings';
 
 const NotificationSettings = () => {
@@ -56,7 +59,7 @@ const NotificationSettings = () => {
     notificationsEnabledState.isENSChannelEnabled,
   ]);
   const updateNotificationEnabledState = useCallback(() => {
-    NotificationManager.getNotificationsEnabledStatus().then(value =>
+    getNotificationsEnabledStatus().then(value =>
       setNotificationsEnabledState(value),
     );
   }, []);
@@ -166,7 +169,7 @@ const NotificationSettings = () => {
                 />
               </View>
             )}
-            onPress={() => NotificationManager.openNotificationSettings()}
+            onPress={() => openNotificationSettings()}
           />
         </List.Section>
         <List.Section>

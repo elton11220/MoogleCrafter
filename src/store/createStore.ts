@@ -2,7 +2,10 @@ import produce from 'immer';
 import SplashScreen from 'react-native-splash-screen';
 import {create} from 'zustand';
 import {persist} from 'zustand/middleware';
-import EorzeaEventNotification from '../native/EorzeaEventNotification';
+import {
+  addSubscription,
+  removeSubscription,
+} from '../native/EorzeaEventNotification';
 import {initialState} from './initialState';
 import {zustandPersistPartialize, zustandPersistStorage} from './persistStore';
 
@@ -79,7 +82,7 @@ export const useStore = create<
           }),
         );
         if (validItems.length > 0) {
-          EorzeaEventNotification.addSubscription(JSON.stringify(validItems));
+          addSubscription(validItems);
         }
       },
       removeFavoriteGatheringItem: items => {
@@ -118,9 +121,7 @@ export const useStore = create<
           }),
         );
         if (validItems.length > 0) {
-          EorzeaEventNotification.removeSubscription(
-            JSON.stringify(validItems),
-          );
+          removeSubscription(validItems);
         }
       },
     }),
