@@ -14,10 +14,14 @@ import GatheringList from '../../components/GatheringList';
 import FilterDrawer from '../../components/FilterDrawer';
 import type {FilterValue} from '../../components/FilterDrawer';
 import type {FilterDrawerInstance} from '../../components/FilterDrawer';
-import {generalSettingsSelector, useStore} from '../../store';
+import {
+  generalSettingsSelector,
+  notificationSettingsSelector,
+  useStore,
+} from '../../store';
 import {useGatheringDataFilter} from '../../hooks/useGatheringDataFilter';
 import produce from 'immer';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import AnimatedBgColorAppBarHeader from '../../components/AnimatedBgColorAppBarHeader';
 import AnimatedBackgroundColorView from '../../components/AnimatedBackgroundColorView';
@@ -28,12 +32,14 @@ import MaterialAppHeaderBackAction from '../../components/MaterialAppHeaderBackA
 import MaterialAppHeaderAction from '../../components/MaterialAppHeaderAction';
 import EorzeaTimeDisplayer from '../../components/EorzeaTimeDisplayer';
 import EorzeaEventNotification from '../../native/EorzeaEventNotification';
+import {gatheringItemsMap} from '../../store/persistStore';
 
 const Favorites: FC = () => {
   const insets = useSafeAreaInsets();
   const theme = useTheme<typeof DefaultLightTheme>();
   const [searchQuery, setSearchQuery] = useState('');
   const filterDrawerInstance = useRef<FilterDrawerInstance | null>(null);
+  const navigation = useNavigation();
   const [filterValue, setFilterValue] = useState<FilterValue>({
     isRare: null,
     classJob: null,
@@ -232,6 +238,23 @@ const Favorites: FC = () => {
       onEorzeaEventNotificationServiceUnbound.remove();
     };
   }, []);
+  const notificationSettings = useStore(notificationSettingsSelector);
+  useEffect(() => {
+    const gatheringEventListener = DeviceEventEmitter.addListener(
+      'gatheringEventTriggered',
+      (data: AppGlobal.GatheringItem['id'][]) => {
+        if (data.length > 0 && notificationSettings.enableFullScreen) {
+          const gatheringItem = gatheringItemsMap.get(data[0]);
+          if (gatheringItem) {
+            navigation.navigate('FullScreenReminder', {
+              gatheringItem,
+            });
+          }
+        }
+      },
+    );
+    return () => gatheringEventListener.remove();
+  }, [navigation, notificationSettings.enableFullScreen]);
   return (
     <View
       style={{

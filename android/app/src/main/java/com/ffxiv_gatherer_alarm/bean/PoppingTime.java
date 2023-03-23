@@ -17,6 +17,11 @@ public class PoppingTime {
         this.duration = duration;
     }
 
+    public PoppingTime(TimePair startTime, TimePair duration) {
+        this.startTime = startTime.getHour() * 100 + startTime.getMinute();
+        this.duration = duration.getHour() * 100 + duration.getMinute();
+    }
+
     public int getStartTime() {
         return startTime;
     }

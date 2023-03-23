@@ -7,6 +7,9 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.view.WindowCompat;
@@ -22,19 +25,26 @@ import org.devio.rn.splashscreen.SplashScreen;
 import androidx.appcompat.app.AppCompatDelegate;
 
 public class MainActivity extends ReactActivity {
-    //react-native-screens override
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+
+        AudioAttributes soundAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         NotificationChannel serviceChannel = new NotificationChannel(EORZEA_EVENT_NOTIFICATION_SERVICE_CHANNEL_ID, "采集事件监控服务", NotificationManager.IMPORTANCE_DEFAULT);
         serviceChannel.setDescription("用于监控采集事件并在事件发生时激活应用内全屏提醒并推送系统通知");
         serviceChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
         serviceChannel.setShowBadge(false);
 
-        NotificationChannel eventNotificationChannel = new NotificationChannel(EORZEA_EVENT_NOTIFICATION_CHANNEL_ID, "采集事件通知", NotificationManager.IMPORTANCE_DEFAULT);
-        serviceChannel.setDescription("采集事件发生时推送系统通知");
-        serviceChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        NotificationChannel eventNotificationChannel = new NotificationChannel(EORZEA_EVENT_NOTIFICATION_CHANNEL_ID, "采集事件通知", NotificationManager.IMPORTANCE_HIGH);
+        eventNotificationChannel.setDescription("采集事件发生时推送系统通知");
+        eventNotificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        eventNotificationChannel.enableVibration(true);
+        eventNotificationChannel.setVibrationPattern(new long[]{200, 100, 200});
+        eventNotificationChannel.setSound(defaultSoundUri, soundAttributes);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.createNotificationChannel(serviceChannel);

@@ -12,7 +12,7 @@ import {
 } from 'react-native-paper';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {extendedDarkColors} from '../../config/themes/extension';
 import useEorzeaTimer from '../../hooks/useEorzeaTimer';
 import type {RootStackScreenProps} from '../../navigation/types';
@@ -39,6 +39,7 @@ const FullScreenReminder: FC = () => {
   const {
     params: {gatheringItem},
   } = useRoute<RootStackScreenProps<'Detail'>['route']>();
+  const navigation = useNavigation();
   const timeTable = useMemo(
     () => getTimeTableFromGatheringPoints(gatheringItem.gatheringPoints),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -166,12 +167,14 @@ const FullScreenReminder: FC = () => {
           }}
           textColor={MD3LightTheme.colors.onPrimary}
           labelStyle={{fontSize: px2DpY(14), lineHeight: px2DpY(18)}}
-          onPress={() => {}}>
+          onPress={() => {
+            navigation.goBack();
+          }}>
           知道了
         </Button>
       </View>
     ),
-    [],
+    [navigation],
   );
   return (
     <View

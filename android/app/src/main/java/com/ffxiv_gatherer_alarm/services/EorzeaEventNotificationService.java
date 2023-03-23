@@ -1,16 +1,17 @@
 package com.ffxiv_gatherer_alarm.services;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
 import com.ffxiv_gatherer_alarm.R;
 import com.ffxiv_gatherer_alarm.bean.EorzeaEventManager;
+import com.ffxiv_gatherer_alarm.bean.GatheringEvent;
 import com.ffxiv_gatherer_alarm.bean.GatheringItem;
 
 import java.util.List;
@@ -20,7 +21,9 @@ public class EorzeaEventNotificationService extends Service {
 
     public static final String EORZEA_EVENT_NOTIFICATION_CHANNEL_ID = "EorzeaEventNotification";
 
-    private final EorzeaEventManager eorzeaEventManager = new EorzeaEventManager();
+    private AlarmManager alarmManager;
+
+    private EorzeaEventManager eorzeaEventManager;
 
     public EorzeaEventNotificationService() {
     }
@@ -37,6 +40,9 @@ public class EorzeaEventNotificationService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build();
         startForeground(1, notification);
+
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        eorzeaEventManager = new EorzeaEventManager(alarmManager, getApplicationContext());
     }
 
     @Override
@@ -47,6 +53,7 @@ public class EorzeaEventNotificationService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         stopForeground(STOP_FOREGROUND_DETACH);
+        eorzeaEventManager.clearAlarm();
         return super.onUnbind(intent);
     }
 
@@ -69,6 +76,14 @@ public class EorzeaEventNotificationService extends Service {
 
         public void removeGatheringEvents(List<GatheringItem> gatheringItems) {
             eorzeaEventManager.removeItems(gatheringItems);
+        }
+
+        public void performNextEvent() {
+            eorzeaEventManager.performNextEvent();
+        }
+
+        public GatheringEvent getCurrentEvent() {
+            return eorzeaEventManager.getCurrentEvent();
         }
     }
 }

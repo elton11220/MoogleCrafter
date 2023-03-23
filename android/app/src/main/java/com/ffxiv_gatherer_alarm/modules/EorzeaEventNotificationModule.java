@@ -1,22 +1,27 @@
 package com.ffxiv_gatherer_alarm.modules;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.ffxiv_gatherer_alarm.bean.GatheringEvent;
+import com.ffxiv_gatherer_alarm.bean.GatheringEventItem;
 import com.ffxiv_gatherer_alarm.bean.GatheringItem;
 import com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService;
 import com.google.gson.Gson;
@@ -24,8 +29,11 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
+import java.util.Map;
 
 public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+
+    public static String GATHERING_EVENT_TRIGGERED_ACTION = "com.elton11220.ffxiv_gatherer_timer.GATHERING_EVENT_TRIGGERED";
 
     public final ReactApplicationContext reactApplicationContext;
 
@@ -35,23 +43,54 @@ public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule im
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             eorzeaEventNotificationServiceBinder = (EorzeaEventNotificationService.LocalBinder) iBinder;
             eorzeaEventNotificationServiceBound = true;
-            sendEvent(reactApplicationContext, "onENServiceBound", null);
+            sendEvent(reactApplicationContext, "onENServiceBound");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             eorzeaEventNotificationServiceBound = false;
-            sendEvent(reactApplicationContext, "onENServiceUnbound", null);
+            sendEvent(reactApplicationContext, "onENServiceUnbound");
         }
     };
 
     private EorzeaEventNotificationService.LocalBinder eorzeaEventNotificationServiceBinder;
     private boolean eorzeaEventNotificationServiceBound = false;
 
+    private class GatheringEventReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            GatheringEvent currentEvent = eorzeaEventNotificationServiceBinder.getCurrentEvent();
+            if (currentEvent != null) {
+                WritableArray writableArray = Arguments.createArray();
+                for (Map.Entry<Integer, GatheringEventItem> gatheringEventItemEntry : currentEvent.getItems().entrySet()) {
+                    writableArray.pushInt(gatheringEventItemEntry.getValue().getId());
+                }
+                sendEvent(reactApplicationContext, "gatheringEventTriggered", writableArray);
+            }
+            if (eorzeaEventNotificationServiceBinder != null) {
+                eorzeaEventNotificationServiceBinder.performNextEvent();
+            }
+        }
+    }
+
+    private GatheringEventReceiver gatheringEventReceiver;
+
     public EorzeaEventNotificationModule(ReactApplicationContext context) {
         super(context);
         reactApplicationContext = context;
         context.addLifecycleEventListener(this);
+
+        gatheringEventReceiver = new GatheringEventReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(GATHERING_EVENT_TRIGGERED_ACTION);
+        context.registerReceiver(gatheringEventReceiver, intentFilter);
+    }
+
+    @Override
+    public void onCatalystInstanceDestroy() {
+        super.onCatalystInstanceDestroy();
+        reactApplicationContext.unregisterReceiver(gatheringEventReceiver);
+        stopService();
     }
 
     @Override
@@ -71,6 +110,10 @@ public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule im
 
     @Override
     public void onHostDestroy() {
+        stopService();
+    }
+
+    private void stopService() {
         if (eorzeaEventNotificationServiceBound) {
             reactApplicationContext.unbindService(eorzeaEventNotificationServiceConn);
             eorzeaEventNotificationServiceBound = false;
@@ -78,8 +121,16 @@ public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule im
         reactApplicationContext.stopService(new Intent(reactApplicationContext, EorzeaEventNotificationService.class));
     }
 
-    private void sendEvent(ReactContext context, String eventName, @Nullable WritableMap params) {
+    private void sendEvent(ReactContext context, String eventName, WritableMap params) {
         context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
+    }
+
+    private void sendEvent(ReactContext context, String eventName, WritableArray params) {
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
+    }
+
+    private void sendEvent(ReactContext context, String eventName) {
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, null);
     }
 
     private final Gson gson = new Gson();
@@ -95,7 +146,7 @@ public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule im
             Intent bindServiceIntent = new Intent(reactApplicationContext, EorzeaEventNotificationService.class);
             reactApplicationContext.bindService(bindServiceIntent, eorzeaEventNotificationServiceConn, Context.BIND_AUTO_CREATE);
         } else {
-            sendEvent(reactApplicationContext, "onENServiceBound", null);
+            sendEvent(reactApplicationContext, "onENServiceBound");
         }
     }
 

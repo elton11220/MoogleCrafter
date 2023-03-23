@@ -1,5 +1,20 @@
 package com.ffxiv_gatherer_alarm.bean;
 
+import static com.ffxiv_gatherer_alarm.bean.GatheringPoint.gatheringTypes;
+import static com.ffxiv_gatherer_alarm.modules.EorzeaEventNotificationModule.GATHERING_EVENT_TRIGGERED_ACTION;
+import static com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_CHANNEL_ID;
+
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import com.ffxiv_gatherer_alarm.R;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Calendar;
@@ -9,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -17,6 +33,15 @@ public class EorzeaEventManager {
     public static final BigDecimal EORZEA_CONVERT_CONSTANT = new BigDecimal("20.571428571428573");
 
     public static final int INVALID_START_TIME = 65535;
+
+    private final AlarmManager alarmManager;
+
+    private final Context context;
+
+    public EorzeaEventManager(AlarmManager alarmManager, Context context) {
+        this.alarmManager = alarmManager;
+        this.context = context;
+    }
 
     public static Calendar computeEorzeaDate(Date date) {
         long unixTime = (long) Math.floor(new BigDecimal(date.getTime()).multiply(EORZEA_CONVERT_CONSTANT).doubleValue());
@@ -79,6 +104,8 @@ public class EorzeaEventManager {
 
     private Integer currentPendingEventKey = null;
 
+    public PendingIntent currentPendingIntent = null;
+
     public Integer getNearestGatheringEventKey() {
         Integer bestEventKey = null;
         Calendar now = Calendar.getInstance();
@@ -98,11 +125,104 @@ public class EorzeaEventManager {
         return bestEventKey;
     }
 
+    public Integer getNextGatheringEventKey() {
+        Integer bestEventKey = null;
+        Calendar now = Calendar.getInstance();
+        for (Map.Entry<Integer, GatheringEvent> gatheringEventEntry : this.eventMap.entrySet()) {
+            if (gatheringEventEntry.getValue().items.size() > 0 && gatheringEventEntry.getKey() != currentPendingEventKey) {
+                if (bestEventKey == null) {
+                    bestEventKey = gatheringEventEntry.getKey();
+                } else {
+                    Calendar workingNodeStartTimeLt = gatheringEventEntry.getValue().getTimeInfo().getStartTimeLt();
+                    Calendar bestStartTimeLt = this.eventMap.get(bestEventKey).getTimeInfo().getStartTimeLt();
+                    if (workingNodeStartTimeLt.compareTo(bestStartTimeLt) < 0 && workingNodeStartTimeLt.compareTo(now) > 0) {
+                        bestEventKey = gatheringEventEntry.getKey();
+                    }
+                }
+            }
+        }
+        return bestEventKey;
+    }
+
     public void generateAlarm(Calendar startTimeLt) {
+        clearAlarm();
+        Intent intent = new Intent(GATHERING_EVENT_TRIGGERED_ACTION);
+        currentPendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, startTimeLt.getTimeInMillis(), currentPendingIntent);
     }
 
     public void clearAlarm() {
+        if (currentPendingIntent != null) {
+            alarmManager.cancel(currentPendingIntent);
+            currentPendingIntent = null;
+        }
+    }
 
+    public GatheringEvent getCurrentEvent() {
+        if (currentPendingEventKey != null) {
+            return this.eventMap.get(currentPendingEventKey);
+        } else {
+            return null;
+        }
+    }
+
+    public void notifyCurrentEvent() {
+        if (currentPendingEventKey != null) {
+            GatheringEvent gatheringEvent = eventMap.get(currentPendingEventKey);
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+            if (gatheringEvent.items.size() <= 3 && gatheringEvent.items.size() > 0) {
+                for (GatheringEventItem gatheringEventItem : gatheringEvent.items.values()) {
+                    StringBuilder titleStringBuilder = new StringBuilder();
+                    StringBuilder contentStringBuilder = new StringBuilder();
+                    titleStringBuilder.append(gatheringEventItem.getName())
+                            .append(" ")
+                            .append(gatheringEventItem.getGatheringItemLevel())
+                            .append("级");
+                    contentStringBuilder.append(gatheringTypes.get(gatheringEventItem.getGatheringType()))
+                            .append(" | ")
+                            .append(gatheringEventItem.getPlaceName())
+                            .append(" X: ")
+                            .append(gatheringEventItem.getX())
+                            .append(", Y: ")
+                            .append(gatheringEventItem.getY());
+                    Notification notification = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
+                            .setContentTitle(titleStringBuilder.toString())
+                            .setContentText(contentStringBuilder.toString())
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setWhen(gatheringEvent.timeInfo.getStartTimeLt().getTimeInMillis())
+                            .build();
+                    TimePair startTimeTP = gatheringEvent.timeInfo.getRawStartTime();
+                    int startTime = startTimeTP.getHour() * 100 + startTimeTP.getMinute();
+                    notificationManagerCompat.notify(startTime + gatheringEventItem.getId(), notification);
+                }
+            }
+            if (gatheringEvent.items.size() > 3) {
+                Notification notification = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
+                        .setContentTitle("素材已出现")
+                        .setContentText("有多个收藏的素材已经出现")
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setWhen(gatheringEvent.timeInfo.getStartTimeLt().getTimeInMillis())
+                        .build();
+                Random random = new Random();
+                notificationManagerCompat.notify(random.nextInt(1000), notification);
+            }
+        }
+    }
+
+    public void performNextEvent() {
+        Integer nextEventKey = getNextGatheringEventKey();
+        if (nextEventKey != null) {
+            // refresh current event
+            GatheringEvent currentEvent = this.eventMap.get(currentPendingEventKey);
+            this.eventMap.get(currentPendingEventKey).setTimeInfo(initGatheringEventTimeInfo(new PoppingTime(currentEvent.timeInfo.getRawStartTime(), currentEvent.timeInfo.getRawDuration())));
+
+            // system notification
+            notifyCurrentEvent();
+
+            // perform next event
+            this.currentPendingEventKey = nextEventKey;
+            generateAlarm(this.eventMap.get(nextEventKey).getTimeInfo().getStartTimeLt());
+        }
     }
 
     public void insertItems(List<GatheringItem> gatheringItems) {
@@ -178,6 +298,7 @@ public class EorzeaEventManager {
                         generateAlarm(this.eventMap.get(nearestEventKey).getTimeInfo().getStartTimeLt());
                     } else {
                         // 不存在其他事件，清空
+                        clearAlarm();
                     }
                 }
             }
