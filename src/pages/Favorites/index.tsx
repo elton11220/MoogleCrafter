@@ -31,7 +31,10 @@ import SplashScreen from 'react-native-splash-screen';
 import MaterialAppHeaderBackAction from '../../components/MaterialAppHeaderBackAction';
 import MaterialAppHeaderAction from '../../components/MaterialAppHeaderAction';
 import EorzeaTimeDisplayer from '../../components/EorzeaTimeDisplayer';
-import {bindService} from '../../native/EorzeaEventNotification';
+import {
+  addSubscription,
+  bindService,
+} from '../../native/EorzeaEventNotification';
 import {gatheringItemsMap} from '../../store/persistStore';
 
 const Favorites: FC = () => {
@@ -255,6 +258,10 @@ const Favorites: FC = () => {
     );
     return () => gatheringEventListener.remove();
   }, [navigation, notificationSettings.enableFullScreen]);
+  useEffect(() => {
+    addSubscription(gatheringItems);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <View
       style={{
