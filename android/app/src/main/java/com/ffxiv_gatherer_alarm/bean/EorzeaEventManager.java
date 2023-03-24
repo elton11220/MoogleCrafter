@@ -9,6 +9,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -77,6 +78,10 @@ public class EorzeaEventManager {
     }
 
     public static GatheringEventTimeInfo initGatheringEventTimeInfo(PoppingTime poppingTime) {
+        return initGatheringEventTimeInfo(poppingTime, false);
+    }
+
+    public static GatheringEventTimeInfo initGatheringEventTimeInfo(PoppingTime poppingTime, boolean getNextTick) {
         Calendar currentEt = computeEorzeaDate(new Date());
         TimePair startTime = parseTimePair(poppingTime.getStartTime());
         TimePair duration = parseTimePair(poppingTime.getDuration());
@@ -89,12 +94,15 @@ public class EorzeaEventManager {
         if (currentEt.get(Calendar.HOUR_OF_DAY) > (startTime.getHour() + duration.getHour()) % 24) {
             startTimeEt.add(Calendar.DAY_OF_MONTH, 1);
         }
+        if (getNextTick) {
+            startTimeEt.add(Calendar.DAY_OF_MONTH, 1);
+        }
         Calendar endTimeEt = Calendar.getInstance();
         endTimeEt.setTimeZone(TimeZone.getTimeZone("UTC"));
         endTimeEt.setTimeInMillis(startTimeEt.getTimeInMillis());
         endTimeEt.set(Calendar.HOUR_OF_DAY, endTimeEt.get(Calendar.HOUR_OF_DAY) + duration.getHour());
         endTimeEt.set(Calendar.MINUTE, endTimeEt.get(Calendar.MINUTE) + duration.getMinute());
-        return new GatheringEventTimeInfo(startTimeEt, computeLocalDate(startTimeEt), endTimeEt, computeLocalDate(endTimeEt), startTime, duration, currentEt.getTimeInMillis() <= endTimeEt.getTimeInMillis() && currentEt.getTimeInMillis() >= startTimeEt.getTimeInMillis() ? GatheringRarePopEventState.OCCURRING : GatheringRarePopEventState.PREPARING);
+        return new GatheringEventTimeInfo(startTimeEt, computeLocalDate(startTimeEt), endTimeEt, computeLocalDate(endTimeEt), startTime, duration, poppingTime, currentEt.getTimeInMillis() <= endTimeEt.getTimeInMillis() && currentEt.getTimeInMillis() >= startTimeEt.getTimeInMillis() ? GatheringRarePopEventState.OCCURRING : GatheringRarePopEventState.PREPARING);
     }
 
     private final HashMap<Integer, GatheringEvent> eventMap = new HashMap<>();
@@ -110,18 +118,34 @@ public class EorzeaEventManager {
     public Integer getNearestGatheringEventKey() {
         Integer bestEventKey = null;
         Calendar now = Calendar.getInstance();
+        int occurringTimePoint = 0; // 出现中的采集点数量，用于判断是否所有采集点都处于出现状态
+        int totalTimePoint = 0;
         for (Map.Entry<Integer, GatheringEvent> gatheringEventEntry : this.eventMap.entrySet()) {
             if (gatheringEventEntry.getValue().items.size() > 0) {
+                Calendar workingNodeStartTimeLt = gatheringEventEntry.getValue().getTimeInfo().getStartTimeLt();
                 if (bestEventKey == null) {
                     bestEventKey = gatheringEventEntry.getKey();
                 } else {
-                    Calendar workingNodeStartTimeLt = gatheringEventEntry.getValue().getTimeInfo().getStartTimeLt();
                     Calendar bestStartTimeLt = this.eventMap.get(bestEventKey).getTimeInfo().getStartTimeLt();
-                    if (workingNodeStartTimeLt.compareTo(bestStartTimeLt) < 0 && workingNodeStartTimeLt.compareTo(now) > 0) {
+                    if ((workingNodeStartTimeLt.compareTo(bestStartTimeLt) < 0 || bestStartTimeLt.compareTo(now) < 0) && workingNodeStartTimeLt.compareTo(now) > 0) {
                         bestEventKey = gatheringEventEntry.getKey();
                     }
                 }
+                if (workingNodeStartTimeLt.compareTo(now) < 0) {
+                    occurringTimePoint++;
+                }
+                totalTimePoint++;
             }
+        }
+        if (totalTimePoint != 0 && occurringTimePoint == totalTimePoint) {
+            // 当前调度过程的所有采集时间点均为发生状态
+            for (Map.Entry<Integer, GatheringEvent> gatheringEventEntry : this.eventMap.entrySet()) {
+                if (gatheringEventEntry.getValue().items.size() > 0) {
+                    PoppingTime poppingTime = gatheringEventEntry.getValue().timeInfo.getRawPoppingTime();
+                    eventMap.get(gatheringEventEntry.getKey()).setTimeInfo(initGatheringEventTimeInfo(poppingTime, true));
+                }
+            }
+            return getNearestGatheringEventKey();
         }
         return bestEventKey;
     }
@@ -129,18 +153,34 @@ public class EorzeaEventManager {
     public Integer getNextGatheringEventKey() {
         Integer bestEventKey = null;
         Calendar now = Calendar.getInstance();
+        int occurringTimePoint = 0; // 出现中的采集点数量，用于判断是否所有采集点都处于出现状态
+        int totalTimePoint = 0;
         for (Map.Entry<Integer, GatheringEvent> gatheringEventEntry : this.eventMap.entrySet()) {
             if (gatheringEventEntry.getValue().items.size() > 0 && !gatheringEventEntry.getKey().equals(currentPendingEventKey)) {
+                Calendar workingNodeStartTimeLt = gatheringEventEntry.getValue().getTimeInfo().getStartTimeLt();
                 if (bestEventKey == null) {
                     bestEventKey = gatheringEventEntry.getKey();
                 } else {
-                    Calendar workingNodeStartTimeLt = gatheringEventEntry.getValue().getTimeInfo().getStartTimeLt();
                     Calendar bestStartTimeLt = this.eventMap.get(bestEventKey).getTimeInfo().getStartTimeLt();
-                    if (workingNodeStartTimeLt.compareTo(bestStartTimeLt) < 0 && workingNodeStartTimeLt.compareTo(now) > 0) {
+                    if ((workingNodeStartTimeLt.compareTo(bestStartTimeLt) < 0 || bestStartTimeLt.compareTo(now) < 0) && workingNodeStartTimeLt.compareTo(now) > 0) {
                         bestEventKey = gatheringEventEntry.getKey();
                     }
                 }
+                if (workingNodeStartTimeLt.compareTo(now) < 0) {
+                    occurringTimePoint++;
+                }
+                totalTimePoint++;
             }
+        }
+        if (totalTimePoint != 0 && occurringTimePoint == totalTimePoint) {
+            // 当前调度过程的所有采集时间点均为发生状态
+            for (Map.Entry<Integer, GatheringEvent> gatheringEventEntry : this.eventMap.entrySet()) {
+                if (gatheringEventEntry.getValue().items.size() > 0 && !gatheringEventEntry.getKey().equals(currentPendingEventKey)) {
+                    PoppingTime poppingTime = gatheringEventEntry.getValue().timeInfo.getRawPoppingTime();
+                    eventMap.get(gatheringEventEntry.getKey()).setTimeInfo(initGatheringEventTimeInfo(poppingTime, true));
+                }
+            }
+            bestEventKey = getNextGatheringEventKey();
         }
         if (bestEventKey == null) {
             // 当前只有1个有效时间，下一个事件仍然是当前时间。此时仅需要刷新当前事件并重新设置Alarm
@@ -154,6 +194,7 @@ public class EorzeaEventManager {
         Intent intent = new Intent(GATHERING_EVENT_TRIGGERED_ACTION);
         currentPendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, startTimeLt.getTimeInMillis(), currentPendingIntent);
+        Log.i("GatheringEvent", "next alarm is generated at: " + startTimeLt.getTime());
     }
 
     public void clearAlarm() {

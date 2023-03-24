@@ -9,17 +9,19 @@ public class GatheringEventTimeInfo {
     private Calendar endTimeLt;
     private TimePair rawStartTime;
     private TimePair rawDuration;
+    private PoppingTime rawPoppingTime;
     private GatheringRarePopEventState state;
 
     @Override
     public String toString() {
-        return "GatheringEvent{" +
+        return "GatheringEventTimeInfo{" +
                 "startTimeEt=" + startTimeEt +
                 ", startTimeLt=" + startTimeLt +
                 ", endTimeEt=" + endTimeEt +
                 ", endTimeLt=" + endTimeLt +
                 ", rawStartTime=" + rawStartTime +
                 ", rawDuration=" + rawDuration +
+                ", rawPoppingTime=" + rawPoppingTime +
                 ", state=" + state +
                 '}';
     }
@@ -72,6 +74,14 @@ public class GatheringEventTimeInfo {
         this.rawDuration = rawDuration;
     }
 
+    public PoppingTime getRawPoppingTime() {
+        return rawPoppingTime;
+    }
+
+    public void setRawPoppingTime(PoppingTime rawPoppingTime) {
+        this.rawPoppingTime = rawPoppingTime;
+    }
+
     public GatheringRarePopEventState getState() {
         return state;
     }
@@ -80,13 +90,14 @@ public class GatheringEventTimeInfo {
         this.state = state;
     }
 
-    public GatheringEventTimeInfo(Calendar startTimeEt, Calendar startTimeLt, Calendar endTimeEt, Calendar endTimeLt, TimePair rawStartTime, TimePair rawDuration, GatheringRarePopEventState state) {
+    public GatheringEventTimeInfo(Calendar startTimeEt, Calendar startTimeLt, Calendar endTimeEt, Calendar endTimeLt, TimePair rawStartTime, TimePair rawDuration, PoppingTime rawPoppingTime, GatheringRarePopEventState state) {
         this.startTimeEt = startTimeEt;
         this.startTimeLt = startTimeLt;
         this.endTimeEt = endTimeEt;
         this.endTimeLt = endTimeLt;
         this.rawStartTime = rawStartTime;
         this.rawDuration = rawDuration;
+        this.rawPoppingTime = rawPoppingTime;
         this.state = state;
     }
 }
