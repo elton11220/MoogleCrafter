@@ -130,7 +130,7 @@ public class EorzeaEventManager {
         Integer bestEventKey = null;
         Calendar now = Calendar.getInstance();
         for (Map.Entry<Integer, GatheringEvent> gatheringEventEntry : this.eventMap.entrySet()) {
-            if (gatheringEventEntry.getValue().items.size() > 0 && gatheringEventEntry.getKey() != currentPendingEventKey) {
+            if (gatheringEventEntry.getValue().items.size() > 0 && !gatheringEventEntry.getKey().equals(currentPendingEventKey)) {
                 if (bestEventKey == null) {
                     bestEventKey = gatheringEventEntry.getKey();
                 } else {
@@ -172,7 +172,7 @@ public class EorzeaEventManager {
     }
 
     public void notifyCurrentEvent() {
-        Long currentTimeMillis = System.currentTimeMillis();
+        long currentTimeMillis = System.currentTimeMillis();
         if (currentPendingEventKey != null) {
             GatheringEvent gatheringEvent = eventMap.get(currentPendingEventKey);
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
@@ -206,9 +206,9 @@ public class EorzeaEventManager {
                     }
                 } else {
                     StringBuilder summaryText = new StringBuilder();
-                    gatheringEventItems.stream().limit(3).forEachOrdered(item -> {
-                        summaryText.append(item.getName()).append("、");
-                    });
+                    gatheringEventItems.stream().limit(3).forEachOrdered(item ->
+                            summaryText.append(item.getName()).append("、")
+                    );
                     summaryText.deleteCharAt(summaryText.length() - 1)
                             .append(" 等")
                             .append(gatheringEventItems.size() - 3)
