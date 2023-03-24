@@ -18,6 +18,7 @@ import com.ffxiv_gatherer_alarm.R;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -171,44 +172,57 @@ public class EorzeaEventManager {
     }
 
     public void notifyCurrentEvent() {
+        Long currentTimeMillis = System.currentTimeMillis();
         if (currentPendingEventKey != null) {
             GatheringEvent gatheringEvent = eventMap.get(currentPendingEventKey);
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
-            if (gatheringEvent.items.size() <= 3 && gatheringEvent.items.size() > 0) {
-                for (GatheringEventItem gatheringEventItem : gatheringEvent.items.values()) {
-                    StringBuilder titleStringBuilder = new StringBuilder();
-                    StringBuilder contentStringBuilder = new StringBuilder();
-                    titleStringBuilder.append(gatheringEventItem.getName())
-                            .append(" ")
-                            .append(gatheringEventItem.getGatheringItemLevel())
-                            .append("级");
-                    contentStringBuilder.append(gatheringTypes.get(gatheringEventItem.getGatheringType()))
-                            .append(" | ")
-                            .append(gatheringEventItem.getPlaceName())
-                            .append(" X: ")
-                            .append(gatheringEventItem.getX())
-                            .append(", Y: ")
-                            .append(gatheringEventItem.getY());
-                    Notification notification = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
-                            .setContentTitle(titleStringBuilder.toString())
-                            .setContentText(contentStringBuilder.toString())
+            if (gatheringEvent.items.size() > 0) {
+                Collection<GatheringEventItem> gatheringEventItems = gatheringEvent.items.values();
+                if (gatheringEvent.items.size() <= 3) {
+                    for (GatheringEventItem gatheringEventItem : gatheringEventItems) {
+                        StringBuilder titleStringBuilder = new StringBuilder();
+                        StringBuilder contentStringBuilder = new StringBuilder();
+                        titleStringBuilder.append(gatheringEventItem.getName())
+                                .append(" ")
+                                .append(gatheringEventItem.getGatheringItemLevel())
+                                .append("级");
+                        contentStringBuilder.append(gatheringTypes.get(gatheringEventItem.getGatheringType()))
+                                .append(" | ")
+                                .append(gatheringEventItem.getPlaceName())
+                                .append(" X: ")
+                                .append(gatheringEventItem.getX())
+                                .append(", Y: ")
+                                .append(gatheringEventItem.getY());
+                        Notification notification = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
+                                .setContentTitle(titleStringBuilder.toString())
+                                .setContentText(contentStringBuilder.toString())
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setWhen(gatheringEvent.timeInfo.getStartTimeLt().getTimeInMillis())
+                                .setGroup(EORZEA_EVENT_NOTIFICATION_CHANNEL_ID + currentTimeMillis)
+                                .build();
+                        TimePair startTimeTP = gatheringEvent.timeInfo.getRawStartTime();
+                        int startTime = startTimeTP.getHour() * 100 + startTimeTP.getMinute();
+                        notificationManagerCompat.notify(startTime + gatheringEventItem.getId(), notification);
+                    }
+                } else {
+                    StringBuilder summaryText = new StringBuilder();
+                    gatheringEventItems.stream().limit(3).forEachOrdered(item -> {
+                        summaryText.append(item.getName()).append("、");
+                    });
+                    summaryText.deleteCharAt(summaryText.length() - 1)
+                            .append(" 等")
+                            .append(gatheringEventItems.size() - 3)
+                            .append("项素材已出现");
+                    Notification notificationSummary = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
+                            .setContentTitle("素材已出现")
+                            .setContentText(summaryText.toString())
                             .setSmallIcon(R.mipmap.ic_launcher)
                             .setWhen(gatheringEvent.timeInfo.getStartTimeLt().getTimeInMillis())
+                            .setGroup(EORZEA_EVENT_NOTIFICATION_CHANNEL_ID + currentTimeMillis)
                             .build();
-                    TimePair startTimeTP = gatheringEvent.timeInfo.getRawStartTime();
-                    int startTime = startTimeTP.getHour() * 100 + startTimeTP.getMinute();
-                    notificationManagerCompat.notify(startTime + gatheringEventItem.getId(), notification);
+                    Random random = new Random();
+                    notificationManagerCompat.notify(random.nextInt(2000), notificationSummary);
                 }
-            }
-            if (gatheringEvent.items.size() > 3) {
-                Notification notification = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
-                        .setContentTitle("素材已出现")
-                        .setContentText("有多个收藏的素材已经出现")
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setWhen(gatheringEvent.timeInfo.getStartTimeLt().getTimeInMillis())
-                        .build();
-                Random random = new Random();
-                notificationManagerCompat.notify(random.nextInt(1000), notification);
             }
         }
     }

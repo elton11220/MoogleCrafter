@@ -38,6 +38,7 @@ public class EorzeaEventNotificationService extends Service {
                 .setOngoing(true)
                 .setShowWhen(false)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setGroup(EORZEA_EVENT_NOTIFICATION_SERVICE_CHANNEL_ID)
                 .build();
         startForeground(1, notification);
 
