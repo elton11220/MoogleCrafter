@@ -8,14 +8,7 @@ declare namespace ZustandStore {
     inAppRingtoneType: InAppRingtoneType;
   }
 
-  type ThemeKey =
-    | 'purple'
-    | 'blue'
-    | 'green'
-    | 'red'
-    | 'yellow'
-    | 'brown'
-    | 'darkRed';
+  type ThemeKey = 'purple' | 'blue' | 'pink' | 'green' | 'yellow' | 'cyan';
 
   interface ThemeSettings {
     themeColor: ThemeKey;

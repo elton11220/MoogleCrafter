@@ -205,7 +205,7 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
               styles.itemIcon,
               styles.selectedIcon,
               {
-                backgroundColor: theme.colors.primaryContainer,
+                backgroundColor: theme.colors.secondaryContainer,
                 opacity: selectedIconOpacityAnimValue,
               },
             ]}>

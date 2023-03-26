@@ -12,6 +12,26 @@ const colorList: ColorPicker.ColorList = [
     key: 'purple',
     value: '#6750a4',
   },
+  {
+    key: 'blue',
+    value: '#315da8',
+  },
+  {
+    key: 'green',
+    value: '#00b68a',
+  },
+  {
+    key: 'pink',
+    value: '#ff74a7',
+  },
+  {
+    key: 'yellow',
+    value: '#f2cc00',
+  },
+  {
+    key: 'cyan',
+    value: '#0a6873',
+  },
 ];
 
 const ThemeSettings = () => {
