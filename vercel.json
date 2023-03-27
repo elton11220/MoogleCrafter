@@ -1,0 +1,13 @@
+{
+  "headers": [
+    {
+      "source": "(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=3600, max-age=3600"
+        }
+      ]
+    }
+  ]
+}
