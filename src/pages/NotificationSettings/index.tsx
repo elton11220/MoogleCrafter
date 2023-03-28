@@ -15,7 +15,6 @@ import {
   useTheme,
 } from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Tip from '../../components/Tip';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import SoundChips from '../../components/SoundChips';
@@ -27,12 +26,33 @@ import {
   getNotificationsEnabledStatus,
 } from '../../native/NotificationManager';
 import type {NotificationManagerModule} from '../../native/NotificationManager/typings';
+import {ExVersion} from '../../utils/eorzeaConstant';
+import {
+  NotificationMode,
+  playSimpleSound,
+  setNotificationMode,
+} from '../../native/SpecialRingtone';
+import Tip from '../../components/Tip';
+
+const getNotificationMode = (
+  specialRingtoneType: ZustandStore.SpecialRingtoneType,
+) => {
+  if (specialRingtoneType === 'simple') {
+    return NotificationMode.SIMPLE;
+  } else if (specialRingtoneType === 'tts') {
+    return NotificationMode.TTS;
+  } else if (specialRingtoneType === 'exVersion') {
+    return NotificationMode.EORZEA_THEME;
+  } else {
+    return NotificationMode.OFF;
+  }
+};
 
 const NotificationSettings = () => {
   const insets = useSafeAreaInsets();
   const theme = useTheme<typeof DefaultLightTheme>();
   const navigation = useNavigation();
-  const {enableRingtone, enableVibration, enableFullScreen, inAppRingtoneType} =
+  const {enableSpecialRingtone, enableFullScreen, specialRingtoneType} =
     useStore(notificationSettingsSelector);
   const updateNotificationSettings = useStore(
     s => s.updateNotificationSettings,
@@ -63,6 +83,20 @@ const NotificationSettings = () => {
       setNotificationsEnabledState(value),
     );
   }, []);
+  const updateSpecialRingtone = useCallback(
+    (value: ZustandStore.NotificationSettings['specialRingtoneType']) => {
+      if (value === 'simple') {
+        playSimpleSound().then();
+        setNotificationMode(NotificationMode.SIMPLE);
+      } else if (value === 'tts') {
+        setNotificationMode(NotificationMode.TTS);
+      } else if (value === 'exVersion') {
+        setNotificationMode(NotificationMode.EORZEA_THEME);
+      }
+      updateNotificationSettings('specialRingtoneType', value);
+    },
+    [updateNotificationSettings],
+  );
   useEffect(() => {
     updateNotificationEnabledState();
     const onResumeEventSubscription = DeviceEventEmitter.addListener(
@@ -71,6 +105,161 @@ const NotificationSettings = () => {
     );
     return () => onResumeEventSubscription.remove();
   }, [updateNotificationEnabledState]);
+  const specialRingtoneListItemEl = useMemo(
+    () => (
+      <List.Item
+        title={
+          <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
+            特殊提示音
+          </Text>
+        }
+        right={() => (
+          <Switch
+            value={enableSpecialRingtone}
+            onValueChange={value => {
+              updateNotificationSettings('enableSpecialRingtone', value);
+              setNotificationMode(
+                value
+                  ? getNotificationMode(specialRingtoneType)
+                  : NotificationMode.OFF,
+              );
+            }}
+            style={styles.itemRightPatch}
+          />
+        )}
+      />
+    ),
+    [enableSpecialRingtone, specialRingtoneType, updateNotificationSettings],
+  );
+  const notificationTypeEl = useMemo(
+    () => (
+      <>
+        <List.Item
+          title={
+            <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
+              全屏提醒
+            </Text>
+          }
+          right={() => (
+            <Switch
+              value={enableFullScreen}
+              onValueChange={value =>
+                updateNotificationSettings('enableFullScreen', value)
+              }
+              style={styles.itemRightPatch}
+            />
+          )}
+        />
+        <List.Item
+          title={
+            <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
+              系统消息通知
+            </Text>
+          }
+          right={() => (
+            <View style={[styles.itemRightNavContainer, styles.itemRightPatch]}>
+              <Text
+                style={[
+                  styles.itemRightNavText,
+                  {color: theme.colors.tertiaryContentText},
+                ]}
+                allowFontScaling={false}>
+                {isSystemNotificationEnabled ? '已开启' : '未开启'}
+              </Text>
+              <MaterialIcons
+                name="chevron-right"
+                size={px2DpY(20)}
+                color={theme.colors.tertiaryContentText}
+              />
+            </View>
+          )}
+          onPress={() => openNotificationSettings()}
+        />
+      </>
+    ),
+    [
+      enableFullScreen,
+      isSystemNotificationEnabled,
+      theme.colors.tertiaryContentText,
+      updateNotificationSettings,
+    ],
+  );
+  const specialRingtoneTypeEl = useMemo(
+    () => (
+      <RadioButton.Group
+        value={specialRingtoneType}
+        onValueChange={value =>
+          updateSpecialRingtone(value as ZustandStore.SpecialRingtoneType)
+        }>
+        <List.Item
+          title="简易提示音"
+          description="一个简单的提示音"
+          titleStyle={styles.listItemTitleStyle}
+          disabled={!enableSpecialRingtone}
+          descriptionStyle={[
+            styles.listItemDescStyle,
+            {
+              color: theme.colors.secondaryContentText,
+            },
+          ]}
+          style={styles.complexListItemStyle}
+          right={() => (
+            <View style={[styles.itemRightPatch, styles.itemRightContainer]}>
+              <RadioButton value="simple" disabled={!enableSpecialRingtone} />
+            </View>
+          )}
+          onPress={() => updateSpecialRingtone('simple')}
+        />
+        <List.Item
+          title="TTS 语音合成"
+          description="使用系统TTS引擎播报出现的素材简介"
+          titleStyle={styles.listItemTitleStyle}
+          disabled={!enableSpecialRingtone}
+          descriptionStyle={[
+            styles.listItemDescStyle,
+            {
+              color: theme.colors.secondaryContentText,
+            },
+          ]}
+          style={styles.complexListItemStyle}
+          right={() => (
+            <View style={[styles.itemRightPatch, styles.itemRightContainer]}>
+              <RadioButton value="tts" disabled={!enableSpecialRingtone} />
+            </View>
+          )}
+          onPress={() => updateSpecialRingtone('tts')}
+        />
+        <List.Item
+          title="素材版本主题提示音"
+          description="播放本次事件出现最多项的版本的主题音效"
+          titleStyle={styles.listItemTitleStyle}
+          disabled={!enableSpecialRingtone}
+          descriptionStyle={[
+            styles.listItemDescStyle,
+            {
+              color: theme.colors.secondaryContentText,
+            },
+          ]}
+          style={styles.complexListItemStyle}
+          right={() => (
+            <View style={[styles.itemRightPatch, styles.itemRightContainer]}>
+              <RadioButton
+                value="exVersion"
+                disabled={!enableSpecialRingtone}
+              />
+            </View>
+          )}
+          onPress={() => updateSpecialRingtone('exVersion')}
+        />
+      </RadioButton.Group>
+    ),
+    [
+      enableSpecialRingtone,
+      specialRingtoneType,
+      theme.colors.secondaryContentText,
+      updateSpecialRingtone,
+    ],
+  );
   return (
     <View
       style={{
@@ -97,80 +286,8 @@ const NotificationSettings = () => {
             ]}>
             通知类型
           </List.Subheader>
-          <List.Item
-            title={
-              <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
-                响铃提醒
-              </Text>
-            }
-            right={() => (
-              <Switch
-                value={enableRingtone}
-                onValueChange={value =>
-                  updateNotificationSettings('enableRingtone', value)
-                }
-                style={styles.itemRightPatch}
-              />
-            )}
-          />
-          <List.Item
-            title={
-              <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
-                震动提醒
-              </Text>
-            }
-            right={() => (
-              <Switch
-                value={enableVibration}
-                onValueChange={value =>
-                  updateNotificationSettings('enableVibration', value)
-                }
-                style={styles.itemRightPatch}
-              />
-            )}
-          />
-          <List.Item
-            title={
-              <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
-                全屏提醒
-              </Text>
-            }
-            right={() => (
-              <Switch
-                value={enableFullScreen}
-                onValueChange={value =>
-                  updateNotificationSettings('enableFullScreen', value)
-                }
-                style={styles.itemRightPatch}
-              />
-            )}
-          />
-          <List.Item
-            title={
-              <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
-                系统消息通知
-              </Text>
-            }
-            right={() => (
-              <View
-                style={[styles.itemRightNavContainer, styles.itemRightPatch]}>
-                <Text
-                  style={[
-                    styles.itemRightNavText,
-                    {color: theme.colors.tertiaryContentText},
-                  ]}
-                  allowFontScaling={false}>
-                  {isSystemNotificationEnabled ? '已开启' : '未开启'}
-                </Text>
-                <MaterialIcons
-                  name="chevron-right"
-                  size={px2DpY(20)}
-                  color={theme.colors.tertiaryContentText}
-                />
-              </View>
-            )}
-            onPress={() => openNotificationSettings()}
-          />
+          {specialRingtoneListItemEl}
+          {notificationTypeEl}
         </List.Section>
         <List.Section>
           <List.Subheader
@@ -178,45 +295,37 @@ const NotificationSettings = () => {
               styles.listSectionTitleStyle,
               {color: theme.colors.primary},
             ]}>
-            应用内提示音
+            特殊提示音类型
           </List.Subheader>
-          <RadioButton.Group
-            value={inAppRingtoneType}
-            onValueChange={value =>
-              updateNotificationSettings(
-                'inAppRingtoneType',
-                value as ZustandStore.InAppRingtoneType,
-              )
-            }>
-            <RadioButton.Item
-              labelStyle={styles.listItemTitleStyle}
-              label="简易提示音"
-              value="simple"
-            />
-            <RadioButton.Item
-              labelStyle={styles.listItemTitleStyle}
-              label="TTS 语音合成"
-              value="tts"
-            />
-            <RadioButton.Item
-              labelStyle={styles.listItemTitleStyle}
-              label="素材版本主题提示音"
-              value="exVersion"
-            />
-          </RadioButton.Group>
+          {specialRingtoneTypeEl}
           <View style={{paddingTop: px2DpY(5)}}>
-            <Tip title="将根据出现的素材对应版本播放不同提示音" />
+            <Tip title="关闭通知音量或静音可能导致您错过提醒" />
             <View style={styles.chipsContainer}>
               <View style={styles.chipsRow}>
-                <SoundChips title="2.0 提示音" />
-                <SoundChips title="3.0 提示音" />
+                <SoundChips
+                  title="2.0 提示音"
+                  exVersion={ExVersion.REALM_REBORN}
+                />
+                <SoundChips
+                  title="3.0 提示音"
+                  exVersion={ExVersion.HEAVEN_SWARD}
+                />
               </View>
               <View style={styles.chipsRow}>
-                <SoundChips title="4.0 提示音" />
-                <SoundChips title="5.0 提示音" />
+                <SoundChips
+                  title="4.0 提示音"
+                  exVersion={ExVersion.STORM_BLOOD}
+                />
+                <SoundChips
+                  title="5.0 提示音"
+                  exVersion={ExVersion.SHADOW_BRINGERS}
+                />
               </View>
               <View style={[styles.chipsRow, {width: px2DpX(120)}]}>
-                <SoundChips title="6.0 提示音" />
+                <SoundChips
+                  title="6.0 提示音"
+                  exVersion={ExVersion.END_WALKER}
+                />
               </View>
             </View>
           </View>
@@ -235,6 +344,14 @@ const styles = StyleSheet.create({
   },
   listItemTitleStyle: {
     fontSize: px2DpY(16),
+  },
+  listItemDescStyle: {
+    fontSize: px2DpY(13),
+    lineHeight: px2DpY(20),
+    paddingTop: px2DpY(2),
+  },
+  complexListItemStyle: {
+    paddingVertical: px2DpY(4),
   },
   chipsContainer: {
     paddingTop: px2DpY(10),
@@ -258,6 +375,9 @@ const styles = StyleSheet.create({
   },
   itemRightPatch: {
     marginRight: -8,
+  },
+  itemRightContainer: {
+    justifyContent: 'center',
   },
 });
 

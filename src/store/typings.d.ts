@@ -1,11 +1,10 @@
 declare namespace ZustandStore {
-  type InAppRingtoneType = 'simple' | 'tts' | 'exVersion';
+  type SpecialRingtoneType = 'simple' | 'tts' | 'exVersion';
 
   interface NotificationSettings {
-    enableRingtone: boolean;
-    enableVibration: boolean;
+    enableSpecialRingtone: boolean;
     enableFullScreen: boolean;
-    inAppRingtoneType: InAppRingtoneType;
+    specialRingtoneType: SpecialRingtoneType;
   }
 
   type ThemeKey = 'purple' | 'blue' | 'pink' | 'green' | 'yellow' | 'cyan';

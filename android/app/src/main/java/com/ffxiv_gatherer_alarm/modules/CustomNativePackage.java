@@ -20,6 +20,7 @@ public class CustomNativePackage implements ReactPackage {
         modules.add(new ActivityAndroidModule(reactApplicationContext));
         modules.add(new NotificationManagerModule(reactApplicationContext));
         modules.add(new EorzeaEventNotificationModule(reactApplicationContext));
+        modules.add(new SpecialRingtoneModule(reactApplicationContext));
         return modules;
     }
 

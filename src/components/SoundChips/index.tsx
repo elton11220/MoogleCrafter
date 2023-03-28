@@ -1,13 +1,19 @@
 import {View, StyleSheet, Pressable} from 'react-native';
+import {memo} from 'react';
 import type {FC} from 'react';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import {Text, useTheme} from 'react-native-paper';
 import {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import type {SoundChips as SoundChipsTypes} from './typings';
+import {playSound} from '../../native/SpecialRingtone';
 
-const SoundChips: FC<SoundChips.Props> = props => {
-  const {title} = props;
+const SoundChips: FC<SoundChipsTypes.Props> = props => {
+  const {title, exVersion} = props;
   const theme = useTheme<typeof DefaultLightTheme>();
+  const onPress = () => {
+    playSound(exVersion).then();
+  };
   return (
     <View style={[styles.container]}>
       <Pressable
@@ -18,7 +24,7 @@ const SoundChips: FC<SoundChips.Props> = props => {
           styles.rippleContainer,
           {backgroundColor: theme.colors.primaryContainer},
         ]}
-        onPress={() => {}}>
+        onPress={onPress}>
         <MaterialIcons
           name="volume-up"
           size={px2DpY(24)}
@@ -56,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SoundChips;
+export default memo(SoundChips);

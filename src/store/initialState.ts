@@ -12,10 +12,9 @@ export const initialState: ZustandStore.State = {
   isSplashScreenShow: true,
   settings: {
     notificationSettings: {
-      enableRingtone: true,
-      enableVibration: true,
-      enableFullScreen: true,
-      inAppRingtoneType: 'tts',
+      enableSpecialRingtone: true,
+      enableFullScreen: false,
+      specialRingtoneType: 'simple',
     },
     themeSettings: {
       themeColor: 'purple',

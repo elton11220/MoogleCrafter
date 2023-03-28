@@ -6,7 +6,7 @@ import {px2DpY} from '../../utils/dimensionConverter';
 import {Text, useTheme} from 'react-native-paper';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import Tip from '../Tip';
-import {ExVersions} from '../../utils/eorzeaConstant';
+import {ExVersionNames} from '../../utils/eorzeaConstant';
 import {
   extendedDarkColors,
   extendedLightColors,
@@ -118,7 +118,7 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
               {color: themeColors.primaryContentText},
             ]}
             allowFontScaling={false}>
-            {ExVersions[gatheringItem.exVersion]}
+            {ExVersionNames[gatheringItem.exVersion]}
           </Text>
         </View>
         <View style={styles.item}>

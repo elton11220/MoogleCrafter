@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: px2DpY(13),
+    lineHeight: px2DpY(17),
   },
 });
 
