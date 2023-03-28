@@ -8,6 +8,13 @@ export enum NotificationMode {
   EORZEA_THEME,
 }
 
+export enum TTSStatus {
+  UNINITIALIZED,
+  WORKING,
+  LANG_NOT_SUPPORT,
+  FAILED,
+}
+
 export function playSound(exVersion: ExVersion) {
   return NativeModules.SpecialRingtone.playSound(exVersion);
 }
@@ -18,3 +25,7 @@ export function playSimpleSound() {
 
 export const setNotificationMode =
   NativeModules.SpecialRingtone.setNotificationMode;
+
+export const getTTSStatus = NativeModules.SpecialRingtone.getTTSStatus;
+
+export const speakWithTTS = NativeModules.SpecialRingtone.speakWithTTS;

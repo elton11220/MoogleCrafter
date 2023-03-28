@@ -20,7 +20,13 @@ import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import SoundChips from '../../components/SoundChips';
 import {notificationSettingsSelector, useStore} from '../../store';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   openNotificationSettings,
   getNotificationsEnabledStatus,
@@ -28,11 +34,15 @@ import {
 import type {NotificationManagerModule} from '../../native/NotificationManager/typings';
 import {ExVersion} from '../../utils/eorzeaConstant';
 import {
+  getTTSStatus,
   NotificationMode,
   playSimpleSound,
   setNotificationMode,
+  speakWithTTS,
+  TTSStatus,
 } from '../../native/SpecialRingtone';
 import Tip from '../../components/Tip';
+import Tag from '../../components/Tag';
 
 const getNotificationMode = (
   specialRingtoneType: ZustandStore.SpecialRingtoneType,
@@ -86,9 +96,18 @@ const NotificationSettings = () => {
   const updateSpecialRingtone = useCallback(
     (value: ZustandStore.NotificationSettings['specialRingtoneType']) => {
       if (value === 'simple') {
-        playSimpleSound().then();
+        playSimpleSound()
+          .then()
+          .catch(() => {
+            ToastAndroid.show('播放失败', ToastAndroid.SHORT);
+          });
         setNotificationMode(NotificationMode.SIMPLE);
       } else if (value === 'tts') {
+        speakWithTTS('90级 不定性铁陨石')
+          .then()
+          .catch(() => {
+            ToastAndroid.show('播放失败', ToastAndroid.SHORT);
+          });
         setNotificationMode(NotificationMode.TTS);
       } else if (value === 'exVersion') {
         setNotificationMode(NotificationMode.EORZEA_THEME);
@@ -97,14 +116,39 @@ const NotificationSettings = () => {
     },
     [updateNotificationSettings],
   );
+  const [ttsStatus, setTTSStatus] = useState<TTSStatus>(
+    TTSStatus.UNINITIALIZED,
+  );
+  const ttsStatusTag = useMemo(() => {
+    if (ttsStatus === TTSStatus.UNINITIALIZED) {
+      return <Tag color="#fa8c16">未初始化</Tag>;
+    } else if (ttsStatus === TTSStatus.WORKING) {
+      return <Tag color="#52C41A">正常</Tag>;
+    } else if (ttsStatus === TTSStatus.LANG_NOT_SUPPORT) {
+      return <Tag color="#CF1322">不支持中文</Tag>;
+    } else if (ttsStatus === TTSStatus.FAILED) {
+      return <Tag color="#CF1322">初始化失败</Tag>;
+    } else {
+      return <Tag color="#fa8c16">未知状态</Tag>;
+    }
+  }, [ttsStatus]);
+  const updateTTSEngineState = useCallback(() => {
+    getTTSStatus().then(value => setTTSStatus(value));
+  }, []);
   useEffect(() => {
-    updateNotificationEnabledState();
     const onResumeEventSubscription = DeviceEventEmitter.addListener(
       'onActivityResume',
-      updateNotificationEnabledState,
+      () => {
+        updateNotificationEnabledState();
+        updateTTSEngineState();
+      },
     );
     return () => onResumeEventSubscription.remove();
-  }, [updateNotificationEnabledState]);
+  }, [updateNotificationEnabledState, updateTTSEngineState]);
+  useLayoutEffect(() => {
+    updateNotificationEnabledState();
+    updateTTSEngineState();
+  }, [updateNotificationEnabledState, updateTTSEngineState]);
   const specialRingtoneListItemEl = useMemo(
     () => (
       <List.Item
@@ -211,10 +255,19 @@ const NotificationSettings = () => {
           onPress={() => updateSpecialRingtone('simple')}
         />
         <List.Item
-          title="TTS 语音合成"
+          title={
+            <View style={styles.listItemContainer}>
+              <Text
+                style={[styles.listItemTitleStyle, {lineHeight: px2DpY(20)}]}
+                allowFontScaling={false}>
+                TTS语音合成
+              </Text>
+              {ttsStatusTag}
+            </View>
+          }
           description="使用系统TTS引擎播报出现的素材简介"
           titleStyle={styles.listItemTitleStyle}
-          disabled={!enableSpecialRingtone}
+          disabled={!enableSpecialRingtone || ttsStatus !== TTSStatus.WORKING}
           descriptionStyle={[
             styles.listItemDescStyle,
             {
@@ -224,7 +277,12 @@ const NotificationSettings = () => {
           style={styles.complexListItemStyle}
           right={() => (
             <View style={[styles.itemRightPatch, styles.itemRightContainer]}>
-              <RadioButton value="tts" disabled={!enableSpecialRingtone} />
+              <RadioButton
+                value="tts"
+                disabled={
+                  !enableSpecialRingtone || ttsStatus !== TTSStatus.WORKING
+                }
+              />
             </View>
           )}
           onPress={() => updateSpecialRingtone('tts')}
@@ -257,6 +315,8 @@ const NotificationSettings = () => {
       enableSpecialRingtone,
       specialRingtoneType,
       theme.colors.secondaryContentText,
+      ttsStatus,
+      ttsStatusTag,
       updateSpecialRingtone,
     ],
   );
@@ -344,6 +404,11 @@ const styles = StyleSheet.create({
   },
   listItemTitleStyle: {
     fontSize: px2DpY(16),
+  },
+  listItemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: px2DpX(10),
   },
   listItemDescStyle: {
     fontSize: px2DpY(13),
