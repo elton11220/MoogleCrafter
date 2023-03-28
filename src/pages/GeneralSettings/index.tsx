@@ -2,6 +2,7 @@ import {useNavigation} from '@react-navigation/native';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {Appbar, List, Switch, Text, useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import Tag from '../../components/Tag';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {generalSettingsSelector, useStore} from '../../store';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
@@ -76,20 +77,7 @@ const GeneralSettings = () => {
                   allowFontScaling={false}>
                   肥肥咖啡交互地图
                 </Text>
-                <View
-                  style={[
-                    styles.ffCafeTagContainer,
-                    {borderColor: theme.colors.tertiaryContentText},
-                  ]}>
-                  <Text
-                    style={[
-                      styles.ffCafeTag,
-                      {color: theme.colors.tertiaryContentText},
-                    ]}
-                    allowFontScaling={false}>
-                    FFCafe
-                  </Text>
-                </View>
+                <Tag>FFCafe</Tag>
               </View>
             }
             right={() => (
@@ -135,20 +123,7 @@ const GeneralSettings = () => {
                   allowFontScaling={false}>
                   肥肥咖啡交互地图
                 </Text>
-                <View
-                  style={[
-                    styles.ffCafeTagContainer,
-                    {borderColor: theme.colors.tertiaryContentText},
-                  ]}>
-                  <Text
-                    style={[
-                      styles.ffCafeTag,
-                      {color: theme.colors.tertiaryContentText},
-                    ]}
-                    allowFontScaling={false}>
-                    FFCafe
-                  </Text>
-                </View>
+                <Tag>FFCafe</Tag>
               </View>
             }
             right={() => (
@@ -181,16 +156,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: px2DpX(10),
-  },
-  ffCafeTagContainer: {
-    paddingLeft: px2DpX(5),
-    paddingRight: px2DpX(5),
-    borderWidth: 1,
-    borderRadius: px2DpY(5),
-  },
-  ffCafeTag: {
-    fontSize: px2DpY(12),
-    lineHeight: px2DpY(18),
   },
   itemRightPatch: {
     marginRight: -8,
