@@ -16,8 +16,11 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.module.annotations.ReactModule;
 
+@ReactModule(name = NotificationManagerModule.NAME)
 public class NotificationManagerModule extends ReactContextBaseJavaModule {
+    public static final String NAME = "NotificationManager";
     private final ReactApplicationContext reactApplicationContext;
 
     public NotificationManagerModule(ReactApplicationContext context) {
@@ -27,7 +30,7 @@ public class NotificationManagerModule extends ReactContextBaseJavaModule {
 
     @Override
     public String getName() {
-        return "NotificationManager";
+        return NAME;
     }
 
     @ReactMethod

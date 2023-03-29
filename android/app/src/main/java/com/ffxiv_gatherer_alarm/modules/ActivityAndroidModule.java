@@ -5,9 +5,12 @@ import androidx.annotation.NonNull;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+@ReactModule(name = ActivityAndroidModule.NAME)
 public class ActivityAndroidModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+    public static final String NAME = "ActivityAndroidModule";
     private ReactApplicationContext reactApplicationContext;
 
     public ActivityAndroidModule(ReactApplicationContext reactContext) {
@@ -33,6 +36,6 @@ public class ActivityAndroidModule extends ReactContextBaseJavaModule implements
     @NonNull
     @Override
     public String getName() {
-        return "ActivityAndroidModule";
+        return NAME;
     }
 }
