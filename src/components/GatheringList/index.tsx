@@ -1,4 +1,4 @@
-import {FlatList} from 'react-native';
+import {FlatList, StyleSheet} from 'react-native';
 import useEorzeaTimer from '../../hooks/useEorzeaTimer';
 import GatheringItem from '../../components/GatheringItem';
 import {getTimeTableFromGatheringPoints} from '../../utils/eorzeaTime';
@@ -81,8 +81,15 @@ const GatheringList: FC<GatheringList.Props> = props => {
       windowSize={2}
       initialNumToRender={7}
       ListEmptyComponent={listEmptyComponent}
+      contentContainerStyle={styles.container}
     />
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+  },
+});
 
 export default memo(GatheringList);

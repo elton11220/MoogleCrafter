@@ -27,7 +27,10 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: px2DpY(35),
     alignItems: 'center',
+    justifyContent: 'center',
     gap: px2DpY(20),
+    flexGrow: 1,
+    marginTop: px2DpY(-110),
   },
   moogleImg: {
     height: px2DpY(147),
