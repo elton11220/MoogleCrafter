@@ -8,6 +8,7 @@ public class GatheringEventItem {
     private int gatheringType;
     private double x;
     private double y;
+    private int exVersion;
 
     @Override
     public String toString() {
@@ -19,6 +20,7 @@ public class GatheringEventItem {
                 ", gatheringType=" + gatheringType +
                 ", x=" + x +
                 ", y=" + y +
+                ", exVersion=" + exVersion +
                 '}';
     }
 
@@ -78,7 +80,15 @@ public class GatheringEventItem {
         this.y = y;
     }
 
-    public GatheringEventItem(Integer id, String name, int gatheringItemLevel, String placeName, int gatheringType, double x, double y) {
+    public int getExVersion() {
+        return exVersion;
+    }
+
+    public void setExVersion(int exVersion) {
+        this.exVersion = exVersion;
+    }
+
+    public GatheringEventItem(Integer id, String name, int gatheringItemLevel, String placeName, int gatheringType, double x, double y, int exVersion) {
         this.id = id;
         this.name = name;
         this.gatheringItemLevel = gatheringItemLevel;
@@ -86,6 +96,7 @@ public class GatheringEventItem {
         this.gatheringType = gatheringType;
         this.x = x;
         this.y = y;
+        this.exVersion = exVersion;
     }
 
     public GatheringEventItem(GatheringItem gatheringItem, GatheringPoint gatheringPoint) {
@@ -96,5 +107,6 @@ public class GatheringEventItem {
         this.gatheringType = gatheringPoint.getGatheringType();
         this.x = gatheringPoint.getX();
         this.y = gatheringPoint.getY();
+        this.exVersion = gatheringItem.getExVersion();
     }
 }

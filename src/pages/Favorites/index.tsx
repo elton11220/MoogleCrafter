@@ -36,6 +36,10 @@ import {
   bindService,
 } from '../../native/EorzeaEventNotification';
 import {gatheringItemsMap} from '../../store/persistStore';
+import {
+  NotificationMode,
+  setNotificationMode,
+} from '../../native/SpecialRingtone';
 
 const Favorites: FC = () => {
   const insets = useSafeAreaInsets();
@@ -225,6 +229,7 @@ const Favorites: FC = () => {
         : state,
     );
   }, []);
+  const notificationSettings = useStore(notificationSettingsSelector);
   useEffect(() => {
     const onEorzeaEventNotificationServiceBound =
       DeviceEventEmitter.addListener('onENServiceBound', () => {
@@ -236,12 +241,21 @@ const Favorites: FC = () => {
         ToastAndroid.show('采集监控服务异常，请重启App', ToastAndroid.LONG);
       });
     bindService();
+    if (notificationSettings.enableSpecialRingtone) {
+      if (notificationSettings.specialRingtoneType === 'simple') {
+        setNotificationMode(NotificationMode.SIMPLE);
+      } else if (notificationSettings.specialRingtoneType === 'tts') {
+        setNotificationMode(NotificationMode.TTS);
+      } else if (notificationSettings.specialRingtoneType === 'exVersion') {
+        setNotificationMode(NotificationMode.EORZEA_THEME);
+      }
+    }
     return () => {
       onEorzeaEventNotificationServiceBound.remove();
       onEorzeaEventNotificationServiceUnbound.remove();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const notificationSettings = useStore(notificationSettingsSelector);
   useEffect(() => {
     const gatheringEventListener = DeviceEventEmitter.addListener(
       'gatheringEventTriggered',

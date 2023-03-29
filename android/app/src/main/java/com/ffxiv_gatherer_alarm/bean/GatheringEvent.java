@@ -1,16 +1,19 @@
 package com.ffxiv_gatherer_alarm.bean;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class GatheringEvent {
     GatheringEventTimeInfo timeInfo;
     LinkedHashMap<Integer, GatheringEventItem> items;
+    HashMap<Integer, Integer> itemExVersionCounts = new HashMap<>();
 
     @Override
     public String toString() {
         return "GatheringEvent{" +
                 "timeInfo=" + timeInfo +
                 ", items=" + items +
+                ", itemExVersionCounts=" + itemExVersionCounts +
                 '}';
     }
 
@@ -30,11 +33,20 @@ public class GatheringEvent {
         this.items = items;
     }
 
+    public HashMap<Integer, Integer> getItemExVersionCounts() {
+        return itemExVersionCounts;
+    }
+
+    public void setItemExVersionCounts(HashMap<Integer, Integer> itemExVersionCounts) {
+        this.itemExVersionCounts = itemExVersionCounts;
+    }
+
     public GatheringEvent() {
     }
 
-    public GatheringEvent(GatheringEventTimeInfo timeInfo, LinkedHashMap<Integer, GatheringEventItem> items) {
+    public GatheringEvent(GatheringEventTimeInfo timeInfo, LinkedHashMap<Integer, GatheringEventItem> items, HashMap<Integer, Integer> itemExVersionCounts) {
         this.timeInfo = timeInfo;
         this.items = items;
+        this.itemExVersionCounts = itemExVersionCounts;
     }
 }

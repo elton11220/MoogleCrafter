@@ -13,6 +13,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.module.annotations.ReactModule;
 import com.ffxiv_gatherer_alarm.R;
 import com.ffxiv_gatherer_alarm.bean.ExVersion;
 import com.ffxiv_gatherer_alarm.bean.NotificationMode;
@@ -20,7 +21,9 @@ import com.ffxiv_gatherer_alarm.bean.TTSStatus;
 
 import java.util.Locale;
 
+@ReactModule(name = SpecialRingtoneModule.NAME)
 public class SpecialRingtoneModule extends ReactContextBaseJavaModule implements TextToSpeech.OnInitListener {
+    public static final String NAME = "SpecialRingtone";
     private final ReactApplicationContext reactApplicationContext;
     private NotificationMode notificationMode = NotificationMode.SIMPLE;
     private final SoundPool soundPool;
@@ -57,7 +60,7 @@ public class SpecialRingtoneModule extends ReactContextBaseJavaModule implements
 
     @Override
     public String getName() {
-        return "SpecialRingtone";
+        return NAME;
     }
 
     @Override
@@ -115,6 +118,14 @@ public class SpecialRingtoneModule extends ReactContextBaseJavaModule implements
 
     public void setNotificationMode(NotificationMode notificationMode) {
         this.notificationMode = notificationMode;
+    }
+
+    public TTSStatus getTTSStatus() {
+        return ttsStatus;
+    }
+
+    public NotificationMode getNotificationMode() {
+        return notificationMode;
     }
 
     @ReactMethod

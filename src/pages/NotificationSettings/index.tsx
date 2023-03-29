@@ -103,7 +103,7 @@ const NotificationSettings = () => {
           });
         setNotificationMode(NotificationMode.SIMPLE);
       } else if (value === 'tts') {
-        speakWithTTS('90级 不定性铁陨石')
+        speakWithTTS('90级 加雷马 不定性铁陨石')
           .then()
           .catch(() => {
             ToastAndroid.show('播放失败', ToastAndroid.SHORT);

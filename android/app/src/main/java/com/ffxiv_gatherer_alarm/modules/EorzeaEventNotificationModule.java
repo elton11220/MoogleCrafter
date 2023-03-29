@@ -19,10 +19,13 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.ffxiv_gatherer_alarm.bean.ExVersion;
 import com.ffxiv_gatherer_alarm.bean.GatheringEvent;
 import com.ffxiv_gatherer_alarm.bean.GatheringEventItem;
 import com.ffxiv_gatherer_alarm.bean.GatheringItem;
+import com.ffxiv_gatherer_alarm.bean.NotificationMode;
 import com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
@@ -31,7 +34,9 @@ import com.google.gson.reflect.TypeToken;
 import java.util.List;
 import java.util.Map;
 
+@ReactModule(name = EorzeaEventNotificationModule.NAME)
 public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+    public static final String NAME = "EorzeaEventNotification";
 
     public static String GATHERING_EVENT_TRIGGERED_ACTION = "com.elton11220.ffxiv_gatherer_timer.GATHERING_EVENT_TRIGGERED";
 
@@ -61,6 +66,51 @@ public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule im
         public void onReceive(Context context, Intent intent) {
             GatheringEvent currentEvent = eorzeaEventNotificationServiceBinder.getCurrentEvent();
             if (currentEvent != null) {
+                // Special Ringtone
+                SpecialRingtoneModule specialRingtoneModule = reactApplicationContext.getNativeModule(SpecialRingtoneModule.class);
+                NotificationMode notificationMode = specialRingtoneModule.getNotificationMode();
+                if (notificationMode == NotificationMode.SIMPLE) {
+                    specialRingtoneModule.playSimpleSound();
+                } else if (notificationMode == NotificationMode.TTS) {
+                    for (GatheringEventItem gatheringEventItem : currentEvent.getItems().values()) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append(gatheringEventItem.getGatheringItemLevel())
+                                .append("级 ")
+                                .append(gatheringEventItem.getPlaceName())
+                                .append(" ")
+                                .append(gatheringEventItem.getName());
+                        specialRingtoneModule.speakWithTTS(stringBuilder.toString());
+                    }
+                } else if (notificationMode == NotificationMode.EORZEA_THEME) {
+                    int mostExVersion = 0;
+                    int maxCount = -1;
+                    for (Map.Entry<Integer, Integer> entry : currentEvent.getItemExVersionCounts().entrySet()) {
+                        if (entry.getValue() != 0) {
+                            if (maxCount == -1) {
+                                maxCount = entry.getValue();
+                                mostExVersion = entry.getKey();
+                            } else {
+                                if (entry.getValue() > maxCount) {
+                                    maxCount = entry.getValue();
+                                    mostExVersion = entry.getKey();
+                                }
+                            }
+                        }
+                    }
+                    if (mostExVersion == 0) {
+                        specialRingtoneModule.playSound(ExVersion.REALM_REBORN);
+                    } else if (mostExVersion == 1) {
+                        specialRingtoneModule.playSound(ExVersion.HEAVEN_SWARD);
+                    } else if (mostExVersion == 2) {
+                        specialRingtoneModule.playSound(ExVersion.STORM_BLOOD);
+                    } else if (mostExVersion == 3) {
+                        specialRingtoneModule.playSound(ExVersion.SHADOW_BRINGERS);
+                    } else if (mostExVersion == 4) {
+                        specialRingtoneModule.playSound(ExVersion.END_WALKER);
+                    }
+                }
+                //
+
                 WritableArray writableArray = Arguments.createArray();
                 for (Map.Entry<Integer, GatheringEventItem> gatheringEventItemEntry : currentEvent.getItems().entrySet()) {
                     writableArray.pushInt(gatheringEventItemEntry.getValue().getId());
@@ -95,7 +145,7 @@ public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule im
 
     @Override
     public String getName() {
-        return "EorzeaEventNotification";
+        return NAME;
     }
 
     @Override

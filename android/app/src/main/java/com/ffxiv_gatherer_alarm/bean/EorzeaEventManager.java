@@ -292,10 +292,12 @@ public class EorzeaEventManager {
                 if (gatheringPoint.getTimeTable().size() > 0) {
                     for (PoppingTime poppingTime : gatheringPoint.getTimeTable()) {
                         if (poppingTime.getStartTime() != INVALID_START_TIME) {
-                            GatheringEvent handlingEvent = this.eventMap.get(poppingTime.getStartTime());
                             if (this.eventMap.containsKey(poppingTime.getStartTime())) {
+                                GatheringEvent handlingEvent = this.eventMap.get(poppingTime.getStartTime());
                                 if (!handlingEvent.items.containsKey(gatheringItem.getId())) {
                                     handlingEvent.items.put(gatheringItem.getId(), new GatheringEventItem(gatheringItem, gatheringPoint));
+                                    handlingEvent.itemExVersionCounts.computeIfPresent(gatheringItem.getExVersion(), (key, value) -> value + 1);
+                                    handlingEvent.itemExVersionCounts.computeIfAbsent(gatheringItem.getExVersion(), (key) -> 1);
                                     if (handlingEvent.items.size() == 0 && this.currentPendingEventKey != null) {
                                         Calendar currentPendingEventTime = this.eventMap.get(this.currentPendingEventKey).timeInfo.getStartTimeLt();
                                         if (handlingEvent.timeInfo.getStartTimeLt().compareTo(currentPendingEventTime) < 0 && handlingEvent.timeInfo.getStartTimeLt().compareTo(now) > 0) {
@@ -309,6 +311,7 @@ public class EorzeaEventManager {
                                 LinkedHashMap<Integer, GatheringEventItem> gatheringEventItemLinkedHashMap = new LinkedHashMap<>();
                                 gatheringEventItemLinkedHashMap.put(gatheringItem.getId(), new GatheringEventItem(gatheringItem, gatheringPoint));
                                 gatheringEvent.items = gatheringEventItemLinkedHashMap;
+                                gatheringEvent.itemExVersionCounts.put(gatheringItem.getExVersion(), 1);
                                 this.eventMap.put(poppingTime.getStartTime(), gatheringEvent);
                                 if (this.currentPendingEventKey != null) {
                                     Calendar currentPendingEventTime = this.eventMap.get(this.currentPendingEventKey).timeInfo.getStartTimeLt();
@@ -346,6 +349,8 @@ public class EorzeaEventManager {
                             if (this.eventMap.containsKey(poppingTime.getStartTime())) {
                                 startTimeTagSet.add(poppingTime.getStartTime());
                                 this.eventMap.get(poppingTime.getStartTime()).items.remove(gatheringItem.getId());
+                                GatheringEvent handlingEvent = this.eventMap.get(poppingTime.getStartTime());
+                                handlingEvent.itemExVersionCounts.computeIfPresent(gatheringItem.getExVersion(), (key, value) -> value - 1);
                             }
                         }
                     }

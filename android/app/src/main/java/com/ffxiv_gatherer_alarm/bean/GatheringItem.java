@@ -6,6 +6,7 @@ public class GatheringItem {
     private Integer id;
     private String name;
     private int gatheringItemLevel;
+    private int exVersion;
     private List<GatheringPoint> gatheringPoints;
 
     @Override
@@ -14,6 +15,7 @@ public class GatheringItem {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", gatheringItemLevel=" + gatheringItemLevel +
+                ", exVersion=" + exVersion +
                 ", gatheringPoints=" + gatheringPoints +
                 '}';
     }
@@ -50,10 +52,19 @@ public class GatheringItem {
         this.gatheringPoints = gatheringPoints;
     }
 
-    public GatheringItem(Integer id, String name, int gatheringItemLevel, List<GatheringPoint> gatheringPoints) {
+    public int getExVersion() {
+        return exVersion;
+    }
+
+    public void setExVersion(int exVersion) {
+        this.exVersion = exVersion;
+    }
+
+    public GatheringItem(Integer id, String name, int gatheringItemLevel, int exVersion, List<GatheringPoint> gatheringPoints) {
         this.id = id;
         this.name = name;
         this.gatheringItemLevel = gatheringItemLevel;
+        this.exVersion = exVersion;
         this.gatheringPoints = gatheringPoints;
     }
 }
