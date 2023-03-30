@@ -21,6 +21,7 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.ffxiv_gatherer_alarm.MainActivity;
 import com.ffxiv_gatherer_alarm.bean.ExVersion;
 import com.ffxiv_gatherer_alarm.bean.GatheringEvent;
 import com.ffxiv_gatherer_alarm.bean.GatheringEventItem;
@@ -39,6 +40,7 @@ public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule im
     public static final String NAME = "EorzeaEventNotification";
 
     public static String GATHERING_EVENT_TRIGGERED_ACTION = "com.elton11220.ffxiv_gatherer_timer.GATHERING_EVENT_TRIGGERED";
+    public static String NOTIFICATION_PRESS_ACTION = "com.elton11220.ffxiv_gatherer_timer.NOTIFICATION_PRESSED";
 
     public final ReactApplicationContext reactApplicationContext;
 
@@ -123,7 +125,23 @@ public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule im
         }
     }
 
+    private class NotificationPressReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int gatheringItemId = intent.getIntExtra("gatheringItemId", -1);
+            Intent resumeActivityIntent = new Intent(context, MainActivity.class);
+            resumeActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(resumeActivityIntent);
+            if (gatheringItemId > -1) {
+                WritableMap params = Arguments.createMap();
+                params.putInt("gatheringItemId", gatheringItemId);
+                sendEvent(reactApplicationContext, "backFromNotification", params);
+            }
+        }
+    }
+
     private GatheringEventReceiver gatheringEventReceiver;
+    private NotificationPressReceiver notificationPressReceiver;
 
     public EorzeaEventNotificationModule(ReactApplicationContext context) {
         super(context);
@@ -134,12 +152,18 @@ public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule im
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GATHERING_EVENT_TRIGGERED_ACTION);
         context.registerReceiver(gatheringEventReceiver, intentFilter);
+
+        notificationPressReceiver = new NotificationPressReceiver();
+        IntentFilter intentFilter1 = new IntentFilter();
+        intentFilter1.addAction(NOTIFICATION_PRESS_ACTION);
+        context.registerReceiver(notificationPressReceiver, intentFilter1);
     }
 
     @Override
     public void onCatalystInstanceDestroy() {
         super.onCatalystInstanceDestroy();
         reactApplicationContext.unregisterReceiver(gatheringEventReceiver);
+        reactApplicationContext.unregisterReceiver(notificationPressReceiver);
         stopService();
     }
 

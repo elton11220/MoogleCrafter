@@ -273,6 +273,20 @@ const Favorites: FC = () => {
     return () => gatheringEventListener.remove();
   }, [navigation, notificationSettings.enableFullScreen]);
   useEffect(() => {
+    const backFromNotificationListener = DeviceEventEmitter.addListener(
+      'backFromNotification',
+      ({gatheringItemId}) => {
+        const gatheringItem = gatheringItemsMap.get(gatheringItemId);
+        if (gatheringItem) {
+          navigation.navigate('Detail', {
+            gatheringItem,
+          });
+        }
+      },
+    );
+    return () => backFromNotificationListener.remove();
+  }, [navigation]);
+  useEffect(() => {
     addSubscription(gatheringItems);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

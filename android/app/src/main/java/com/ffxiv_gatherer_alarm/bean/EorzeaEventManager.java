@@ -2,6 +2,7 @@ package com.ffxiv_gatherer_alarm.bean;
 
 import static com.ffxiv_gatherer_alarm.bean.GatheringPoint.gatheringTypes;
 import static com.ffxiv_gatherer_alarm.modules.EorzeaEventNotificationModule.GATHERING_EVENT_TRIGGERED_ACTION;
+import static com.ffxiv_gatherer_alarm.modules.EorzeaEventNotificationModule.NOTIFICATION_PRESS_ACTION;
 import static com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_CHANNEL_ID;
 
 import android.app.AlarmManager;
@@ -14,6 +15,7 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.ffxiv_gatherer_alarm.MainActivity;
 import com.ffxiv_gatherer_alarm.R;
 
 import java.math.BigDecimal;
@@ -234,13 +236,21 @@ public class EorzeaEventManager {
                                 .append(gatheringEventItem.getX())
                                 .append(", Y: ")
                                 .append(gatheringEventItem.getY());
+
+                        Intent intent = new Intent(NOTIFICATION_PRESS_ACTION);
+                        intent.putExtra("gatheringItemId", gatheringEventItem.getId());
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
                         Notification notification = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
                                 .setContentTitle(titleStringBuilder.toString())
                                 .setContentText(contentStringBuilder.toString())
                                 .setSmallIcon(R.mipmap.ic_launcher)
                                 .setWhen(gatheringEvent.timeInfo.getStartTimeLt().getTimeInMillis())
                                 .setGroup(EORZEA_EVENT_NOTIFICATION_CHANNEL_ID + currentTimeMillis)
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true)
                                 .build();
+
                         TimePair startTimeTP = gatheringEvent.timeInfo.getRawStartTime();
                         int startTime = startTimeTP.getHour() * 100 + startTimeTP.getMinute();
                         notificationManagerCompat.notify(startTime + gatheringEventItem.getId(), notification);
@@ -254,15 +264,22 @@ public class EorzeaEventManager {
                             .append(" 等")
                             .append(gatheringEventItems.size() - 3)
                             .append("项素材已出现");
+
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
                     Notification notificationSummary = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
                             .setContentTitle("素材已出现")
                             .setContentText(summaryText.toString())
                             .setSmallIcon(R.mipmap.ic_launcher)
                             .setWhen(gatheringEvent.timeInfo.getStartTimeLt().getTimeInMillis())
                             .setGroup(EORZEA_EVENT_NOTIFICATION_CHANNEL_ID + currentTimeMillis)
+                            .setContentIntent(pendingIntent)
+                            .setAutoCancel(true)
                             .build();
                     Random random = new Random();
-                    notificationManagerCompat.notify(random.nextInt(2000), notificationSummary);
+                    notificationManagerCompat.notify(random.nextInt(2000) + 100000, notificationSummary);
                 }
             }
         }
