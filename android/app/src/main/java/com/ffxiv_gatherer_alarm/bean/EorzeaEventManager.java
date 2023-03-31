@@ -196,7 +196,7 @@ public class EorzeaEventManager {
     public void generateAlarm(Calendar startTimeLt) {
         clearAlarm();
         Intent intent = new Intent(GATHERING_EVENT_TRIGGERED_ACTION);
-        currentPendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        currentPendingIntent = PendingIntent.getBroadcast(context, -2, intent, PendingIntent.FLAG_IMMUTABLE);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, startTimeLt.getTimeInMillis(), currentPendingIntent);
         Log.i("GatheringEvent", "next alarm is generated at: " + startTimeLt.getTime());
     }
@@ -241,7 +241,7 @@ public class EorzeaEventManager {
 
                         Intent intent = new Intent(NOTIFICATION_PRESS_ACTION);
                         intent.putExtra("gatheringItemId", gatheringEventItem.getId());
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, gatheringEventItem.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
                         Notification notification = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
                                 .setContentTitle(titleStringBuilder.toString())
@@ -269,7 +269,7 @@ public class EorzeaEventManager {
 
                     Intent intent = new Intent(context, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(context, -1, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
                     Notification notificationSummary = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
                             .setContentTitle("素材已出现")
