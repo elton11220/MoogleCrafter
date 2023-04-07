@@ -6,6 +6,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import WebView from 'react-native-webview';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpY} from '../../utils/dimensionConverter';
+import versionInfo from '../../config/version';
 
 const About = () => {
   const insets = useSafeAreaInsets();
@@ -49,7 +50,7 @@ const About = () => {
               styles.appVersion,
               {color: theme.colors.secondaryContentText},
             ]}>
-            应用版本：1.0.0-stable-230213
+            应用版本：{versionInfo.compositedVersionSymbol}
           </Text>
           <Text
             allowFontScaling={false}
@@ -57,7 +58,7 @@ const About = () => {
               styles.appVersion,
               {color: theme.colors.secondaryContentText},
             ]}>
-            数据版本：2023.02.16.0000.0000-6.25-chs
+            数据版本：{versionInfo.resVersion}
           </Text>
         </View>
         <View style={{width: '100%'}}>

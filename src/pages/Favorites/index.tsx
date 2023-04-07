@@ -40,6 +40,8 @@ import {
   NotificationMode,
   setNotificationMode,
 } from '../../native/SpecialRingtone';
+import UpdateDialog from '../../components/UpdateDialog';
+import {useUpdateDialog} from '../../components/UpdateDialog/useUpdateDialog';
 
 const Favorites: FC = () => {
   const insets = useSafeAreaInsets();
@@ -290,6 +292,12 @@ const Favorites: FC = () => {
     addSubscription(gatheringItems);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const {
+    visible: updateDialogVisible,
+    onDismiss: onUpdateDialogDismiss,
+    onConfirm: onUpdateDialogConfirm,
+    currentUpdateInfo,
+  } = useUpdateDialog({checkWhenMount: true});
   return (
     <View
       style={{
@@ -297,6 +305,14 @@ const Favorites: FC = () => {
         paddingBottom: insets.bottom,
         backgroundColor: theme.colors.background,
       }}>
+      <UpdateDialog
+        visible={updateDialogVisible}
+        onDismiss={onUpdateDialogDismiss}
+        onConfirm={onUpdateDialogConfirm}
+        allowSkip={!currentUpdateInfo.isForce}
+        rightText={currentUpdateInfo.version}
+        content={currentUpdateInfo.content}
+      />
       {filterDrawer}
       {appHeader}
       <AnimatedBackgroundColorView

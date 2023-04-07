@@ -7,11 +7,20 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {useNavigation} from '@react-navigation/native';
+import UpdateDialog from '../../components/UpdateDialog';
+import {useUpdateDialog} from '../../components/UpdateDialog/useUpdateDialog';
 
 const Settings: FC = () => {
   const insets = useSafeAreaInsets();
   const theme = useTheme<typeof DefaultLightTheme>();
   const navigation = useNavigation();
+  const {
+    visible: updateDialogVisible,
+    onDismiss: onUpdateDialogDismiss,
+    onConfirm: onUpdateDialogConfirm,
+    currentUpdateInfo,
+    check: checkUpdate,
+  } = useUpdateDialog({showCheckTip: true});
   return (
     <View
       style={{
@@ -19,6 +28,14 @@ const Settings: FC = () => {
         paddingBottom: insets.bottom,
         backgroundColor: theme.colors.background,
       }}>
+      <UpdateDialog
+        visible={updateDialogVisible}
+        onDismiss={onUpdateDialogDismiss}
+        onConfirm={onUpdateDialogConfirm}
+        allowSkip={!currentUpdateInfo.isForce}
+        rightText={currentUpdateInfo.version}
+        content={currentUpdateInfo.content}
+      />
       <Appbar.Header>
         <Appbar.Content title="设置" titleStyle={styles.appBarHeaderTitle} />
       </Appbar.Header>
@@ -100,7 +117,9 @@ const Settings: FC = () => {
         </List.Section>
         <List.Section>
           <List.Item
-            onPress={() => {}}
+            onPress={() => {
+              checkUpdate();
+            }}
             title={
               <Text style={styles.listItemTitle} allowFontScaling={false}>
                 检查更新
