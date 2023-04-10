@@ -171,7 +171,7 @@ const Settings: FC = () => {
                   color: theme.colors.tertiaryContentText,
                 },
               ]}>
-              https://website.com
+              -- 龙巢神殿 --
             </Text>
           </View>
           <View>

@@ -17,7 +17,7 @@ export const initialState: ZustandStore.State = {
       specialRingtoneType: 'simple',
     },
     themeSettings: {
-      themeColor: 'purple',
+      themeColor: 'blue',
       darkModeFollowOS: true,
       enableDarkMode: false,
     },

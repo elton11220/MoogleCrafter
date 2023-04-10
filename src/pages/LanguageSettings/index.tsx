@@ -48,11 +48,13 @@ const LanguageSettings = () => {
               labelStyle={styles.listItemTitleStyle}
               label="简体中文"
               value="zh-cn"
+              disabled
             />
             <RadioButton.Item
               labelStyle={styles.listItemTitleStyle}
               label="English"
               value="en-us"
+              disabled
             />
           </RadioButton.Group>
         </List.Section>

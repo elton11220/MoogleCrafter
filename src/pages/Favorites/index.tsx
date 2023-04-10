@@ -282,7 +282,6 @@ const Favorites: FC = () => {
   useEffect(() => {
     const onEorzeaEventNotificationServiceBound =
       DeviceEventEmitter.addListener('onENServiceBound', () => {
-        ToastAndroid.show('采集监控服务加载成功', ToastAndroid.SHORT);
         SplashScreen.hide();
       });
     const onEorzeaEventNotificationServiceUnbound =
