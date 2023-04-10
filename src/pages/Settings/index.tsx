@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import type {FC} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {Appbar, List, Text, useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -9,6 +9,7 @@ import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {useNavigation} from '@react-navigation/native';
 import UpdateDialog from '../../components/UpdateDialog';
 import {useUpdateDialog} from '../../components/UpdateDialog/useUpdateDialog';
+import useThrottle from '../../hooks/useThrottle';
 
 const Settings: FC = () => {
   const insets = useSafeAreaInsets();
@@ -21,6 +22,7 @@ const Settings: FC = () => {
     currentUpdateInfo,
     check: checkUpdate,
   } = useUpdateDialog({showCheckTip: true});
+  const throttledCheckUpdate = useThrottle(checkUpdate, 5000);
   return (
     <View
       style={{
@@ -117,9 +119,7 @@ const Settings: FC = () => {
         </List.Section>
         <List.Section>
           <List.Item
-            onPress={() => {
-              checkUpdate();
-            }}
+            onPress={throttledCheckUpdate}
             title={
               <Text style={styles.listItemTitle} allowFontScaling={false}>
                 检查更新

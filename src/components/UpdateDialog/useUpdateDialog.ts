@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Linking, ToastAndroid} from 'react-native';
 import {checkUpdate} from '../../utils/request';
 import versionInfo from '../../config/version';
@@ -28,7 +28,6 @@ export function useUpdateDialog(
       url: '',
       content: [],
     });
-  const isChecking = useRef(false);
   const computedUpdateInfo = useMemo(
     () => ({
       version: `V${currentUpdateInfo.majorVersion}.${currentUpdateInfo.minorVersion}.${currentUpdateInfo.patchVersion}-${currentUpdateInfo.versionType}-${currentUpdateInfo.releaseDate}`,
@@ -60,13 +59,8 @@ export function useUpdateDialog(
     }
   }, [currentUpdateInfo.url, params]);
   const check = useCallback(() => {
-    if (params?.showCheckTip || isChecking.current) {
+    if (params?.showCheckTip) {
       ToastAndroid.show('正在检查更新，请稍候...', ToastAndroid.SHORT);
-    }
-    if (isChecking.current) {
-      return;
-    } else {
-      isChecking.current = true;
     }
     return new Promise<boolean>(resolve => {
       checkUpdate({
@@ -81,7 +75,7 @@ export function useUpdateDialog(
           } else {
             if (params.showCheckTip) {
               ToastAndroid.show(
-                '已经是最新版本，无需更新库啵',
+                '已经是最新版本，无需更新库啵~',
                 ToastAndroid.SHORT,
               );
             }
@@ -94,9 +88,6 @@ export function useUpdateDialog(
             ToastAndroid.LONG,
           );
           resolve(false);
-        })
-        .finally(() => {
-          isChecking.current = false;
         });
     });
   }, [params.showCheckTip]);
