@@ -79,6 +79,7 @@ const App: FC = () => {
     return (
       <Tab.Navigator
         shifting={true}
+        backBehavior="none"
         barStyle={{
           backgroundColor: isDarkMode
             ? darkTheme.colors.elevation.level2
