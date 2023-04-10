@@ -29,6 +29,7 @@ import {
   useStore,
 } from '../../store';
 import GatheringItemLite from '../../components/GatheringItemLite';
+import {mapUrl} from '../../config/url';
 
 const GATHERING_POINT_LIST_MAX_AMOUNT = 3;
 
@@ -298,7 +299,7 @@ const Detail: FC = () => {
         <View style={styles.ffCafeMapContainer}>
           <WebView
             source={{
-              uri: `https://map.elton11220.top/?mapId=${parsedGatheringPoints.poppingGatheringPoint.mapId}&x=${parsedGatheringPoints.poppingGatheringPoint.x}&y=${parsedGatheringPoints.poppingGatheringPoint.y}&zoom=-1`,
+              uri: `${mapUrl}/?mapId=${parsedGatheringPoints.poppingGatheringPoint.mapId}&x=${parsedGatheringPoints.poppingGatheringPoint.x}&y=${parsedGatheringPoints.poppingGatheringPoint.y}&zoom=-1`,
             }}
             scrollEnabled={false}
             startInLoadingState

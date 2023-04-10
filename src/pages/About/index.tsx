@@ -7,6 +7,7 @@ import WebView from 'react-native-webview';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpY} from '../../utils/dimensionConverter';
 import versionInfo from '../../config/version';
+import {resBaseUrl} from '../../config/url';
 
 const About = () => {
   const insets = useSafeAreaInsets();
@@ -64,7 +65,7 @@ const About = () => {
         <View style={{width: '100%'}}>
           <WebView
             source={{
-              uri: `https://res.elton11220.top/about.html?bgColor=${encodeURIComponent(
+              uri: `${resBaseUrl}/about.html?bgColor=${encodeURIComponent(
                 theme.colors.background,
               )}&dark=${theme.dark}`,
             }}

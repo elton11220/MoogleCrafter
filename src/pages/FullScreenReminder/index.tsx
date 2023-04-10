@@ -32,6 +32,7 @@ import GatheringItemDetail from '../../components/GatheringItemDetail';
 import GatheringItemTimerGroup from '../../components/GatheringItemTimerGroup';
 import WebView from 'react-native-webview';
 import {generalSettingsSelector, useStore} from '../../store';
+import {mapUrl} from '../../config/url';
 
 const FullScreenReminder: FC = () => {
   const insets = useSafeAreaInsets();
@@ -139,7 +140,7 @@ const FullScreenReminder: FC = () => {
           <View style={styles.ffCafeMapContainer}>
             <WebView
               source={{
-                uri: `https://map.elton11220.top/?mapId=${gatheringPointDetail.mapId}&x=${gatheringPointDetail.x}&y=${gatheringPointDetail.y}&zoom=-1`,
+                uri: `${mapUrl}/?mapId=${gatheringPointDetail.mapId}&x=${gatheringPointDetail.x}&y=${gatheringPointDetail.y}&zoom=-1`,
               }}
               scrollEnabled={false}
               startInLoadingState
