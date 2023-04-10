@@ -67,4 +67,5 @@ export const zustandPersistPartialize: (
   favoriteGatheringItemIds: state.favoriteGatheringItemIds,
   remindedGatheringItemIds: state.remindedGatheringItemIds,
   settings: state.settings,
+  readAnnouncementId: state.readAnnouncementId,
 });

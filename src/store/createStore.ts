@@ -124,6 +124,12 @@ export const useStore = create<
           removeSubscription(validItems);
         }
       },
+      updateReadAnnouncementId: id =>
+        set(state =>
+          produce(state, draft => {
+            draft.readAnnouncementId = id;
+          }),
+        ),
     }),
     {
       name: 'zustand-storage',

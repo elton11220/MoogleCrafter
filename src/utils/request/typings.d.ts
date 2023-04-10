@@ -30,4 +30,9 @@ declare namespace AxiosTypes {
     hasUpdate: boolean;
     update: UpdateInfo;
   }
+
+  interface GetAnnouncementResult {
+    id: string;
+    content: string[];
+  }
 }

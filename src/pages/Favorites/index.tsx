@@ -42,6 +42,7 @@ import {
 } from '../../native/SpecialRingtone';
 import UpdateDialog from '../../components/UpdateDialog';
 import {useUpdateDialog} from '../../components/UpdateDialog/useUpdateDialog';
+import AnnouncementDialog from '../../components/AnnouncementDialog';
 
 const Favorites: FC = () => {
   const insets = useSafeAreaInsets();
@@ -351,6 +352,7 @@ const Favorites: FC = () => {
         paddingBottom: insets.bottom,
         backgroundColor: theme.colors.background,
       }}>
+      <AnnouncementDialog />
       <UpdateDialog
         visible={updateDialogVisible}
         onDismiss={onUpdateDialogDismiss}

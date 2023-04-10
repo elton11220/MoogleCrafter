@@ -62,6 +62,7 @@ declare namespace ZustandStore {
     removeGatheringItemReminder: (
       items: Map<AppGlobal.GatheringItem['id'], AppGlobal.GatheringItem>,
     ) => void;
+    updateReadAnnouncementId: (id: string) => void;
   }
 
   interface State {
@@ -81,6 +82,7 @@ declare namespace ZustandStore {
       languageSettings: LanguageSettings;
       generalSettings: GeneralSettings;
     };
+    readAnnouncementId: string;
   }
 
   type PersistedState = Pick<
@@ -89,6 +91,7 @@ declare namespace ZustandStore {
     | 'favoriteGatheringItemIds'
     | 'remindedGatheringItemIds'
     | 'settings'
+    | 'readAnnouncementId'
   >;
 
   type Store = State & Action;

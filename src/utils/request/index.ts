@@ -1,8 +1,9 @@
 import axios from 'axios';
 import type {AxiosResponse} from 'axios';
+import {apiBaseUrl, resBaseUrl} from '../../config/url';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://api.elton11220.top/api',
+  baseURL: apiBaseUrl,
   timeout: 12000,
 });
 
@@ -33,4 +34,7 @@ const checkUpdate: (
   return axiosInstance.post('/update', data);
 };
 
-export {checkUpdate};
+const getAnnouncement: () => Promise<AxiosTypes.GetAnnouncementResult> = () =>
+  axiosInstance.get(`${resBaseUrl}/announcement.json`);
+
+export {checkUpdate, getAnnouncement};

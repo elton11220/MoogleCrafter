@@ -32,4 +32,5 @@ export const initialState: ZustandStore.State = {
       enableFFCafeMapInFullScreen: true,
     },
   },
+  readAnnouncementId: '',
 };
