@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: px2DpX(4),
+    paddingHorizontal: px2DpX(8),
     gap: px2DpX(10),
   },
 });

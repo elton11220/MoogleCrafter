@@ -7,7 +7,7 @@ import {
   ToastAndroid,
   View,
 } from 'react-native';
-import {Text, useTheme} from 'react-native-paper';
+import {Text, useTheme, Menu} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import GatheringList from '../../components/GatheringList';
@@ -61,12 +61,17 @@ const Favorites: FC = () => {
     () => [...favoriteGatheringItems.values()],
     [favoriteGatheringItems],
   );
-  const {removeFavoriteGatheringItem, removeGatheringItemReminder} = useStore(
-    s => ({
-      removeFavoriteGatheringItem: s.removeFavoriteGatheringItem,
-      removeGatheringItemReminder: s.removeGatheringItemReminder,
-    }),
-  );
+  const {
+    removeFavoriteGatheringItem,
+    removeGatheringItemReminder,
+    addFavoriteGatheringItem,
+    addGatheringItemReminder,
+  } = useStore(s => ({
+    removeFavoriteGatheringItem: s.removeFavoriteGatheringItem,
+    removeGatheringItemReminder: s.removeGatheringItemReminder,
+    addFavoriteGatheringItem: s.addFavoriteGatheringItem,
+    addGatheringItemReminder: s.addGatheringItemReminder,
+  }));
   const generalSettings = useStore(generalSettingsSelector);
   const [, filteredGatheringItems, effectiveFilterAmount] =
     useGatheringDataFilter(gatheringItems, filterValue, searchQuery);
@@ -145,6 +150,25 @@ const Favorites: FC = () => {
       }),
     );
   }, [removeFavoriteGatheringItem, selectedGatheringItems]);
+  const [isMultiSelectMenuOpen, setMultiSelectMenuOpen] = useState(false);
+  const onAddRemItemActionTriggered = useCallback(() => {
+    addGatheringItemReminder(selectedGatheringItems);
+    setMultiSelectMenuOpen(false);
+    setSelectedGatheringItems(state =>
+      produce(state, draft => {
+        draft.clear();
+      }),
+    );
+  }, [addGatheringItemReminder, selectedGatheringItems]);
+  const onAddFavItemActionTriggered = useCallback(() => {
+    addFavoriteGatheringItem(selectedGatheringItems);
+    setMultiSelectMenuOpen(false);
+    setSelectedGatheringItems(state =>
+      produce(state, draft => {
+        draft.clear();
+      }),
+    );
+  }, [addFavoriteGatheringItem, selectedGatheringItems]);
   const appHeader = useMemo(
     () => (
       <AnimatedBgColorAppBarHeader
@@ -182,17 +206,39 @@ const Favorites: FC = () => {
           hide={!hasSelectedItem}
           useIconFont
         />
-        <MaterialAppHeaderAction
-          icon="more-horiz"
-          onPress={() => {}}
-          hide={!hasSelectedItem}
-        />
+        <Menu
+          visible={isMultiSelectMenuOpen}
+          anchorPosition="bottom"
+          onDismiss={() => setMultiSelectMenuOpen(false)}
+          anchor={
+            <MaterialAppHeaderAction
+              icon="more-horiz"
+              onPress={() => setMultiSelectMenuOpen(true)}
+              hide={!hasSelectedItem}
+            />
+          }>
+          <Menu.Item
+            title="添加收藏"
+            titleStyle={styles.menuItemTitle}
+            style={styles.menuItemContainer}
+            onPress={onAddFavItemActionTriggered}
+          />
+          <Menu.Item
+            title="添加提醒"
+            titleStyle={styles.menuItemTitle}
+            style={styles.menuItemContainer}
+            onPress={onAddRemItemActionTriggered}
+          />
+        </Menu>
       </AnimatedBgColorAppBarHeader>
     ),
     [
       clearSelectedGatheringItems,
       generalSettings.enableEorzeaTimeDisplayer,
       hasSelectedItem,
+      isMultiSelectMenuOpen,
+      onAddFavItemActionTriggered,
+      onAddRemItemActionTriggered,
       onRemoveFavItemActionTriggered,
       onRemoveRemItemActionTriggered,
       selectedGatheringItems.size,
@@ -392,6 +438,12 @@ const styles = StyleSheet.create({
   },
   topItemScrollView: {
     width: '100%',
+  },
+  menuItemTitle: {
+    fontSize: px2DpY(16),
+  },
+  menuItemContainer: {
+    height: px2DpY(50),
   },
 });
 

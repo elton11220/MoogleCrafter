@@ -75,7 +75,8 @@ const MaterialAppHeaderAction: FC<
       <Pressable
         style={[styles.pressable, {width: size, height: size}]}
         android_ripple={{color: theme.colors.rippleBackgroundColor}}
-        onPress={onPress}>
+        onPress={onPress}
+        unstable_pressDelay={0}>
         {cachedIcon}
       </Pressable>
     </Animated.View>
