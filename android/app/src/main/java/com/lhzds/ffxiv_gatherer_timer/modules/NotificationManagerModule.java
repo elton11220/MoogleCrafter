@@ -1,7 +1,4 @@
-package com.ffxiv_gatherer_alarm.modules;
-
-import static com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_CHANNEL_ID;
-import static com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_SERVICE_CHANNEL_ID;
+package com.lhzds.ffxiv_gatherer_timer.modules;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -17,6 +14,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
+import com.lhzds.ffxiv_gatherer_timer.services.EorzeaEventNotificationService;
 
 @ReactModule(name = NotificationManagerModule.NAME)
 public class NotificationManagerModule extends ReactContextBaseJavaModule {
@@ -47,8 +45,8 @@ public class NotificationManagerModule extends ReactContextBaseJavaModule {
     public void getNotificationsEnabledStatus(Promise promise) {
         // Android SDK 26+ Only
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(reactApplicationContext);
-        NotificationChannel eventNotificationServiceChannel = notificationManager.getNotificationChannel(EORZEA_EVENT_NOTIFICATION_SERVICE_CHANNEL_ID);
-        NotificationChannel eventNotificationChannel = notificationManager.getNotificationChannel(EORZEA_EVENT_NOTIFICATION_CHANNEL_ID);
+        NotificationChannel eventNotificationServiceChannel = notificationManager.getNotificationChannel(EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_SERVICE_CHANNEL_ID);
+        NotificationChannel eventNotificationChannel = notificationManager.getNotificationChannel(EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_CHANNEL_ID);
 
         boolean areNotificationsEnabled = notificationManager.areNotificationsEnabled();
         boolean isENSChannelEnabled = eventNotificationServiceChannel != null && eventNotificationServiceChannel.getImportance() != NotificationManager.IMPORTANCE_NONE;

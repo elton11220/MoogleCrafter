@@ -1,4 +1,4 @@
-package com.ffxiv_gatherer_alarm.modules;
+package com.lhzds.ffxiv_gatherer_timer.modules;
 
 import androidx.annotation.NonNull;
 

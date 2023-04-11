@@ -93,9 +93,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.ffxiv_gatherer_alarm"
+    namespace "com.lhzds.ffxiv_gatherer_timer"
     defaultConfig {
-        applicationId "com.ffxiv_gatherer_alarm"
+        applicationId "com.lhzds.ffxiv_gatherer_timer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

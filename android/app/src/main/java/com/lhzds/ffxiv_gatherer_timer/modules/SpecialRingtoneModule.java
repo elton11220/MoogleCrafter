@@ -1,4 +1,4 @@
-package com.ffxiv_gatherer_alarm.modules;
+package com.lhzds.ffxiv_gatherer_timer.modules;
 
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -14,10 +14,10 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
-import com.ffxiv_gatherer_alarm.R;
-import com.ffxiv_gatherer_alarm.bean.ExVersion;
-import com.ffxiv_gatherer_alarm.bean.NotificationMode;
-import com.ffxiv_gatherer_alarm.bean.TTSStatus;
+import com.lhzds.ffxiv_gatherer_timer.R;
+import com.lhzds.ffxiv_gatherer_timer.bean.ExVersion;
+import com.lhzds.ffxiv_gatherer_timer.bean.NotificationMode;
+import com.lhzds.ffxiv_gatherer_timer.bean.TTSStatus;
 
 import java.util.Locale;
 

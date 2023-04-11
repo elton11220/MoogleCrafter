@@ -1,4 +1,4 @@
-package com.ffxiv_gatherer_alarm;
+package com.lhzds.ffxiv_gatherer_timer;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
@@ -8,7 +8,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
-import com.ffxiv_gatherer_alarm.modules.CustomNativePackage;
+import com.lhzds.ffxiv_gatherer_timer.modules.CustomNativePackage;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {

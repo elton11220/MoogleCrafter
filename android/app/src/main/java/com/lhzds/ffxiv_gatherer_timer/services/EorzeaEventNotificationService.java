@@ -1,4 +1,4 @@
-package com.ffxiv_gatherer_alarm.services;
+package com.lhzds.ffxiv_gatherer_timer.services;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -9,10 +9,10 @@ import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
 
-import com.ffxiv_gatherer_alarm.R;
-import com.ffxiv_gatherer_alarm.bean.EorzeaEventManager;
-import com.ffxiv_gatherer_alarm.bean.GatheringEvent;
-import com.ffxiv_gatherer_alarm.bean.GatheringItem;
+import com.lhzds.ffxiv_gatherer_timer.R;
+import com.lhzds.ffxiv_gatherer_timer.bean.EorzeaEventManager;
+import com.lhzds.ffxiv_gatherer_timer.bean.GatheringEvent;
+import com.lhzds.ffxiv_gatherer_timer.bean.GatheringItem;
 
 import java.util.List;
 

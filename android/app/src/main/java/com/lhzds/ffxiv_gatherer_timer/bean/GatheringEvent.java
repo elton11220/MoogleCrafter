@@ -1,4 +1,4 @@
-package com.ffxiv_gatherer_alarm.bean;
+package com.lhzds.ffxiv_gatherer_timer.bean;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

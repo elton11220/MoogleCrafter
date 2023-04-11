@@ -1,9 +1,9 @@
-package com.ffxiv_gatherer_alarm.bean;
+package com.lhzds.ffxiv_gatherer_timer.bean;
 
-import static com.ffxiv_gatherer_alarm.bean.GatheringPoint.gatheringTypes;
-import static com.ffxiv_gatherer_alarm.modules.EorzeaEventNotificationModule.GATHERING_EVENT_TRIGGERED_ACTION;
-import static com.ffxiv_gatherer_alarm.modules.EorzeaEventNotificationModule.NOTIFICATION_PRESS_ACTION;
-import static com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_CHANNEL_ID;
+import static com.lhzds.ffxiv_gatherer_timer.bean.GatheringPoint.gatheringTypes;
+import static com.lhzds.ffxiv_gatherer_timer.modules.EorzeaEventNotificationModule.GATHERING_EVENT_TRIGGERED_ACTION;
+import static com.lhzds.ffxiv_gatherer_timer.modules.EorzeaEventNotificationModule.NOTIFICATION_PRESS_ACTION;
+import static com.lhzds.ffxiv_gatherer_timer.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_CHANNEL_ID;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -15,8 +15,8 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.ffxiv_gatherer_alarm.MainActivity;
-import com.ffxiv_gatherer_alarm.R;
+import com.lhzds.ffxiv_gatherer_timer.MainActivity;
+import com.lhzds.ffxiv_gatherer_timer.R;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

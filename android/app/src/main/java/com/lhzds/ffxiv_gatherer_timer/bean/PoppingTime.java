@@ -1,4 +1,4 @@
-package com.ffxiv_gatherer_alarm.bean;
+package com.lhzds.ffxiv_gatherer_timer.bean;
 
 public class PoppingTime {
     private int startTime;

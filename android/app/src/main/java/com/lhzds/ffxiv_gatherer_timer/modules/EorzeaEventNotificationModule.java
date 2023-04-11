@@ -1,4 +1,4 @@
-package com.ffxiv_gatherer_alarm.modules;
+package com.lhzds.ffxiv_gatherer_timer.modules;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -21,13 +21,13 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.ffxiv_gatherer_alarm.MainActivity;
-import com.ffxiv_gatherer_alarm.bean.ExVersion;
-import com.ffxiv_gatherer_alarm.bean.GatheringEvent;
-import com.ffxiv_gatherer_alarm.bean.GatheringEventItem;
-import com.ffxiv_gatherer_alarm.bean.GatheringItem;
-import com.ffxiv_gatherer_alarm.bean.NotificationMode;
-import com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService;
+import com.lhzds.ffxiv_gatherer_timer.MainActivity;
+import com.lhzds.ffxiv_gatherer_timer.bean.ExVersion;
+import com.lhzds.ffxiv_gatherer_timer.bean.GatheringEvent;
+import com.lhzds.ffxiv_gatherer_timer.bean.GatheringEventItem;
+import com.lhzds.ffxiv_gatherer_timer.bean.GatheringItem;
+import com.lhzds.ffxiv_gatherer_timer.bean.NotificationMode;
+import com.lhzds.ffxiv_gatherer_timer.services.EorzeaEventNotificationService;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;

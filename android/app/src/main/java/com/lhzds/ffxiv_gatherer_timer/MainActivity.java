@@ -1,7 +1,7 @@
-package com.ffxiv_gatherer_alarm;
+package com.lhzds.ffxiv_gatherer_timer;
 
-import static com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_CHANNEL_ID;
-import static com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_SERVICE_CHANNEL_ID;
+import static com.lhzds.ffxiv_gatherer_timer.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_CHANNEL_ID;
+import static com.lhzds.ffxiv_gatherer_timer.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_SERVICE_CHANNEL_ID;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -18,7 +18,7 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
-import com.ffxiv_gatherer_alarm.services.EorzeaEventNotificationService;
+import com.lhzds.ffxiv_gatherer_timer.services.EorzeaEventNotificationService;
 
 import org.devio.rn.splashscreen.SplashScreen;
 
@@ -64,7 +64,7 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "ffxiv_gatherer_alarm";
+        return "ffxiv_gatherer_timer";
     }
 
     /**

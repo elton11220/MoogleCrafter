@@ -1,6 +1,6 @@
 {
-  "name": "ffxiv_gatherer_alarm",
-  "version": "0.0.1",
+  "name": "ffxiv_gatherer_timer",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
