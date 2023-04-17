@@ -21,7 +21,6 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.lhzds.ffxiv_gatherer_timer.MainActivity;
 import com.lhzds.ffxiv_gatherer_timer.bean.ExVersion;
 import com.lhzds.ffxiv_gatherer_timer.bean.GatheringEvent;
 import com.lhzds.ffxiv_gatherer_timer.bean.GatheringEventItem;
@@ -39,8 +38,8 @@ import java.util.Map;
 public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
     public static final String NAME = "EorzeaEventNotification";
 
-    public static String GATHERING_EVENT_TRIGGERED_ACTION = "com.elton11220.ffxiv_gatherer_timer.GATHERING_EVENT_TRIGGERED";
-    public static String NOTIFICATION_PRESS_ACTION = "com.elton11220.ffxiv_gatherer_timer.NOTIFICATION_PRESSED";
+    public static String GATHERING_EVENT_TRIGGERED_ACTION = "com.lhzds.ffxiv_gatherer_timer.GATHERING_EVENT_TRIGGERED";
+    public static String NOTIFICATION_PRESS_ACTION = "com.lhzds.ffxiv_gatherer_timer.NOTIFICATION_PRESSED";
 
     public final ReactApplicationContext reactApplicationContext;
 
@@ -129,9 +128,6 @@ public class EorzeaEventNotificationModule extends ReactContextBaseJavaModule im
         @Override
         public void onReceive(Context context, Intent intent) {
             int gatheringItemId = intent.getIntExtra("gatheringItemId", -1);
-            Intent resumeActivityIntent = new Intent(context, MainActivity.class);
-            resumeActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(resumeActivityIntent);
             if (gatheringItemId > -1) {
                 WritableMap params = Arguments.createMap();
                 params.putInt("gatheringItemId", gatheringItemId);

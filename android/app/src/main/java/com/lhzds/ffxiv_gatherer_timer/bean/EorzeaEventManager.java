@@ -2,7 +2,6 @@ package com.lhzds.ffxiv_gatherer_timer.bean;
 
 import static com.lhzds.ffxiv_gatherer_timer.bean.GatheringPoint.gatheringTypes;
 import static com.lhzds.ffxiv_gatherer_timer.modules.EorzeaEventNotificationModule.GATHERING_EVENT_TRIGGERED_ACTION;
-import static com.lhzds.ffxiv_gatherer_timer.modules.EorzeaEventNotificationModule.NOTIFICATION_PRESS_ACTION;
 import static com.lhzds.ffxiv_gatherer_timer.services.EorzeaEventNotificationService.EORZEA_EVENT_NOTIFICATION_CHANNEL_ID;
 
 import android.app.AlarmManager;
@@ -17,6 +16,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.lhzds.ffxiv_gatherer_timer.MainActivity;
 import com.lhzds.ffxiv_gatherer_timer.R;
+import com.lhzds.ffxiv_gatherer_timer.TrampolineActivity;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -239,9 +239,9 @@ public class EorzeaEventManager {
                                 .append(", Y: ")
                                 .append(gatheringEventItem.getY());
 
-                        Intent intent = new Intent(NOTIFICATION_PRESS_ACTION);
+                        Intent intent = new Intent(context, TrampolineActivity.class);
                         intent.putExtra("gatheringItemId", gatheringEventItem.getId());
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, gatheringEventItem.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(context, gatheringEventItem.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
                         Notification notification = new NotificationCompat.Builder(context, EORZEA_EVENT_NOTIFICATION_CHANNEL_ID)
                                 .setContentTitle(titleStringBuilder.toString())
