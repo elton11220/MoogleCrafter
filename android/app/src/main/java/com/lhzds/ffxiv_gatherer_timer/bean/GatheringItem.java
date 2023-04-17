@@ -1,8 +1,9 @@
 package com.lhzds.ffxiv_gatherer_timer.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class GatheringItem {
+public class GatheringItem implements Serializable {
     private Integer id;
     private String name;
     private int gatheringItemLevel;

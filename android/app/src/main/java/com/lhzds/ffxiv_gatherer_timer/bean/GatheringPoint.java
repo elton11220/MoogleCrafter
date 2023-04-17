@@ -1,9 +1,10 @@
 package com.lhzds.ffxiv_gatherer_timer.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GatheringPoint {
+public class GatheringPoint implements Serializable {
     public static List<String> gatheringTypes = new ArrayList<>();
     static {
         gatheringTypes.add("采掘");

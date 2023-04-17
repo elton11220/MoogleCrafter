@@ -1,6 +1,8 @@
 package com.lhzds.ffxiv_gatherer_timer.bean;
 
-public class PoppingTime {
+import java.io.Serializable;
+
+public class PoppingTime implements Serializable {
     private int startTime;
     private int duration;
 
