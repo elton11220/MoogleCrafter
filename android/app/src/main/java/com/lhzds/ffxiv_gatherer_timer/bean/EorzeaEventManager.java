@@ -197,7 +197,8 @@ public class EorzeaEventManager {
         clearAlarm();
         Intent intent = new Intent(GATHERING_EVENT_TRIGGERED_ACTION);
         currentPendingIntent = PendingIntent.getBroadcast(context, -2, intent, PendingIntent.FLAG_IMMUTABLE);
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, startTimeLt.getTimeInMillis(), currentPendingIntent);
+        AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(startTimeLt.getTimeInMillis(), currentPendingIntent);
+        alarmManager.setAlarmClock(alarmClockInfo, currentPendingIntent);
         Log.i("GatheringEvent", "next alarm is generated at: " + startTimeLt.getTime());
     }
 
