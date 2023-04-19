@@ -1,9 +1,12 @@
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
-import {useMemo} from 'react';
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
+import {useEffect, useMemo} from 'react';
 import type {FC} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {StatusBar} from 'react-native';
+import {DeviceEventEmitter, StatusBar} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Provider as PaperProvider} from 'react-native-paper';
@@ -31,6 +34,8 @@ import {DarkGreenTheme, LightGreenTheme} from './config/themes/greenTheme';
 import {DarkYellowTheme, LightYellowTheme} from './config/themes/yellowTheme';
 import {DarkCyanTheme, LightCyanTheme} from './config/themes/cyanTheme';
 import CheckPermission from './pages/CheckPermission';
+import type {RootStackParamList} from './navigation/types';
+import {gatheringItemsMap} from './store/persistStore';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -76,6 +81,22 @@ const App: FC = () => {
       }),
     [darkTheme, lightTheme],
   );
+  const navigationContainerRef =
+    useNavigationContainerRef<RootStackParamList>();
+  useEffect(() => {
+    const backFromNotificationListener = DeviceEventEmitter.addListener(
+      'backFromNotification',
+      ({gatheringItemId}) => {
+        const gatheringItem = gatheringItemsMap.get(gatheringItemId);
+        if (gatheringItem && navigationContainerRef.isReady()) {
+          navigationContainerRef.navigate('Detail', {
+            gatheringItem,
+          });
+        }
+      },
+    );
+    return () => backFromNotificationListener.remove();
+  }, [navigationContainerRef]);
   const HomeTabs = () => {
     return (
       <Tab.Navigator
@@ -132,6 +153,7 @@ const App: FC = () => {
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         />
         <NavigationContainer
+          ref={navigationContainerRef}
           theme={
             isDarkMode ? adaptedNavTheme.darkTheme : adaptedNavTheme.lightTheme
           }>
