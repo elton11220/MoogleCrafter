@@ -30,6 +30,7 @@ import {DarkPinkTheme, LightPinkTheme} from './config/themes/pinkTheme';
 import {DarkGreenTheme, LightGreenTheme} from './config/themes/greenTheme';
 import {DarkYellowTheme, LightYellowTheme} from './config/themes/yellowTheme';
 import {DarkCyanTheme, LightCyanTheme} from './config/themes/cyanTheme';
+import CheckPermission from './pages/CheckPermission';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -206,6 +207,16 @@ const App: FC = () => {
                 orientation: 'portrait',
                 animation: 'fade',
                 presentation: 'transparentModal',
+              }}
+            />
+            <Stack.Screen
+              name="CheckPermission"
+              component={CheckPermission}
+              options={{
+                headerShown: false,
+                orientation: 'portrait',
+                animation: 'none',
+                presentation: 'card',
               }}
             />
           </Stack.Navigator>

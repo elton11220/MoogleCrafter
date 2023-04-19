@@ -18,6 +18,9 @@ export type RootStackParamList = {
   FullScreenReminder: {
     gatheringItem: AppGlobal.GatheringItem;
   };
+  CheckPermission: {
+    preventBack: boolean;
+  };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

@@ -179,11 +179,15 @@ const NotificationSettings = () => {
     () => (
       <>
         <List.Item
-          title={
-            <Text style={styles.listItemTitleStyle} allowFontScaling={false}>
-              全屏提醒
-            </Text>
-          }
+          title="全屏提醒"
+          titleStyle={styles.listItemTitleStyle}
+          description="这个功能需要完善，请等待更新"
+          descriptionStyle={[
+            styles.listItemDescStyle,
+            {
+              color: theme.colors.secondaryContentText,
+            },
+          ]}
           right={() => (
             <Switch
               value={enableFullScreen}
@@ -224,9 +228,30 @@ const NotificationSettings = () => {
     [
       enableFullScreen,
       isSystemNotificationEnabled,
+      theme.colors.secondaryContentText,
       theme.colors.tertiaryContentText,
       updateNotificationSettings,
     ],
+  );
+  const notificationIssueHelperEl = useMemo(
+    () => (
+      <List.Section>
+        <List.Subheader
+          style={[styles.listSectionTitleStyle, {color: theme.colors.primary}]}>
+          提醒无法正常工作？
+        </List.Subheader>
+        <List.Item
+          title="检查应用权限"
+          titleStyle={styles.listItemTitleStyle}
+          onPress={() => {
+            navigation.navigate('CheckPermission', {
+              preventBack: false,
+            });
+          }}
+        />
+      </List.Section>
+    ),
+    [navigation, theme.colors.primary],
   );
   const specialRingtoneTypeEl = useMemo(
     () => (
@@ -349,6 +374,7 @@ const NotificationSettings = () => {
           {specialRingtoneListItemEl}
           {notificationTypeEl}
         </List.Section>
+        {notificationIssueHelperEl}
         <List.Section>
           <List.Subheader
             style={[
