@@ -63,6 +63,7 @@ declare namespace ZustandStore {
       items: Map<AppGlobal.GatheringItem['id'], AppGlobal.GatheringItem>,
     ) => void;
     updateReadAnnouncementId: (id: string) => void;
+    updateShowCheckPermissionWhenLaunch: (value: boolean) => void;
   }
 
   interface State {
@@ -83,6 +84,7 @@ declare namespace ZustandStore {
       generalSettings: GeneralSettings;
     };
     readAnnouncementId: string;
+    showCheckPermissionWhenLaunch: boolean;
   }
 
   type PersistedState = Pick<
@@ -92,6 +94,7 @@ declare namespace ZustandStore {
     | 'remindedGatheringItemIds'
     | 'settings'
     | 'readAnnouncementId'
+    | 'showCheckPermissionWhenLaunch'
   >;
 
   type Store = State & Action;

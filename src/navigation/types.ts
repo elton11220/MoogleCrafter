@@ -20,6 +20,7 @@ export type RootStackParamList = {
   };
   CheckPermission: {
     preventBack: boolean;
+    showDismissButton: boolean;
   };
 };
 

@@ -130,6 +130,12 @@ export const useStore = create<
             draft.readAnnouncementId = id;
           }),
         ),
+      updateShowCheckPermissionWhenLaunch: value =>
+        set(state =>
+          produce(state, draft => {
+            draft.showCheckPermissionWhenLaunch = value;
+          }),
+        ),
     }),
     {
       name: 'zustand-storage',

@@ -246,6 +246,7 @@ const NotificationSettings = () => {
           onPress={() => {
             navigation.navigate('CheckPermission', {
               preventBack: false,
+              showDismissButton: false,
             });
           }}
         />

@@ -74,6 +74,9 @@ const Favorites: FC = () => {
     addGatheringItemReminder: s.addGatheringItemReminder,
   }));
   const generalSettings = useStore(generalSettingsSelector);
+  const showCheckPermissionWhenLaunch = useStore(
+    s => s.showCheckPermissionWhenLaunch,
+  );
   const [, filteredGatheringItems, effectiveFilterAmount] =
     useGatheringDataFilter(gatheringItems, filterValue, searchQuery);
   const [selectedGatheringItems, setSelectedGatheringItems] = useState<
@@ -322,6 +325,12 @@ const Favorites: FC = () => {
   }, [navigation, notificationSettings.enableFullScreen]);
   useEffect(() => {
     addSubscription(gatheringItems);
+    if (showCheckPermissionWhenLaunch) {
+      navigation.navigate('CheckPermission', {
+        preventBack: true,
+        showDismissButton: true,
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const {

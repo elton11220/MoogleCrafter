@@ -7,7 +7,7 @@ import {
   ToastAndroid,
   View,
 } from 'react-native';
-import {Appbar, List, Text, useTheme} from 'react-native-paper';
+import {Appbar, Button, List, Text, useTheme} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
@@ -22,14 +22,18 @@ import {
 } from '../../native/SystemSettings';
 import {openNotificationSettings} from '../../native/NotificationManager';
 import {RootStackScreenProps} from '../../navigation/types';
+import {useStore} from '../../store';
 
 const CheckPermission: FC = () => {
   const insets = useSafeAreaInsets();
   const theme = useTheme<typeof DefaultLightTheme>();
   const navigation = useNavigation();
   const {
-    params: {preventBack},
+    params: {preventBack, showDismissButton},
   } = useRoute<RootStackScreenProps<'CheckPermission'>['route']>();
+  const updateShowCheckPermissionWhenLaunch = useStore(
+    s => s.updateShowCheckPermissionWhenLaunch,
+  );
   const pageHeader = useMemo(
     () => (
       <>
@@ -255,6 +259,17 @@ const CheckPermission: FC = () => {
           )}
         />
       </ScrollView>
+      {showDismissButton ? (
+        <View style={styles.footerContainer}>
+          <Button
+            onPress={() => {
+              updateShowCheckPermissionWhenLaunch(false);
+              navigation.goBack();
+            }}>
+            不再提示
+          </Button>
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -296,6 +311,11 @@ const styles = StyleSheet.create({
   },
   itemRightPatch: {
     marginRight: -8,
+  },
+  footerContainer: {
+    height: px2DpY(70),
+    justifyContent: 'center',
+    paddingHorizontal: px2DpX(120),
   },
 });
 

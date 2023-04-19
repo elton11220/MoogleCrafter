@@ -68,4 +68,5 @@ export const zustandPersistPartialize: (
   remindedGatheringItemIds: state.remindedGatheringItemIds,
   settings: state.settings,
   readAnnouncementId: state.readAnnouncementId,
+  showCheckPermissionWhenLaunch: state.showCheckPermissionWhenLaunch,
 });
