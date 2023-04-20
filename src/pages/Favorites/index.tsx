@@ -58,6 +58,7 @@ const Favorites: FC = () => {
     mapId: null,
   });
   const favoriteGatheringItems = useStore(s => s.favoriteGatheringItems);
+  const remindedGatheringItemIds = useStore(s => s.remindedGatheringItemIds);
   const gatheringItems = useMemo(
     () => [...favoriteGatheringItems.values()],
     [favoriteGatheringItems],
@@ -324,7 +325,13 @@ const Favorites: FC = () => {
     return () => gatheringEventListener.remove();
   }, [navigation, notificationSettings.enableFullScreen]);
   useEffect(() => {
-    addSubscription(gatheringItems);
+    const remindedGatheringItems: AppGlobal.GatheringItem[] = [];
+    for (const entry of favoriteGatheringItems.entries()) {
+      if (remindedGatheringItemIds.has(entry[0])) {
+        remindedGatheringItems.push(entry[1]);
+      }
+    }
+    addSubscription(remindedGatheringItems);
     if (showCheckPermissionWhenLaunch) {
       navigation.navigate('CheckPermission', {
         preventBack: true,
