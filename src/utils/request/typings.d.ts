@@ -19,6 +19,7 @@ declare namespace AxiosTypes {
     patchVersion: number;
     versionType: VersionType;
     versionSymbol: number;
+    minVersionSymbol: number;
     releaseDate: string;
     resVersion: string;
     isForce: boolean;

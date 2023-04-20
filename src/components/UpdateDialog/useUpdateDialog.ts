@@ -22,6 +22,7 @@ export function useUpdateDialog(
       patchVersion: 0,
       versionType: 'stable',
       versionSymbol: 0,
+      minVersionSymbol: 0,
       releaseDate: '',
       resVersion: '',
       isForce: false,
@@ -31,13 +32,16 @@ export function useUpdateDialog(
   const computedUpdateInfo = useMemo(
     () => ({
       version: `V${currentUpdateInfo.majorVersion}.${currentUpdateInfo.minorVersion}.${currentUpdateInfo.patchVersion}-${currentUpdateInfo.versionType}-${currentUpdateInfo.releaseDate}`,
-      isForce: currentUpdateInfo.isForce,
+      isForce:
+        currentUpdateInfo.isForce ||
+        versionInfo.versionSymbol < currentUpdateInfo.minVersionSymbol,
       content: currentUpdateInfo.content,
     }),
     [
       currentUpdateInfo.content,
       currentUpdateInfo.isForce,
       currentUpdateInfo.majorVersion,
+      currentUpdateInfo.minVersionSymbol,
       currentUpdateInfo.minorVersion,
       currentUpdateInfo.patchVersion,
       currentUpdateInfo.releaseDate,
