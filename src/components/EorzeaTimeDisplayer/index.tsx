@@ -16,7 +16,7 @@ const EorzeaTimeDisplayer: FC<EorzeaTimeDisplayer.Props> = () => {
         <Text
           allowFontScaling={false}
           style={[styles.text, {color: theme.colors.tertiaryContentText}]}>
-          ET {moment(eorzeaTime.currentEt).format('HH:mm:ss')}
+          ET {moment(eorzeaTime.currentEt).utc().format('HH:mm:ss')}
         </Text>
       </View>
     </View>
