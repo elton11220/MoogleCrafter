@@ -15,7 +15,9 @@ function computeLocalDate(date: Date): Date {
   return localTime;
 }
 
-function parseStartTime(startTime: number) {
+function parseStartTime(
+  startTime: number,
+): EorzeaTimeUtils.ParsedTimePair | null {
   if (startTime === 65535) {
     return null;
   }
@@ -34,6 +36,28 @@ function parseStartTime(startTime: number) {
   return {
     hour,
     minute,
+  };
+}
+
+function addTimePair(
+  a: EorzeaTimeUtils.ParsedTimePair,
+  b: EorzeaTimeUtils.ParsedTimePair,
+): EorzeaTimeUtils.ParsedTimePair & {nextDay: boolean} {
+  let hour = a.hour + b.hour;
+  let minute = a.minute + b.minute;
+  let nextDay = false;
+  if (minute >= 60) {
+    hour += 1;
+    minute %= 60;
+  }
+  if (hour >= 24) {
+    hour %= 24;
+    nextDay = true;
+  }
+  return {
+    hour,
+    minute,
+    nextDay,
   };
 }
 
@@ -70,17 +94,21 @@ function parseGatheringRarePopEvents(
         startTimeEt.setUTCHours(parsedStartTime.hour);
         startTimeEt.setUTCMinutes(parsedStartTime.minute);
         startTimeEt.setUTCSeconds(0);
+        const endTimeEtTimePair = addTimePair(parsedStartTime, parsedDuration);
         if (
-          currentEt.getUTCHours() >
-          parsedStartTime.hour + parsedDuration.hour
+          !endTimeEtTimePair.nextDay &&
+          (currentEt.getUTCHours() > endTimeEtTimePair.hour ||
+            (currentEt.getUTCHours() === endTimeEtTimePair.hour &&
+              currentEt.getUTCMinutes() > endTimeEtTimePair.minute))
         ) {
           startTimeEt.setUTCDate(startTimeEt.getUTCDate() + 1);
         }
         const endTimeEt = new Date(startTimeEt.valueOf());
-        endTimeEt.setUTCHours(endTimeEt.getUTCHours() + parsedDuration.hour);
-        endTimeEt.setUTCMinutes(
-          endTimeEt.getUTCMinutes() + parsedDuration.minute,
-        );
+        if (endTimeEtTimePair.nextDay) {
+          endTimeEt.setUTCDate(endTimeEt.getUTCDate() + 1);
+        }
+        endTimeEt.setUTCHours(endTimeEtTimePair.hour);
+        endTimeEt.setUTCMinutes(endTimeEtTimePair.minute);
         return {
           gatheringPointIndex: time.gatheringPointIndex,
           gatheringPointBaseId: time.gatheringPointBaseId,
@@ -230,19 +258,24 @@ function parseGatheringPoints(
               startTimeEt.setUTCHours(parsedStartTime.hour);
               startTimeEt.setUTCMinutes(parsedStartTime.minute);
               startTimeEt.setUTCSeconds(0);
+              const endTimeEtTimePair = addTimePair(
+                parsedStartTime,
+                parsedDuration,
+              );
               if (
-                currentEt.getUTCHours() >
-                parsedStartTime.hour + parsedDuration.hour
+                !endTimeEtTimePair.nextDay &&
+                (currentEt.getUTCHours() > endTimeEtTimePair.hour ||
+                  (currentEt.getUTCHours() === endTimeEtTimePair.hour &&
+                    currentEt.getUTCMinutes() > endTimeEtTimePair.minute))
               ) {
                 startTimeEt.setUTCDate(startTimeEt.getUTCDate() + 1);
               }
               const endTimeEt = new Date(startTimeEt.valueOf());
-              endTimeEt.setUTCHours(
-                endTimeEt.getUTCHours() + parsedDuration.hour,
-              );
-              endTimeEt.setUTCMinutes(
-                endTimeEt.getUTCMinutes() + parsedDuration.minute,
-              );
+              if (endTimeEtTimePair.nextDay) {
+                endTimeEt.setUTCDate(endTimeEt.getUTCDate() + 1);
+              }
+              endTimeEt.setUTCHours(endTimeEtTimePair.hour);
+              endTimeEt.setUTCMinutes(endTimeEtTimePair.minute);
               return {
                 gatheringPointIndex: pointIdx,
                 gatheringPointBaseId: point.gatheringPointBaseId,

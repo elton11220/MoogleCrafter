@@ -79,6 +79,21 @@ public class EorzeaEventManager {
         return new TimePair(hour, minute);
     }
 
+    public static TimePair addTimePair(TimePair a, TimePair b) {
+        int hour = a.getHour() + b.getHour();
+        int minute = a.getMinute() + b.getMinute();
+        boolean isNextDay = false;
+        if (minute >= 60) {
+            hour += 1;
+            minute %= 60;
+        }
+        if (hour >= 24) {
+            hour %= 24;
+            isNextDay = true;
+        }
+        return new TimePair(hour, minute, isNextDay);
+    }
+
     public static GatheringEventTimeInfo initGatheringEventTimeInfo(PoppingTime poppingTime) {
         return initGatheringEventTimeInfo(poppingTime, false);
     }
@@ -93,17 +108,23 @@ public class EorzeaEventManager {
         startTimeEt.set(Calendar.HOUR_OF_DAY, startTime.getHour());
         startTimeEt.set(Calendar.MINUTE, startTime.getMinute());
         startTimeEt.set(Calendar.SECOND, 0);
-        if (currentEt.get(Calendar.HOUR_OF_DAY) > (startTime.getHour() + duration.getHour()) % 24) {
+        if (getNextTick) {
             startTimeEt.add(Calendar.DAY_OF_MONTH, 1);
         }
-        if (getNextTick) {
+        TimePair endTimeEtTimePair = addTimePair(startTime, duration);
+        if (!endTimeEtTimePair.isNextDay() &&
+                (currentEt.get(Calendar.HOUR_OF_DAY) > endTimeEtTimePair.getHour() ||
+                        (currentEt.get(Calendar.HOUR_OF_DAY) == endTimeEtTimePair.getHour() && currentEt.get(Calendar.MINUTE) > endTimeEtTimePair.getMinute()))) {
             startTimeEt.add(Calendar.DAY_OF_MONTH, 1);
         }
         Calendar endTimeEt = Calendar.getInstance();
         endTimeEt.setTimeZone(TimeZone.getTimeZone("UTC"));
         endTimeEt.setTimeInMillis(startTimeEt.getTimeInMillis());
-        endTimeEt.set(Calendar.HOUR_OF_DAY, endTimeEt.get(Calendar.HOUR_OF_DAY) + duration.getHour());
-        endTimeEt.set(Calendar.MINUTE, endTimeEt.get(Calendar.MINUTE) + duration.getMinute());
+        if (endTimeEtTimePair.isNextDay()) {
+            endTimeEt.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        endTimeEt.set(Calendar.HOUR_OF_DAY, endTimeEtTimePair.getHour());
+        endTimeEt.set(Calendar.MINUTE, endTimeEtTimePair.getMinute());
         return new GatheringEventTimeInfo(startTimeEt, computeLocalDate(startTimeEt), endTimeEt, computeLocalDate(endTimeEt), startTime, duration, poppingTime, currentEt.getTimeInMillis() <= endTimeEt.getTimeInMillis() && currentEt.getTimeInMillis() >= startTimeEt.getTimeInMillis() ? GatheringRarePopEventState.OCCURRING : GatheringRarePopEventState.PREPARING);
     }
 
