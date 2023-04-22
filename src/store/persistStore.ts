@@ -69,4 +69,6 @@ export const zustandPersistPartialize: (
   settings: state.settings,
   readAnnouncementId: state.readAnnouncementId,
   showCheckPermissionWhenLaunch: state.showCheckPermissionWhenLaunch,
+  acceptUserAgreement: state.acceptUserAgreement,
+  acceptPrivacyPolicy: state.acceptPrivacyPolicy,
 });

@@ -64,6 +64,8 @@ declare namespace ZustandStore {
     ) => void;
     updateReadAnnouncementId: (id: string) => void;
     updateShowCheckPermissionWhenLaunch: (value: boolean) => void;
+    updateAcceptUserAgreement: (value: boolean) => void;
+    updateAcceptPrivacyPolicy: (value: boolean) => void;
   }
 
   interface State {
@@ -85,6 +87,8 @@ declare namespace ZustandStore {
     };
     readAnnouncementId: string;
     showCheckPermissionWhenLaunch: boolean;
+    acceptUserAgreement: boolean;
+    acceptPrivacyPolicy: boolean;
   }
 
   type PersistedState = Pick<
@@ -95,6 +99,8 @@ declare namespace ZustandStore {
     | 'settings'
     | 'readAnnouncementId'
     | 'showCheckPermissionWhenLaunch'
+    | 'acceptUserAgreement'
+    | 'acceptPrivacyPolicy'
   >;
 
   type Store = State & Action;

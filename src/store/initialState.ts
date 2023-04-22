@@ -34,4 +34,6 @@ export const initialState: ZustandStore.State = {
   },
   readAnnouncementId: '',
   showCheckPermissionWhenLaunch: true,
+  acceptUserAgreement: false,
+  acceptPrivacyPolicy: false,
 };

@@ -43,6 +43,10 @@ import {
 import UpdateDialog from '../../components/UpdateDialog';
 import {useUpdateDialog} from '../../components/UpdateDialog/useUpdateDialog';
 import AnnouncementDialog from '../../components/AnnouncementDialog';
+import ConfirmDialog, {
+  ConfirmDialogInstance,
+} from '../../components/ConfirmDialog';
+import {privacyPolicy, userAgreement} from '../../config/strings';
 
 const Favorites: FC = () => {
   const insets = useSafeAreaInsets();
@@ -332,7 +336,11 @@ const Favorites: FC = () => {
       }
     }
     addSubscription(remindedGatheringItems);
-    if (showCheckPermissionWhenLaunch) {
+    if (
+      acceptPrivacyPolicy &&
+      acceptUserAgreement &&
+      showCheckPermissionWhenLaunch
+    ) {
       navigation.navigate('CheckPermission', {
         preventBack: true,
         showDismissButton: true,
@@ -346,6 +354,70 @@ const Favorites: FC = () => {
     onConfirm: onUpdateDialogConfirm,
     currentUpdateInfo,
   } = useUpdateDialog({checkWhenMount: true});
+  const {
+    acceptUserAgreement,
+    acceptPrivacyPolicy,
+    updateAcceptUserAgreement,
+    updateAcceptPrivacyPolicy,
+  } = useStore(s => ({
+    acceptUserAgreement: s.acceptUserAgreement,
+    acceptPrivacyPolicy: s.acceptPrivacyPolicy,
+    updateAcceptUserAgreement: s.updateAcceptUserAgreement,
+    updateAcceptPrivacyPolicy: s.updateAcceptPrivacyPolicy,
+  }));
+  const privacyPolicyDialogInstance = useRef<ConfirmDialogInstance | null>(
+    null,
+  );
+  const userAgreementDialogInstance = useRef<ConfirmDialogInstance | null>(
+    null,
+  );
+  const onPrivacyPolicyDialogConfirm = useCallback(() => {
+    updateAcceptPrivacyPolicy(true);
+    if (privacyPolicyDialogInstance.current !== null) {
+      privacyPolicyDialogInstance.current.hide();
+    }
+  }, [updateAcceptPrivacyPolicy]);
+  const onPrivacyPolicyDialogCancel = useCallback(() => {
+    if (privacyPolicyDialogInstance.current !== null) {
+      privacyPolicyDialogInstance.current.hide();
+    }
+  }, []);
+  const onPrivacyPolicyDialogClosed = useCallback(() => {
+    if (!acceptUserAgreement && userAgreementDialogInstance.current !== null) {
+      userAgreementDialogInstance.current.show();
+    }
+  }, [acceptUserAgreement]);
+  const onUserAgreementDialogConfirm = useCallback(() => {
+    updateAcceptUserAgreement(true);
+    if (userAgreementDialogInstance.current !== null) {
+      userAgreementDialogInstance.current.hide();
+    }
+  }, [updateAcceptUserAgreement]);
+  const onUserAgreementDialogCancel = useCallback(() => {
+    if (userAgreementDialogInstance.current !== null) {
+      userAgreementDialogInstance.current.hide();
+    }
+  }, []);
+  const onUserAgreementDialogClosed = useCallback(() => {
+    if (showCheckPermissionWhenLaunch) {
+      navigation.navigate('CheckPermission', {
+        preventBack: true,
+        showDismissButton: true,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (!acceptPrivacyPolicy && privacyPolicyDialogInstance.current !== null) {
+      privacyPolicyDialogInstance.current.show();
+    } else if (
+      !acceptUserAgreement &&
+      userAgreementDialogInstance.current !== null
+    ) {
+      userAgreementDialogInstance.current.show();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <View
       style={{
@@ -353,7 +425,29 @@ const Favorites: FC = () => {
         paddingBottom: insets.bottom,
         backgroundColor: theme.colors.background,
       }}>
-      <AnnouncementDialog />
+      <ConfirmDialog
+        ref={privacyPolicyDialogInstance}
+        title="隐私政策"
+        content={privacyPolicy}
+        confirmText="同意"
+        cancelText="不同意"
+        onConfirm={onPrivacyPolicyDialogConfirm}
+        onCancel={onPrivacyPolicyDialogCancel}
+        onClosed={onPrivacyPolicyDialogClosed}
+      />
+      <ConfirmDialog
+        ref={userAgreementDialogInstance}
+        title="用户协议"
+        content={userAgreement}
+        confirmText="同意"
+        cancelText="不同意"
+        onConfirm={onUserAgreementDialogConfirm}
+        onCancel={onUserAgreementDialogCancel}
+        onClosed={onUserAgreementDialogClosed}
+      />
+      <AnnouncementDialog
+        canRequest={acceptPrivacyPolicy && acceptUserAgreement}
+      />
       <UpdateDialog
         visible={updateDialogVisible}
         onDismiss={onUpdateDialogDismiss}

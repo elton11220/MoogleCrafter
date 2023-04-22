@@ -7,7 +7,8 @@ import {px2DpY} from '../../utils/dimensionConverter';
 import {getAnnouncement} from '../../utils/request';
 import {DefaultLightTheme} from '../../config/themes/defaultTheme';
 
-const AnnouncementDialog: FC<AnnouncementDialog.Props> = () => {
+const AnnouncementDialog: FC<AnnouncementDialog.Props> = props => {
+  const {canRequest} = props;
   const {readAnnouncementId, updateReadAnnouncementId} = useStore(s => ({
     readAnnouncementId: s.readAnnouncementId,
     updateReadAnnouncementId: s.updateReadAnnouncementId,
@@ -20,16 +21,18 @@ const AnnouncementDialog: FC<AnnouncementDialog.Props> = () => {
   const [visible, setVisible] = useState(false);
   const theme = useTheme<typeof DefaultLightTheme>();
   useEffect(() => {
-    getAnnouncement()
-      .then(data => {
-        if (data.id !== readAnnouncementId) {
-          setAnnouncement(data);
-          setVisible(true);
-        }
-      })
-      .catch(() => {});
+    if (canRequest) {
+      getAnnouncement()
+        .then(data => {
+          if (data.id !== readAnnouncementId) {
+            setAnnouncement(data);
+            setVisible(true);
+          }
+        })
+        .catch(() => {});
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [canRequest]);
   const closeModal = useCallback(() => setVisible(false), []);
   const onDisableCurrent = useCallback(() => {
     setVisible(false);

@@ -136,6 +136,18 @@ export const useStore = create<
             draft.showCheckPermissionWhenLaunch = value;
           }),
         ),
+      updateAcceptPrivacyPolicy: value =>
+        set(state =>
+          produce(state, draft => {
+            draft.acceptPrivacyPolicy = value;
+          }),
+        ),
+      updateAcceptUserAgreement: value =>
+        set(state =>
+          produce(state, draft => {
+            draft.acceptUserAgreement = value;
+          }),
+        ),
     }),
     {
       name: 'zustand-storage',

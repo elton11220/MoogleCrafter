@@ -1,3 +1,5 @@
 declare namespace AnnouncementDialog {
-  interface Props {}
+  interface Props {
+    canRequest: boolean;
+  }
 }
