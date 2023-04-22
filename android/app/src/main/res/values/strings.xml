@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">FFXIV 采集时钟</string>
+    <string name="app_name">莫古锤子</string>
     <string name="author_name">绿胡子大叔</string>
-    <string name="app_version">App 0.1.0-stable-230407</string>
+    <string name="app_version">App 0.1.1-stable-230423</string>
     <string name="res_version">Res 2023.02.16.0000.0000-6.25-chs</string>
     <string name="title_activity_trampoline">TrampolineActivity</string>
 </resources>

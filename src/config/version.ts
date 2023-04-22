@@ -1,4 +1,5 @@
 type VersionInfo = {
+  appName: string;
   versionSymbol: number;
   compositedVersionSymbol: string;
   versionType: AxiosTypes.VersionType;
@@ -6,8 +7,9 @@ type VersionInfo = {
 };
 
 const versionInfo: VersionInfo = {
-  versionSymbol: 0,
-  compositedVersionSymbol: '0.1.0-stable-230407',
+  appName: '莫古锤子',
+  versionSymbol: 1,
+  compositedVersionSymbol: '0.1.1-stable-230423',
   versionType: 'stable',
   resVersion: '2023.02.16.0000.0000-6.25-chs',
 };
