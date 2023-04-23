@@ -181,19 +181,29 @@ function getPoppingEvent(events: EorzeaTimeUtils.ParsedGatheringRarePopEvents) {
   }
 }
 
+function diffTimeByMinute(smallerTimestamp: number, largerTimestamp: number) {
+  const diffMs = largerTimestamp - smallerTimestamp;
+  const diffHours = Math.floor(diffMs / 3600000);
+  const utcDuration = moment.utc(diffMs);
+  if (diffHours === 0) {
+    return utcDuration.format('mm:ss');
+  } else {
+    const duration = moment.duration(diffMs);
+    const totalMinutes = Math.floor(duration.asMinutes());
+    const seconds = utcDuration.format('ss');
+    return `${totalMinutes.toString().padStart(2, '0')}:${seconds}`;
+  }
+}
+
 function getCountdownValueByParsedEvent(
   event: EorzeaTimeUtils.GatheringRarePopEvent,
   currentLt: Date,
 ) {
   if (event !== null) {
     if (event.state === GatheringRarePopEventState.OCCURRING) {
-      return moment(event.endTimeLt.valueOf() - currentLt.valueOf()).format(
-        'mm:ss',
-      );
+      return diffTimeByMinute(currentLt.valueOf(), event.endTimeLt.valueOf());
     } else if (event.state === GatheringRarePopEventState.PREPARING) {
-      return moment(event.startTimeLt.valueOf() - currentLt.valueOf()).format(
-        'mm:ss',
-      );
+      return diffTimeByMinute(currentLt.valueOf(), event.startTimeLt.valueOf());
     } else {
       return null;
     }
@@ -209,13 +219,15 @@ function getCountdownValueByParsedEvents(
   const poppingEvent = getPoppingEvent(events);
   if (poppingEvent !== null) {
     if (poppingEvent.state === GatheringRarePopEventState.OCCURRING) {
-      return moment(
-        poppingEvent.endTimeLt.valueOf() - currentLt.valueOf(),
-      ).format('mm:ss');
+      return diffTimeByMinute(
+        currentLt.valueOf(),
+        poppingEvent.endTimeLt.valueOf(),
+      );
     } else if (poppingEvent.state === GatheringRarePopEventState.PREPARING) {
-      return moment(
-        poppingEvent.startTimeLt.valueOf() - currentLt.valueOf(),
-      ).format('mm:ss');
+      return diffTimeByMinute(
+        currentLt.valueOf(),
+        poppingEvent.startTimeLt.valueOf(),
+      );
     } else {
       return null;
     }
