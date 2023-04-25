@@ -44,7 +44,7 @@ const GatheringItemTimerGroup: FC<GatheringItemTimerGroup.Props> = props => {
 
 const styles = StyleSheet.create({
   row: {
-    width: px2DpX(72),
+    width: px2DpX(60),
     height: px2DpY(20),
     flexDirection: 'row',
     alignItems: 'center',

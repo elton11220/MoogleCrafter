@@ -43,20 +43,26 @@ const ConfirmDialog: ForwardRefRenderFunction<
   const dialogContent = useMemo(
     () =>
       content instanceof Array ? (
-        content.map((item, index) =>
-          item === '' ? (
-            <View style={styles.emptyRow} key={index} />
-          ) : (
-            <Text
-              key={index}
-              allowFontScaling={false}
-              style={styles.contentText}>
-              {item}
-            </Text>
-          ),
-        )
+        <Dialog.Content>
+          {content.map((item, index) =>
+            item === '' ? (
+              <View style={styles.emptyRow} key={index} />
+            ) : (
+              <Text
+                key={index}
+                allowFontScaling={false}
+                style={styles.contentText}>
+                {item}
+              </Text>
+            ),
+          )}
+        </Dialog.Content>
+      ) : typeof content === 'string' ? (
+        <Dialog.Content>
+          <Text allowFontScaling={false}>{content}</Text>
+        </Dialog.Content>
       ) : (
-        <Text allowFontScaling={false}>{content}</Text>
+        <View style={styles.contentContainer}>{content}</View>
       ),
     [content],
   );
@@ -71,7 +77,7 @@ const ConfirmDialog: ForwardRefRenderFunction<
         dismissable={dismissable}
         onDismiss={hideDialog}>
         <Dialog.Title>{title}</Dialog.Title>
-        <Dialog.Content>{dialogContent}</Dialog.Content>
+        {dialogContent}
         <Dialog.Actions>
           {showCancel ? <Button onPress={onCancel}>{cancelText}</Button> : null}
           {showConfirm ? (
@@ -91,6 +97,9 @@ const styles = StyleSheet.create({
   contentText: {
     fontSize: px2DpY(14),
     lineHeight: px2DpY(19),
+  },
+  contentContainer: {
+    paddingBottom: px2DpY(24),
   },
 });
 

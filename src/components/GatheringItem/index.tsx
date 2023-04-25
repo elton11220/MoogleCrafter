@@ -22,7 +22,7 @@ import {
 } from '../../utils/eorzeaTime';
 import GatheringItemTimerGroup from '../GatheringItemTimerGroup';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useStore} from '../../store';
+import {generalSettingsSelector, useStore} from '../../store';
 
 const GatheringItem: FC<GatheringItem.Props> = props => {
   const {
@@ -39,6 +39,7 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
     favoriteGatheringItemIds: s.favoriteGatheringItemIds,
     remindedGatheringItemIds: s.remindedGatheringItemIds,
   }));
+  const {placeNameDispMode} = useStore(generalSettingsSelector);
   const parsedGatheringRarePopEvents = parseGatheringRarePopEvents(
     timeTable,
     eorzeaTime.currentEt,
@@ -107,6 +108,28 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
     ),
     [gatheringItem.icon],
   );
+  const itemPlaceName = useMemo(() => {
+    if (gatheringPointDetail.placeNameForAetheryte) {
+      if (placeNameDispMode === 'm') {
+        return gatheringPointDetail.placeName;
+      } else if (placeNameDispMode === 'a') {
+        return gatheringPointDetail.placeNameForAetheryte;
+      } else if (placeNameDispMode === 'ma') {
+        return `${gatheringPointDetail.placeName} / ${gatheringPointDetail.placeNameForAetheryte}`;
+      } else if (placeNameDispMode === 'am') {
+        return `${gatheringPointDetail.placeNameForAetheryte} / ${gatheringPointDetail.placeName}`;
+      }
+    }
+    return gatheringPointDetail.placeName;
+  }, [
+    gatheringPointDetail.placeName,
+    gatheringPointDetail.placeNameForAetheryte,
+    placeNameDispMode,
+  ]);
+  const isComplexPlaceName = useMemo(
+    () => placeNameDispMode === 'ma' || placeNameDispMode === 'am',
+    [placeNameDispMode],
+  );
   const itemDetail = useMemo(
     () => (
       <View style={styles.contentContainer}>
@@ -150,6 +173,11 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
             {`等级${gatheringItem.gatheringItemLevel} ${
               gatheringPointDetail.classJob ?? '-'
             }`}
+            {isComplexPlaceName
+              ? ` X: ${gatheringPointDetail?.x ?? '-'}, Y: ${
+                  gatheringPointDetail?.y ?? '-'
+                }`
+              : null}
           </Text>
           <Text
             allowFontScaling={false}
@@ -160,26 +188,30 @@ const GatheringItem: FC<GatheringItem.Props> = props => {
                 color: theme.colors.secondaryContentText,
               },
             ]}>
-            {`${gatheringPointDetail?.placeName ?? '-'} X: ${
-              gatheringPointDetail?.x ?? '-'
-            }, Y: ${gatheringPointDetail?.y ?? '-'}`}
+            {itemPlaceName ?? '-'}
+            {!isComplexPlaceName
+              ? ` X: ${gatheringPointDetail?.x ?? '-'}, Y: ${
+                  gatheringPointDetail?.y ?? '-'
+                }`
+              : null}
           </Text>
         </View>
       </View>
     ),
     [
-      favoriteGatheringItemIds,
-      gatheringItem.gatheringItemLevel,
-      gatheringItem.id,
+      theme.colors.primaryContentText,
+      theme.colors.tertiaryContentText,
+      theme.colors.secondaryContentText,
       gatheringItem.name,
+      gatheringItem.id,
+      gatheringItem.gatheringItemLevel,
+      remindedGatheringItemIds,
+      favoriteGatheringItemIds,
       gatheringPointDetail.classJob,
-      gatheringPointDetail?.placeName,
       gatheringPointDetail?.x,
       gatheringPointDetail?.y,
-      remindedGatheringItemIds,
-      theme.colors.primaryContentText,
-      theme.colors.secondaryContentText,
-      theme.colors.tertiaryContentText,
+      isComplexPlaceName,
+      itemPlaceName,
     ],
   );
   return (
@@ -266,7 +298,7 @@ const styles = StyleSheet.create({
     fontSize: px2DpY(13),
   },
   rightContainer: {
-    width: px2DpX(72),
+    width: px2DpX(60),
   },
   itemIcon: {
     height: px2DpY(56),

@@ -1,5 +1,5 @@
 import {View, StyleSheet, ScrollView, Linking, Vibration} from 'react-native';
-import {useMemo, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import type {FC} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Appbar, List, Text, useTheme} from 'react-native-paper';
@@ -102,8 +102,27 @@ const Detail: FC = () => {
     removeFavoriteGatheringItem: s.removeFavoriteGatheringItem,
     removeGatheringItemReminder: s.removeGatheringItemReminder,
   }));
-  const {showAllItemsOfGatheringPoint, enableFFCafeMapInDetail} = useStore(
-    generalSettingsSelector,
+  const {
+    showAllItemsOfGatheringPoint,
+    enableFFCafeMapInDetail,
+    placeNameDispMode,
+  } = useStore(generalSettingsSelector);
+  const getPlaceName = useCallback(
+    (gatheringPointDetail: AppGlobal.GatheringPoint) => {
+      if (gatheringPointDetail.placeNameForAetheryte) {
+        if (placeNameDispMode === 'm') {
+          return gatheringPointDetail.placeName;
+        } else if (placeNameDispMode === 'a') {
+          return gatheringPointDetail.placeNameForAetheryte;
+        } else if (placeNameDispMode === 'ma') {
+          return `${gatheringPointDetail.placeName} / ${gatheringPointDetail.placeNameForAetheryte}`;
+        } else if (placeNameDispMode === 'am') {
+          return `${gatheringPointDetail.placeNameForAetheryte} / ${gatheringPointDetail.placeName}`;
+        }
+      }
+      return gatheringPointDetail.placeName;
+    },
+    [placeNameDispMode],
   );
   const isFavoriteItem = useMemo(
     () => favoriteGatheringItemIds.has(gatheringItem.id),
@@ -413,7 +432,7 @@ const Detail: FC = () => {
                     eorzeaTime.currentLt,
                   ) ?? null
                 }
-                regionName={point.placeName}
+                regionName={getPlaceName(point)}
                 prefix={(index + 1).toString()}
                 coordinate={`X:${point.x}, Y:${point.y}`}
               />
@@ -441,7 +460,7 @@ const Detail: FC = () => {
                     eorzeaTime.currentLt,
                   ) ?? null
                 }
-                regionName={point.placeName}
+                regionName={getPlaceName(point)}
                 prefix={(
                   index +
                   parsedGatheringPoints.sortedOccurringGatheringPoints.length +

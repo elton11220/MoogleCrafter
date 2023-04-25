@@ -27,6 +27,7 @@ export const initialState: ZustandStore.State = {
     },
     generalSettings: {
       enableEorzeaTimeDisplayer: true,
+      placeNameDispMode: 'a',
       enableFFCafeMapInDetail: true,
       showAllItemsOfGatheringPoint: true,
       enableFFCafeMapInFullScreen: true,

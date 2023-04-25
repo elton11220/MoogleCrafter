@@ -1,6 +1,6 @@
 declare namespace ConfirmDialog {
   interface Props {
-    content: string[] | string;
+    content: string[] | string | JSX.Element;
     title: string;
     showConfirm?: boolean;
     showCancel?: boolean;

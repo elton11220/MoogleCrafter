@@ -20,6 +20,7 @@ declare namespace AppGlobal {
     mapId: number;
     mapSymbol: string;
     placeName: string;
+    placeNameForAetheryte: string;
     timeTable: RawTimeTable[];
     x: number;
     y: number;

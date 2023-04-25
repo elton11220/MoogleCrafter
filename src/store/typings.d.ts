@@ -23,8 +23,11 @@ declare namespace ZustandStore {
     resLang: ResLang;
   }
 
+  type PlaceNameDispMode = 'm' | 'a' | 'ma' | 'am'; // m -> map, a -> aetheryte
+
   interface GeneralSettings {
     enableEorzeaTimeDisplayer: boolean;
+    placeNameDispMode: PlaceNameDispMode;
     enableFFCafeMapInDetail: boolean;
     showAllItemsOfGatheringPoint: boolean;
     enableFFCafeMapInFullScreen: boolean;

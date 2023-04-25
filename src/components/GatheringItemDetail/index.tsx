@@ -128,15 +128,18 @@ const GatheringItemDetail: FC<GatheringItemDetail.Props> = props => {
               {color: themeColors.secondaryContentText},
             ]}
             allowFontScaling={false}>
-            所在地图
+            采集位置
           </Text>
           <Text
             style={[
               styles.itemContent,
               {color: themeColors.primaryContentText},
             ]}
+            numberOfLines={2}
             allowFontScaling={false}>
             {poppingGatheringPoint.placeName}
+            {' / '}
+            {poppingGatheringPoint.placeNameForAetheryte}
           </Text>
         </View>
         <View style={styles.item}>
@@ -238,6 +241,7 @@ const styles = StyleSheet.create({
   itemContent: {
     fontSize: px2DpY(14),
     lineHeight: px2DpY(18),
+    textAlign: 'center',
   },
 });
 

@@ -52,12 +52,26 @@ const GatheringPointSummary: FC<GatheringPointSummary.Props> = props => {
             ? `艾 ${startTimeEt} 本 ${startTimeLt}`
             : '非限时采集点'}
         </Text>
-        <Text
-          allowFontScaling={false}
-          style={[
-            styles.contentDesc,
-            {color: theme.colors.tertiaryContentText},
-          ]}>{`${regionName} ${coordinate}`}</Text>
+        <View style={styles.descRow}>
+          <Text
+            allowFontScaling={false}
+            style={[
+              styles.contentDesc,
+              {
+                color: theme.colors.tertiaryContentText,
+              },
+            ]}>
+            {regionName}
+          </Text>
+          <Text
+            allowFontScaling={false}
+            style={[
+              styles.contentDesc,
+              {color: theme.colors.tertiaryContentText},
+            ]}>
+            {coordinate}
+          </Text>
+        </View>
       </View>
     ),
     [
@@ -125,7 +139,7 @@ const styles = StyleSheet.create({
   },
   contentDesc: {
     fontSize: px2DpY(12),
-    lineHeight: px2DpY(20),
+    lineHeight: px2DpY(18),
   },
   countdownContainer: {
     flexDirection: 'row',
@@ -134,6 +148,13 @@ const styles = StyleSheet.create({
   gatheringPointStateText: {
     lineHeight: px2DpY(17),
     fontSize: px2DpY(13),
+  },
+  descRow: {
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: px2DpX(5),
+    minHeight: px2DpY(20),
   },
 });
 
