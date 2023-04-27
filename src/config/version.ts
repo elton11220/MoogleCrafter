@@ -8,8 +8,8 @@ type VersionInfo = {
 
 const versionInfo: VersionInfo = {
   appName: '莫古锤子',
-  versionSymbol: 2,
-  compositedVersionSymbol: '0.1.1-stable-230423',
+  versionSymbol: 3,
+  compositedVersionSymbol: '0.1.2-stable-230427',
   versionType: 'stable',
   resVersion: '2023.02.16.0000.0000-6.25-chs',
 };

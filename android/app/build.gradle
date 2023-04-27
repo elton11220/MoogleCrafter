@@ -98,8 +98,8 @@ android {
         applicationId "com.lhzds.ffxiv_gatherer_timer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "0.1.1-stable-230423"
+        versionCode 3
+        versionName "0.1.2-stable-230427"
     }
 
     splits {
