@@ -75,4 +75,20 @@ declare namespace AppGlobal {
   }
 
   type GatheringPointBase = GatheringPointBaseItem[];
+
+  type ReductionItems = Record<number, ReductionItem>;
+
+  interface ReductionItem {
+    targetItem: TargetItem;
+    rawItems: RawItem[];
+  }
+
+  interface RawReductionItem extends ItemBase {
+    gatheringType: number;
+  }
+
+  interface TargetReductionItem extends ItemBase {
+    itemCategory: string;
+    desc: string;
+  }
 }

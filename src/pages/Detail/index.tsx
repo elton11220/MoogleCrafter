@@ -1,4 +1,11 @@
-import {View, StyleSheet, ScrollView, Linking, Vibration} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Linking,
+  Vibration,
+  ToastAndroid,
+} from 'react-native';
 import {useCallback, useMemo, useState} from 'react';
 import type {FC} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -26,6 +33,7 @@ import IconFont from '../../components/IconFont';
 import {
   gatheringPointBasesSelector,
   generalSettingsSelector,
+  reductionItemsSelector,
   useStore,
 } from '../../store';
 import GatheringItemLite from '../../components/GatheringItemLite';
@@ -385,6 +393,21 @@ const Detail: FC = () => {
       theme.colors.primary,
     ],
   );
+  const reductionItems = useStore(reductionItemsSelector);
+  const onReduceResultItemPress = useCallback(
+    (id: number) => {
+      const reductionItem = reductionItems?.[id];
+      if (reductionItem) {
+        navigation.navigate('ReductionDetail', reductionItem);
+      } else {
+        ToastAndroid.show(
+          '精选数据不存在，请反馈数据缺失情况',
+          ToastAndroid.SHORT,
+        );
+      }
+    },
+    [navigation, reductionItems],
+  );
   const allReduceResultItems = useMemo(
     () => (
       <List.Section style={styles.listSectionContainer}>
@@ -394,12 +417,17 @@ const Detail: FC = () => {
         </List.Subheader>
         <View style={styles.gatheringItemLiteWrappableContainer}>
           {gatheringItem.reduceResult.map((item, index) => (
-            <GatheringItemLite key={index} data={item} />
+            <GatheringItemLite
+              key={index}
+              data={item}
+              showRightNavIcon
+              onPress={onReduceResultItemPress}
+            />
           ))}
         </View>
       </List.Section>
     ),
-    [gatheringItem.reduceResult, theme.colors.primary],
+    [gatheringItem.reduceResult, onReduceResultItemPress, theme.colors.primary],
   );
   return (
     <View

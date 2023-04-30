@@ -22,6 +22,7 @@ export type RootStackParamList = {
     preventBack: boolean;
     showDismissButton: boolean;
   };
+  ReductionDetail: AppGlobal.ReductionItem;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

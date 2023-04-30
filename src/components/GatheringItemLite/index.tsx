@@ -6,20 +6,30 @@ import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import FastImage from 'react-native-fast-image';
 import {itemIcons} from '../../images/gameResource';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import type {GatheringItemLite as GatheringItemLiteType} from './typings';
 
 const emptyPressHandler = (_: number) => {};
 
-const GatheringItemLite: FC<GatheringItemLite.Props> = props => {
+const GatheringItemLite: FC<GatheringItemLiteType.Props> = props => {
   const {
     data: {id, name, icon},
     prefix,
     showRightNavIcon = false,
     onPress = emptyPressHandler,
+    textStyle,
+    flex = false,
+    suffix,
   } = props;
   const theme = useTheme<typeof DefaultLightTheme>();
   return (
     <Pressable
-      style={styles.container}
+      style={[
+        styles.container,
+        {
+          width: flex ? undefined : px2DpX(157),
+          flexGrow: flex ? 1 : 0,
+        },
+      ]}
       onPress={() => {
         onPress(id);
       }}>
@@ -50,10 +60,12 @@ const GatheringItemLite: FC<GatheringItemLite.Props> = props => {
           {
             color: theme.colors.primaryContentText,
           },
+          textStyle,
         ]}>
         {name}
       </Text>
-      {showRightNavIcon ? (
+      {suffix}
+      {!suffix && showRightNavIcon ? (
         <View style={styles.rightContainer}>
           <MaterialIcons
             name="chevron-right"
@@ -70,7 +82,6 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: px2DpY(7),
     flexDirection: 'row',
-    width: px2DpX(157),
     gap: px2DpX(10),
     alignItems: 'center',
   },

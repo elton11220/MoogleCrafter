@@ -36,6 +36,7 @@ import {DarkCyanTheme, LightCyanTheme} from './config/themes/cyanTheme';
 import CheckPermission from './pages/CheckPermission';
 import type {RootStackParamList} from './navigation/types';
 import {gatheringItemsMap} from './store/persistStore';
+import ReductionDetail from './pages/ReductionDetail';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -239,6 +240,16 @@ const App: FC = () => {
                 orientation: 'portrait',
                 animation: 'none',
                 presentation: 'card',
+              }}
+            />
+            <Stack.Screen
+              name="ReductionDetail"
+              component={ReductionDetail}
+              options={{
+                headerShown: false,
+                orientation: 'portrait',
+                animation: 'fade',
+                presentation: 'transparentModal',
               }}
             />
           </Stack.Navigator>

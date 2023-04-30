@@ -74,6 +74,7 @@ declare namespace ZustandStore {
   interface State {
     gatheringItems: AppGlobal.GatheringItem[];
     gatheringPointBases: AppGlobal.GatheringPointBase[];
+    reductionItems: AppGlobal.ReductionItems;
     favoriteGatheringItems: Map<
       AppGlobal.GatheringItem['id'],
       AppGlobal.GatheringItem

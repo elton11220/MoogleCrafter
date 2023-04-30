@@ -4,6 +4,9 @@ export const gatheringItemsSelector = (s: ZustandStore.Store) =>
 export const gatheringPointBasesSelector = (s: ZustandStore.Store) =>
   s.gatheringPointBases;
 
+export const reductionItemsSelector = (s: ZustandStore.Store) =>
+  s.reductionItems;
+
 export const regionItemsSelector = (s: ZustandStore.Store) => s.regions;
 
 export const notificationSettingsSelector = (s: ZustandStore.Store) =>
