@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: px2DpX(3),
+    maxWidth: px2DpX(270),
   },
   infoCardDesc: {
     fontSize: px2DpY(13),
