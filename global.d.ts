@@ -11,7 +11,11 @@ declare namespace AppGlobal {
     gatheringPoints: GatheringPoint[];
     isRare: boolean;
     isHidden: boolean;
+    isReducible: boolean;
+    reduceResult: ReduceResult[];
   }
+
+  interface ReduceResult extends ItemBase {}
 
   interface GatheringPoint {
     classJob: string | null;
@@ -58,13 +62,16 @@ declare namespace AppGlobal {
     subName: string;
   }
 
-  interface GatheringPointBaseItem {
-    id: number;
-    name: string;
-    icon: number;
+  interface GatheringPointBaseItem extends ItemBase {
     gatheringItemLevel: number;
     gatheringItemStars: number;
     isHidden: boolean;
+  }
+
+  interface ItemBase {
+    id: number;
+    name: string;
+    icon: number;
   }
 
   type GatheringPointBase = GatheringPointBaseItem[];

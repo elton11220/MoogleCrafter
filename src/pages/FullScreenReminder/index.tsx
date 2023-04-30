@@ -119,6 +119,7 @@ const FullScreenReminder: FC = () => {
               {starsEle.map(item => item)}
             </View>
             {gatheringItem.isHidden ? <Tag>隐藏</Tag> : null}
+            {gatheringItem.isReducible ? <Tag>可精选</Tag> : null}
           </View>
         </View>
       </>
@@ -128,6 +129,7 @@ const FullScreenReminder: FC = () => {
     gatheringItem.gatheringItemStars,
     gatheringItem.icon,
     gatheringItem.isHidden,
+    gatheringItem.isReducible,
     gatheringItem.name,
     gatheringPointDetail.gatheringType,
     theme.colors.tertiaryContentText,

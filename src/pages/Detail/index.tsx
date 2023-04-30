@@ -31,6 +31,7 @@ import {
 import GatheringItemLite from '../../components/GatheringItemLite';
 import {mapUrl} from '../../config/url';
 import Tag from '../../components/Tag';
+import Divider from '../../components/Divider';
 
 const GATHERING_POINT_LIST_MAX_AMOUNT = 3;
 
@@ -296,6 +297,7 @@ const Detail: FC = () => {
               {starsEle.map(item => item)}
             </View>
             {gatheringItem.isHidden ? <Tag>隐藏</Tag> : null}
+            {gatheringItem.isReducible ? <Tag>可精选</Tag> : null}
           </View>
         </View>
       </>
@@ -305,6 +307,7 @@ const Detail: FC = () => {
     gatheringItem.gatheringItemStars,
     gatheringItem.icon,
     gatheringItem.isHidden,
+    gatheringItem.isReducible,
     gatheringItem.name,
     parsedGatheringPoints.poppingGatheringPoint.gatheringType,
     theme.colors.primaryContentText,
@@ -336,6 +339,20 @@ const Detail: FC = () => {
       theme.colors.primary,
     ],
   );
+  const classifiedGatheringPointBaseItems = useMemo(
+    () => ({
+      normalItems: gatheringPointBases[
+        parsedGatheringPoints.poppingGatheringPoint.gatheringPointBaseId
+      ].filter(item => item.isHidden === false),
+      hiddenItems: gatheringPointBases[
+        parsedGatheringPoints.poppingGatheringPoint.gatheringPointBaseId
+      ].filter(item => item.isHidden),
+    }),
+    [
+      gatheringPointBases,
+      parsedGatheringPoints.poppingGatheringPoint.gatheringPointBaseId,
+    ],
+  );
   const allGatheringPointItems = useMemo(
     () => (
       <List.Section style={styles.listSectionContainer}>
@@ -343,22 +360,46 @@ const Detail: FC = () => {
           style={[styles.listSectionTitleStyle, {color: theme.colors.primary}]}>
           当前采集点物品
         </List.Subheader>
-        {gatheringPointBases[
-          parsedGatheringPoints.poppingGatheringPoint.gatheringPointBaseId
-        ].map((item, index) => (
-          <GatheringItemLite
-            key={index}
-            data={item}
-            prefix={item.isHidden ? '?' : (index + 1).toString()}
-          />
-        ))}
+        <View style={styles.gatheringItemLiteWrappableContainer}>
+          {classifiedGatheringPointBaseItems.normalItems.map((item, index) => (
+            <GatheringItemLite key={index} data={item} />
+          ))}
+        </View>
+        {classifiedGatheringPointBaseItems.hiddenItems.length > 0 ? (
+          <>
+            <Divider style={styles.dividerStyle} title="隐藏" />
+            <View style={styles.gatheringItemLiteWrappableContainer}>
+              {classifiedGatheringPointBaseItems.hiddenItems.map(
+                (item, index) => (
+                  <GatheringItemLite key={index} data={item} />
+                ),
+              )}
+            </View>
+          </>
+        ) : null}
       </List.Section>
     ),
     [
-      gatheringPointBases,
-      parsedGatheringPoints.poppingGatheringPoint.gatheringPointBaseId,
+      classifiedGatheringPointBaseItems.hiddenItems,
+      classifiedGatheringPointBaseItems.normalItems,
       theme.colors.primary,
     ],
+  );
+  const allReduceResultItems = useMemo(
+    () => (
+      <List.Section style={styles.listSectionContainer}>
+        <List.Subheader
+          style={[styles.listSectionTitleStyle, {color: theme.colors.primary}]}>
+          精选结果
+        </List.Subheader>
+        <View style={styles.gatheringItemLiteWrappableContainer}>
+          {gatheringItem.reduceResult.map((item, index) => (
+            <GatheringItemLite key={index} data={item} />
+          ))}
+        </View>
+      </List.Section>
+    ),
+    [gatheringItem.reduceResult, theme.colors.primary],
   );
   return (
     <View
@@ -404,6 +445,7 @@ const Detail: FC = () => {
           footerTip="当前展示的为将出现或出现中的采集信息"
         />
         {showAllItemsOfGatheringPoint ? allGatheringPointItems : null}
+        {gatheringItem.isReducible ? allReduceResultItems : null}
         <List.Section style={[styles.listSectionContainer]}>
           <List.Subheader
             style={[
@@ -539,6 +581,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: px2DpY(3),
     overflow: 'hidden',
+  },
+  gatheringItemLiteWrappableContainer: {
+    paddingHorizontal: px2DpX(25),
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  dividerStyle: {
+    paddingHorizontal: px2DpX(25),
   },
 });
 

@@ -1,6 +1,8 @@
 declare namespace GatheringItemLite {
   interface Props {
-    data: AppGlobal.GatheringPointBaseItem;
+    data: AppGlobal.ItemBase;
     prefix?: string;
+    showRightNavIcon?: boolean;
+    onPress?: (id: number) => void;
   }
 }

@@ -1,4 +1,4 @@
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Pressable} from 'react-native';
 import type {FC} from 'react';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import {Text, useTheme} from 'react-native-paper';
@@ -7,14 +7,22 @@ import FastImage from 'react-native-fast-image';
 import {itemIcons} from '../../images/gameResource';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
+const emptyPressHandler = (_: number) => {};
+
 const GatheringItemLite: FC<GatheringItemLite.Props> = props => {
   const {
-    data: {name, icon, gatheringItemLevel, gatheringItemStars},
+    data: {id, name, icon},
     prefix,
+    showRightNavIcon = false,
+    onPress = emptyPressHandler,
   } = props;
   const theme = useTheme<typeof DefaultLightTheme>();
   return (
-    <View style={styles.container}>
+    <Pressable
+      style={styles.container}
+      onPress={() => {
+        onPress(id);
+      }}>
       {prefix ? (
         <View style={styles.prefixContainer}>
           <Text
@@ -36,6 +44,7 @@ const GatheringItemLite: FC<GatheringItemLite.Props> = props => {
       />
       <Text
         allowFontScaling={false}
+        numberOfLines={1}
         style={[
           styles.itemName,
           {
@@ -44,42 +53,24 @@ const GatheringItemLite: FC<GatheringItemLite.Props> = props => {
         ]}>
         {name}
       </Text>
-      <View style={styles.rightContainer}>
-        <Text
-          allowFontScaling={false}
-          style={[
-            styles.rightText,
-            {
-              color: theme.colors.tertiaryContentText,
-            },
-          ]}>{`Lv${gatheringItemLevel}`}</Text>
-        {gatheringItemStars > 0 ? (
-          <>
-            <MaterialIcons
-              name="star"
-              size={px2DpY(13)}
-              color={theme.colors.tertiaryContentText}
-            />
-            <Text
-              allowFontScaling={false}
-              style={[
-                styles.rightText,
-                {
-                  color: theme.colors.tertiaryContentText,
-                },
-              ]}>{`${gatheringItemStars}`}</Text>
-          </>
-        ) : null}
-      </View>
-    </View>
+      {showRightNavIcon ? (
+        <View style={styles.rightContainer}>
+          <MaterialIcons
+            name="chevron-right"
+            size={px2DpY(18)}
+            color={theme.colors.tertiaryContentText}
+          />
+        </View>
+      ) : null}
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: px2DpX(25),
     paddingVertical: px2DpY(7),
     flexDirection: 'row',
+    width: px2DpX(157),
     gap: px2DpX(10),
     alignItems: 'center',
   },
