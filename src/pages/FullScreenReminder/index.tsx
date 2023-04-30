@@ -33,6 +33,7 @@ import GatheringItemTimerGroup from '../../components/GatheringItemTimerGroup';
 import WebView from 'react-native-webview';
 import {generalSettingsSelector, useStore} from '../../store';
 import {mapUrl} from '../../config/url';
+import Tag from '../../components/Tag';
 
 const FullScreenReminder: FC = () => {
   const insets = useSafeAreaInsets();
@@ -117,6 +118,7 @@ const FullScreenReminder: FC = () => {
             <View style={styles.starContainer}>
               {starsEle.map(item => item)}
             </View>
+            {gatheringItem.isHidden ? <Tag>隐藏</Tag> : null}
           </View>
         </View>
       </>
@@ -125,6 +127,7 @@ const FullScreenReminder: FC = () => {
     gatheringItem.gatheringItemLevel,
     gatheringItem.gatheringItemStars,
     gatheringItem.icon,
+    gatheringItem.isHidden,
     gatheringItem.name,
     gatheringPointDetail.gatheringType,
     theme.colors.tertiaryContentText,

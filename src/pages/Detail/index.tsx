@@ -30,6 +30,7 @@ import {
 } from '../../store';
 import GatheringItemLite from '../../components/GatheringItemLite';
 import {mapUrl} from '../../config/url';
+import Tag from '../../components/Tag';
 
 const GATHERING_POINT_LIST_MAX_AMOUNT = 3;
 
@@ -294,6 +295,7 @@ const Detail: FC = () => {
             <View style={styles.starContainer}>
               {starsEle.map(item => item)}
             </View>
+            {gatheringItem.isHidden ? <Tag>隐藏</Tag> : null}
           </View>
         </View>
       </>
@@ -302,6 +304,7 @@ const Detail: FC = () => {
     gatheringItem.gatheringItemLevel,
     gatheringItem.gatheringItemStars,
     gatheringItem.icon,
+    gatheringItem.isHidden,
     gatheringItem.name,
     parsedGatheringPoints.poppingGatheringPoint.gatheringType,
     theme.colors.primaryContentText,
@@ -346,7 +349,7 @@ const Detail: FC = () => {
           <GatheringItemLite
             key={index}
             data={item}
-            prefix={(index + 1).toString()}
+            prefix={item.isHidden ? '?' : (index + 1).toString()}
           />
         ))}
       </List.Section>

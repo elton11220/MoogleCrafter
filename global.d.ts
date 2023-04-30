@@ -10,6 +10,7 @@ declare namespace AppGlobal {
     gatheringItemStars: number;
     gatheringPoints: GatheringPoint[];
     isRare: boolean;
+    isHidden: boolean;
   }
 
   interface GatheringPoint {
@@ -63,6 +64,7 @@ declare namespace AppGlobal {
     icon: number;
     gatheringItemLevel: number;
     gatheringItemStars: number;
+    isHidden: boolean;
   }
 
   type GatheringPointBase = GatheringPointBaseItem[];
