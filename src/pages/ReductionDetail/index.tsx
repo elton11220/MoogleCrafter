@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   infoCardRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: px2DpX(3),
+    gap: px2DpX(5),
     maxWidth: px2DpX(270),
   },
   infoCardDesc: {
