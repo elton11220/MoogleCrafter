@@ -17,7 +17,6 @@ import * as List from '../../components/List';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import type {ConfirmDialogInstance} from '../../components/ConfirmDialog';
 import {userAgreement} from '../../config/strings';
-import {openAppDetailsInAppMarket} from '../../native/AppMarket';
 import {onPageStart, onPageEnd} from '../../native/BaiduMobStat';
 import {resBaseUrl} from '../../config/url';
 
@@ -113,7 +112,11 @@ const About = () => {
           <List.Item
             title="隐私政策"
             onPress={() => {
-              Linking.openURL(resBaseUrl + '/privacyPolicy.html');
+              navigation.navigate('InAppBrowser', {
+                url: resBaseUrl + '/privacyPolicy.html',
+                title: '隐私政策',
+                allowOpenInSystemBrowser: true,
+              });
             }}
           />
           <List.Item
@@ -125,9 +128,29 @@ const About = () => {
             }}
           />
           <List.Item
+            title="开源许可证"
+            onPress={() => {
+              navigation.navigate('InAppBrowser', {
+                url: resBaseUrl + '/license.html',
+                title: '开源许可证',
+                allowOpenInSystemBrowser: true,
+              });
+            }}
+          />
+          <List.Item
+            title="第三方信息共享清单"
+            onPress={() => {
+              navigation.navigate('InAppBrowser', {
+                url: resBaseUrl + '/thirdParty.html',
+                title: '第三方信息共享清单',
+                allowOpenInSystemBrowser: true,
+              });
+            }}
+          />
+          {/* <List.Item
             title="评价应用"
             onPress={() => openAppDetailsInAppMarket()}
-          />
+          /> */}
         </List.Section>
         <List.Section title="版权声明">
           <View style={styles.copyrightContainer}>
