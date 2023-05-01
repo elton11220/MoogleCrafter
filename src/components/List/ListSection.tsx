@@ -29,7 +29,7 @@ const ListSection: FC<ListSectionType.Props> = props => {
         style={[
           styles.contentContainer,
           {
-            backgroundColor: theme.colors.surfaceVariant,
+            backgroundColor: theme.colors.secondaryContainer,
           },
           contentContainerStyle,
         ]}>
