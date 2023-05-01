@@ -131,7 +131,7 @@ export type FilterDrawerInstance = {
 export type FilterValue = {
   isRare: true | false | null;
   classJob: string | null;
-  specialType: 'hidden' | 'reducible' | null;
+  specialType: string | null;
   exVersion: number | null;
   gatheringItemLevel: number | null;
   mapId: number | null;
