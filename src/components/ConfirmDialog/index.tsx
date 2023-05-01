@@ -33,6 +33,7 @@ const ConfirmDialog: ForwardRefRenderFunction<
     onCancel = emptyCallback,
     onClosed = emptyCallback,
     dismissable = false,
+    extraAction,
   } = props;
   const [visible, setVisible] = useState(false);
   const showDialog = useCallback(() => setVisible(true), []);
@@ -79,6 +80,7 @@ const ConfirmDialog: ForwardRefRenderFunction<
         <Dialog.Title>{title}</Dialog.Title>
         {dialogContent}
         <Dialog.Actions>
+          {extraAction}
           {showCancel ? <Button onPress={onCancel}>{cancelText}</Button> : null}
           {showConfirm ? (
             <Button onPress={onConfirm}>{confirmText}</Button>

@@ -10,5 +10,6 @@ declare namespace ConfirmDialog {
     onCancel?: () => void;
     onClosed?: () => void;
     dismissable?: boolean;
+    extraAction?: JSX.Element;
   }
 }
