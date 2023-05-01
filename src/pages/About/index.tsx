@@ -16,17 +16,15 @@ import versionInfo from '../../config/version';
 import * as List from '../../components/List';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import type {ConfirmDialogInstance} from '../../components/ConfirmDialog';
-import {privacyPolicy, userAgreement} from '../../config/strings';
+import {userAgreement} from '../../config/strings';
 import {openAppDetailsInAppMarket} from '../../native/AppMarket';
 import {onPageStart, onPageEnd} from '../../native/BaiduMobStat';
+import {resBaseUrl} from '../../config/url';
 
 const About = () => {
   const insets = useSafeAreaInsets();
   const theme = useTheme<typeof DefaultLightTheme>();
   const navigation = useNavigation();
-  const privacyPolicyDialogInstance = useRef<ConfirmDialogInstance | null>(
-    null,
-  );
   const userAgreementDialogInstance = useRef<ConfirmDialogInstance | null>(
     null,
   );
@@ -44,14 +42,6 @@ const About = () => {
         paddingBottom: insets.bottom,
         backgroundColor: theme.colors.background,
       }}>
-      <ConfirmDialog
-        ref={privacyPolicyDialogInstance}
-        title="隐私政策"
-        content={privacyPolicy}
-        showConfirm={false}
-        showCancel={false}
-        dismissable
-      />
       <ConfirmDialog
         ref={userAgreementDialogInstance}
         title="用户协议"
@@ -123,9 +113,7 @@ const About = () => {
           <List.Item
             title="隐私政策"
             onPress={() => {
-              if (privacyPolicyDialogInstance.current) {
-                privacyPolicyDialogInstance.current?.show();
-              }
+              Linking.openURL(resBaseUrl + '/privacyPolicy.html');
             }}
           />
           <List.Item

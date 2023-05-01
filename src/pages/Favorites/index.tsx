@@ -3,11 +3,12 @@ import type {FC} from 'react';
 import {
   BackHandler,
   DeviceEventEmitter,
+  Linking,
   StyleSheet,
   ToastAndroid,
   View,
 } from 'react-native';
-import {Text, useTheme, Menu} from 'react-native-paper';
+import {Text, useTheme, Menu, Button} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import GatheringList from '../../components/GatheringList';
@@ -53,6 +54,7 @@ import {
   onPageEnd,
   onPageStart,
 } from '../../native/BaiduMobStat';
+import {resBaseUrl} from '../../config/url';
 
 const Favorites: FC = () => {
   const insets = useSafeAreaInsets();
@@ -416,6 +418,17 @@ const Favorites: FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const openPrivacyPolicyAction = useMemo(
+    () => (
+      <Button
+        onPress={() => {
+          Linking.openURL(resBaseUrl + '/privacyPolicy.html');
+        }}>
+        查看隐私政策
+      </Button>
+    ),
+    [],
+  );
   useEffect(() => {
     if (!acceptPrivacyPolicy && privacyPolicyDialogInstance.current !== null) {
       privacyPolicyDialogInstance.current.show();
@@ -450,6 +463,7 @@ const Favorites: FC = () => {
         onConfirm={onPrivacyPolicyDialogConfirm}
         onCancel={onPrivacyPolicyDialogCancel}
         onClosed={onPrivacyPolicyDialogClosed}
+        extraAction={openPrivacyPolicyAction}
       />
       <ConfirmDialog
         ref={userAgreementDialogInstance}
