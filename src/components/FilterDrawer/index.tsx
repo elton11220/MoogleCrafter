@@ -48,6 +48,21 @@ const classJobs = [
   },
 ];
 
+const specialTypes = [
+  {
+    key: null,
+    label: '全部',
+  },
+  {
+    key: 'hidden',
+    label: '隐藏',
+  },
+  {
+    key: 'reducible',
+    label: '可精选',
+  },
+];
+
 const exVersions = [
   {
     key: null,
@@ -116,6 +131,7 @@ export type FilterDrawerInstance = {
 export type FilterValue = {
   isRare: true | false | null;
   classJob: string | null;
+  specialType: 'hidden' | 'reducible' | null;
   exVersion: number | null;
   gatheringItemLevel: number | null;
   mapId: number | null;
@@ -152,6 +168,7 @@ const FilterDrawer: ForwardRefRenderFunction<
         draft.exVersion = value.exVersion;
         draft.gatheringItemLevel = value.gatheringItemLevel;
         draft.isRare = value.isRare;
+        draft.specialType = value.specialType;
         draft.mapId = value.mapId;
       }),
     );
@@ -173,6 +190,7 @@ const FilterDrawer: ForwardRefRenderFunction<
         produce(value, draft => {
           draft.classJob = tempFilterValue.classJob;
           draft.exVersion = tempFilterValue.exVersion;
+          draft.specialType = tempFilterValue.specialType;
           draft.gatheringItemLevel = tempFilterValue.gatheringItemLevel;
           draft.isRare = tempFilterValue.isRare;
           draft.mapId = tempFilterValue.mapId;
@@ -185,6 +203,7 @@ const FilterDrawer: ForwardRefRenderFunction<
       tempFilterValue.exVersion,
       tempFilterValue.gatheringItemLevel,
       tempFilterValue.isRare,
+      tempFilterValue.specialType,
       tempFilterValue.mapId,
       value,
     ],
@@ -196,6 +215,7 @@ const FilterDrawer: ForwardRefRenderFunction<
         draft.classJob = null;
         draft.exVersion = null;
         draft.gatheringItemLevel = null;
+        draft.specialType = null;
         draft.mapId = null;
       }),
     );
@@ -203,6 +223,7 @@ const FilterDrawer: ForwardRefRenderFunction<
       produce(state, draft => {
         draft.isRare = null;
         draft.classJob = null;
+        draft.specialType = null;
         draft.exVersion = null;
         draft.gatheringItemLevel = null;
         draft.mapId = null;
@@ -217,7 +238,7 @@ const FilterDrawer: ForwardRefRenderFunction<
   );
   const isRareRadioGroup = useMemo(
     () => (
-      <DrawerItem title="类型">
+      <DrawerItem title="限时">
         <View style={styles.itemContainer}>
           <RadioTagGroup<FilterDrawer.FilterValue['isRare']>
             items={isRareRadioItems}
@@ -242,6 +263,20 @@ const FilterDrawer: ForwardRefRenderFunction<
       </DrawerItem>
     ),
     [tempFilterValue.classJob, updateFilterValue],
+  );
+  const specialTypeRadioGroup = useMemo(
+    () => (
+      <DrawerItem title="特殊">
+        <View style={styles.itemContainer}>
+          <RadioTagGroup<FilterDrawer.FilterValue['specialType']>
+            items={specialTypes}
+            value={tempFilterValue.specialType}
+            setValue={newValue => updateFilterValue('specialType', newValue)}
+          />
+        </View>
+      </DrawerItem>
+    ),
+    [tempFilterValue.specialType, updateFilterValue],
   );
   const exVersionRadioGroup = useMemo(
     () => (
@@ -312,6 +347,7 @@ const FilterDrawer: ForwardRefRenderFunction<
       <View>
         {isRareRadioGroup}
         {classJobRadioGroup}
+        {specialTypeRadioGroup}
       </View>
       <View>
         {exVersionRadioGroup}

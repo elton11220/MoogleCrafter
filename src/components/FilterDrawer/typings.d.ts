@@ -7,6 +7,7 @@ declare namespace FilterDrawer {
   interface FilterValue {
     isRare: true | false | null;
     classJob: string | null;
+    specialType: string | null;
     exVersion: number | null;
     gatheringItemLevel: number | null;
     mapId: number | null;

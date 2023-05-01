@@ -48,6 +48,18 @@ export function useGatheringDataFilter(
             return false;
           }
         }
+        if (filterValue.specialType !== null) {
+          if (filterValue.specialType === 'hidden') {
+            if (!item.isHidden) {
+              return false;
+            }
+          }
+          if (filterValue.specialType === 'reducible') {
+            if (!item.isReducible) {
+              return false;
+            }
+          }
+        }
         if (filterValue.exVersion !== null) {
           if (item.exVersion !== filterValue.exVersion) {
             return false;

@@ -35,6 +35,7 @@ const MaterialList: FC = () => {
     classJob: null,
     exVersion: null,
     gatheringItemLevel: null,
+    specialType: null,
     mapId: null,
   });
   const gatheringItems = useStore(gatheringItemsSelector);
