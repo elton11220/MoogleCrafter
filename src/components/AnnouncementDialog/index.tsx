@@ -59,8 +59,8 @@ const AnnouncementDialog: FC<AnnouncementDialog.Props> = props => {
           ))}
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={onDisableCurrent}>不再提示</Button>
           <Button onPress={closeModal}>确定</Button>
+          <Button onPress={onDisableCurrent}>不再提示</Button>
         </Dialog.Actions>
       </Dialog>
     </Portal>
