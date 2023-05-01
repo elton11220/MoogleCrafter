@@ -161,3 +161,7 @@
 -keepclassmembers class com.lhzds.ffxiv_gatherer_timer.bean.EorzeaEventManager {
     static <fields>;
 }
+
+# 避免混淆百度移动统计SDK
+-keep class com.baidu.bottom.** { *; }
+-keep class com.baidu.mobstat.** { *; }

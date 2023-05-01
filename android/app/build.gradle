@@ -167,6 +167,8 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.10.1")
 
+    implementation files("libs/Baidu_Mtj_android_4.0.10.5.jar")
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.squareup.okhttp3', module:'okhttp'

@@ -37,6 +37,7 @@ import CheckPermission from './pages/CheckPermission';
 import type {RootStackParamList} from './navigation/types';
 import {gatheringItemsMap} from './store/persistStore';
 import ReductionDetail from './pages/ReductionDetail';
+import {initStatService} from './native/BaiduMobStat';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -98,6 +99,13 @@ const App: FC = () => {
     );
     return () => backFromNotificationListener.remove();
   }, [navigationContainerRef]);
+  const acceptPrivacyPolicy = useStore(s => s.acceptPrivacyPolicy);
+  useEffect(() => {
+    if (acceptPrivacyPolicy) {
+      initStatService();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const HomeTabs = () => {
     return (
       <Tab.Navigator

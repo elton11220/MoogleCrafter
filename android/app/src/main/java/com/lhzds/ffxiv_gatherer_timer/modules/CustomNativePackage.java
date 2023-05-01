@@ -23,6 +23,7 @@ public class CustomNativePackage implements ReactPackage {
         modules.add(new SpecialRingtoneModule(reactApplicationContext));
         modules.add(new SystemSettingsModule(reactApplicationContext));
         modules.add(new AppMarketModule(reactApplicationContext));
+        modules.add(new BaiduMobStatModule(reactApplicationContext));
         return modules;
     }
 

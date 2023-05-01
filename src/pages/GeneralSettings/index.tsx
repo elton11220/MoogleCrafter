@@ -1,5 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
-import {useMemo, useRef, useState} from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useCallback, useMemo, useRef, useState} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {
   Appbar,
@@ -16,6 +16,7 @@ import Tag from '../../components/Tag';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {generalSettingsSelector, useStore} from '../../store';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
+import {onPageStart, onPageEnd} from '../../native/BaiduMobStat';
 
 const GeneralSettings = () => {
   const insets = useSafeAreaInsets();
@@ -53,6 +54,13 @@ const GeneralSettings = () => {
       return '未指定';
     }
   }, [placeNameDispMode]);
+  const onPageFocusChanged = useCallback(() => {
+    onPageStart('GeneralSettings');
+    return () => {
+      onPageEnd('GeneralSettings');
+    };
+  }, []);
+  useFocusEffect(onPageFocusChanged);
   return (
     <View
       style={{

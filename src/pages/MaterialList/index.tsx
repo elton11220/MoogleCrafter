@@ -24,6 +24,7 @@ import AnimatedBgColorFilterButton from '../../components/AnimatedBgColorFilterB
 import MaterialAppHeaderAction from '../../components/MaterialAppHeaderAction';
 import MaterialAppHeaderBackAction from '../../components/MaterialAppHeaderBackAction';
 import EorzeaTimeDisplayer from '../../components/EorzeaTimeDisplayer';
+import {onPageStart, onPageEnd} from '../../native/BaiduMobStat';
 
 const MaterialList: FC = () => {
   const insets = useSafeAreaInsets();
@@ -253,6 +254,13 @@ const MaterialList: FC = () => {
         : state,
     );
   }, []);
+  const onPageFocusChanged = useCallback(() => {
+    onPageStart('MaterialList');
+    return () => {
+      onPageEnd('MaterialList');
+    };
+  }, []);
+  useFocusEffect(onPageFocusChanged);
   return (
     <View
       style={{

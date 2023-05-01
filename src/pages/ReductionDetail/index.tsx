@@ -1,8 +1,13 @@
 import {View, StyleSheet} from 'react-native';
+import {useCallback} from 'react';
 import type {FC} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Button, Text, useTheme} from 'react-native-paper';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import type {RootStackScreenProps} from '../../navigation/types';
 import FastImage from 'react-native-fast-image';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
@@ -12,6 +17,7 @@ import {extendedDarkColors} from '../../config/themes/extension';
 import Tip from '../../components/Tip';
 import GatheringItemLite from '../../components/GatheringItemLite';
 import {DefaultLightTheme} from '../../config/themes/defaultTheme';
+import {onPageStart, onPageEnd} from '../../native/BaiduMobStat';
 
 const ReductionDetail: FC = () => {
   const insets = useSafeAreaInsets();
@@ -29,6 +35,13 @@ const ReductionDetail: FC = () => {
   };
   const theme = useTheme<typeof DefaultLightTheme>();
   const navigation = useNavigation();
+  const onPageFocusChanged = useCallback(() => {
+    onPageStart('ReductionDetail');
+    return () => {
+      onPageEnd('ReductionDetail');
+    };
+  }, []);
+  useFocusEffect(onPageFocusChanged);
   return (
     <View
       style={{

@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {Appbar, List, Switch, Text, useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -6,6 +6,8 @@ import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
 import ColorPicker from '../../components/ColorPicker';
 import {themeSettingsSelector, useStore} from '../../store';
+import {useCallback} from 'react';
+import {onPageStart, onPageEnd} from '../../native/BaiduMobStat';
 
 const colorList: ColorPicker.ColorList = [
   {
@@ -42,6 +44,13 @@ const ThemeSettings = () => {
     themeSettingsSelector,
   );
   const updateThemeSettings = useStore(s => s.updateThemeSettings);
+  const onPageFocusChanged = useCallback(() => {
+    onPageStart('ThemeSettings');
+    return () => {
+      onPageEnd('ThemeSettings');
+    };
+  }, []);
+  useFocusEffect(onPageFocusChanged);
   return (
     <View
       style={{

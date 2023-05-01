@@ -1,5 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
-import {useRef} from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useCallback, useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -18,6 +18,7 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 import type {ConfirmDialogInstance} from '../../components/ConfirmDialog';
 import {privacyPolicy, userAgreement} from '../../config/strings';
 import {openAppDetailsInAppMarket} from '../../native/AppMarket';
+import {onPageStart, onPageEnd} from '../../native/BaiduMobStat';
 
 const About = () => {
   const insets = useSafeAreaInsets();
@@ -29,6 +30,13 @@ const About = () => {
   const userAgreementDialogInstance = useRef<ConfirmDialogInstance | null>(
     null,
   );
+  const onPageFocusChanged = useCallback(() => {
+    onPageStart('About');
+    return () => {
+      onPageEnd('About');
+    };
+  }, []);
+  useFocusEffect(onPageFocusChanged);
   return (
     <View
       style={{

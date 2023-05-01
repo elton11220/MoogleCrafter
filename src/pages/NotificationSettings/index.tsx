@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   View,
   StyleSheet,
@@ -43,6 +43,7 @@ import {
 } from '../../native/SpecialRingtone';
 import Tip from '../../components/Tip';
 import Tag from '../../components/Tag';
+import {onPageStart, onPageEnd} from '../../native/BaiduMobStat';
 
 const getNotificationMode = (
   specialRingtoneType: ZustandStore.SpecialRingtoneType,
@@ -346,6 +347,13 @@ const NotificationSettings = () => {
       updateSpecialRingtone,
     ],
   );
+  const onPageFocusChanged = useCallback(() => {
+    onPageStart('NotificationSettings');
+    return () => {
+      onPageEnd('NotificationSettings');
+    };
+  }, []);
+  useFocusEffect(onPageFocusChanged);
   return (
     <View
       style={{

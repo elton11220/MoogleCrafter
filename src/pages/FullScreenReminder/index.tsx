@@ -1,5 +1,5 @@
 import {View, StyleSheet, ScrollView} from 'react-native';
-import {useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 import type {FC} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
@@ -12,7 +12,11 @@ import {
 } from 'react-native-paper';
 import type {DefaultLightTheme} from '../../config/themes/defaultTheme';
 import {px2DpX, px2DpY} from '../../utils/dimensionConverter';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {extendedDarkColors} from '../../config/themes/extension';
 import useEorzeaTimer from '../../hooks/useEorzeaTimer';
 import type {RootStackScreenProps} from '../../navigation/types';
@@ -34,6 +38,7 @@ import WebView from 'react-native-webview';
 import {generalSettingsSelector, useStore} from '../../store';
 import {mapUrl} from '../../config/url';
 import Tag from '../../components/Tag';
+import {onPageStart, onPageEnd} from '../../native/BaiduMobStat';
 
 const FullScreenReminder: FC = () => {
   const insets = useSafeAreaInsets();
@@ -182,6 +187,13 @@ const FullScreenReminder: FC = () => {
     ),
     [navigation],
   );
+  const onPageFocusChanged = useCallback(() => {
+    onPageStart('FullScreenReminder');
+    return () => {
+      onPageEnd('FullScreenReminder');
+    };
+  }, []);
+  useFocusEffect(onPageFocusChanged);
   return (
     <View
       style={{

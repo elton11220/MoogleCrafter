@@ -25,7 +25,11 @@ import {itemIcons} from '../../images/gameResource';
 import GatheringItemTimerGroup from '../../components/GatheringItemTimerGroup';
 import {GatheringTypes} from '../../utils/eorzeaConstant';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import WebView from 'react-native-webview';
 import GatheringPointSummary from '../../components/GatheringPointSummary';
 import ShowMore from '../../components/ShowMore';
@@ -40,6 +44,7 @@ import GatheringItemLite from '../../components/GatheringItemLite';
 import {mapUrl} from '../../config/url';
 import Tag from '../../components/Tag';
 import Divider from '../../components/Divider';
+import {onEvent, onPageEnd, onPageStart} from '../../native/BaiduMobStat';
 
 const GATHERING_POINT_LIST_MAX_AMOUNT = 3;
 
@@ -400,6 +405,7 @@ const Detail: FC = () => {
       if (reductionItem) {
         navigation.navigate('ReductionDetail', reductionItem);
       } else {
+        onEvent('reduction-item-not-found', `${id}`);
         ToastAndroid.show(
           '精选数据不存在，请反馈数据缺失情况',
           ToastAndroid.SHORT,
@@ -429,6 +435,13 @@ const Detail: FC = () => {
     ),
     [gatheringItem.reduceResult, onReduceResultItemPress, theme.colors.primary],
   );
+  const onPageFocusChanged = useCallback(() => {
+    onPageStart('Detail');
+    return () => {
+      onPageEnd('Detail');
+    };
+  }, []);
+  useFocusEffect(onPageFocusChanged);
   return (
     <View
       style={{

@@ -47,6 +47,12 @@ import ConfirmDialog, {
   ConfirmDialogInstance,
 } from '../../components/ConfirmDialog';
 import {privacyPolicy, userAgreement} from '../../config/strings';
+import {
+  initStatService,
+  initStatServiceInBrowseMode,
+  onPageEnd,
+  onPageStart,
+} from '../../native/BaiduMobStat';
 
 const Favorites: FC = () => {
   const insets = useSafeAreaInsets();
@@ -373,12 +379,14 @@ const Favorites: FC = () => {
     null,
   );
   const onPrivacyPolicyDialogConfirm = useCallback(() => {
+    initStatService();
     updateAcceptPrivacyPolicy(true);
     if (privacyPolicyDialogInstance.current !== null) {
       privacyPolicyDialogInstance.current.hide();
     }
   }, [updateAcceptPrivacyPolicy]);
   const onPrivacyPolicyDialogCancel = useCallback(() => {
+    initStatServiceInBrowseMode();
     if (privacyPolicyDialogInstance.current !== null) {
       privacyPolicyDialogInstance.current.hide();
     }
@@ -419,6 +427,13 @@ const Favorites: FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const onPageFocusChanged = useCallback(() => {
+    onPageStart('Favorites');
+    return () => {
+      onPageEnd('Favorites');
+    };
+  }, []);
+  useFocusEffect(onPageFocusChanged);
   return (
     <View
       style={{
