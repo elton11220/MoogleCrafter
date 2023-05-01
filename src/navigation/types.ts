@@ -23,6 +23,11 @@ export type RootStackParamList = {
     showDismissButton: boolean;
   };
   ReductionDetail: AppGlobal.ReductionItem;
+  InAppBrowser: {
+    title?: string;
+    url: string;
+    allowOpenInSystemBrowser?: boolean;
+  };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

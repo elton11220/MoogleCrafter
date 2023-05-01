@@ -38,6 +38,7 @@ import type {RootStackParamList} from './navigation/types';
 import {gatheringItemsMap} from './store/persistStore';
 import ReductionDetail from './pages/ReductionDetail';
 import {initStatService} from './native/BaiduMobStat';
+import InAppBrowser from './pages/InAppBrowser';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -258,6 +259,16 @@ const App: FC = () => {
                 orientation: 'portrait',
                 animation: 'fade',
                 presentation: 'transparentModal',
+              }}
+            />
+            <Stack.Screen
+              name="InAppBrowser"
+              component={InAppBrowser}
+              options={{
+                headerShown: false,
+                orientation: 'portrait',
+                animation: 'none',
+                presentation: 'card',
               }}
             />
           </Stack.Navigator>
