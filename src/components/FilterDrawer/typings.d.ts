@@ -9,6 +9,7 @@ declare namespace FilterDrawer {
     classJob: string | null;
     specialType: string | null;
     exVersion: number | null;
+    craftFilter: number | null;
     gatheringItemLevel: number | null;
     mapId: number | null;
   }

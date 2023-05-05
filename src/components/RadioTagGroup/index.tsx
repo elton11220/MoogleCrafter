@@ -8,7 +8,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const RadioTagGroup: <T>(
   props: RadioTagGroup.Props<T>,
 ) => JSX.Element = props => {
-  const {value, setValue, items, showSelectedIcon} = props;
+  const {value, setValue, items, showSelectedIcon, itemSize = 'auto'} = props;
   const theme = useTheme<typeof DefaultLightTheme>();
   return (
     <View style={styles.container}>
@@ -36,6 +36,7 @@ const RadioTagGroup: <T>(
                   ? item.style.unselectedBorderColor
                   : theme.colors.secondaryContainer,
               borderWidth: item.style ? px2DpX(1) : 0,
+              width: itemSize === 'large' ? '100%' : undefined,
             },
           ]}>
           {item.linearGradient ? (
@@ -63,6 +64,7 @@ const RadioTagGroup: <T>(
                 paddingRight: item.style ? px2DpX(11) : px2DpX(12),
                 paddingTop: item.style ? px2DpY(5) : px2DpY(6),
                 paddingBottom: item.style ? px2DpY(5) : px2DpY(6),
+                width: itemSize === 'large' ? '100%' : undefined,
               },
             ]}
             onPress={() => {

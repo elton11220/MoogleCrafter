@@ -17,6 +17,12 @@ import produce from 'immer';
 import {px2DpX} from '../../utils/dimensionConverter';
 import NumberInput from '../NumberInput';
 import RegionSelectorMenu from '../RegionSelectorMenu';
+import {craftFilterDataSelector, useStore} from '../../store';
+
+interface LabelBase<T> {
+  key: T;
+  label: string;
+}
 
 const isRareRadioItems = [
   {
@@ -63,7 +69,19 @@ const specialTypes = [
   },
 ];
 
-const exVersions = [
+type ExVersionLabelStyle = {
+  selectedBorderColor: string;
+  selectedBackground: string;
+  unselectedBorderColor: string;
+  unselectedBackground: string;
+};
+
+const exVersions: Array<
+  LabelBase<null | number> & {
+    style?: ExVersionLabelStyle;
+    linearGradient?: RadioTagGroup.LinearGradientProps;
+  }
+> = [
   {
     key: null,
     label: '全部',
@@ -133,6 +151,7 @@ export type FilterValue = {
   classJob: string | null;
   specialType: string | null;
   exVersion: number | null;
+  craftFilter: number | null;
   gatheringItemLevel: number | null;
   mapId: number | null;
 };
@@ -166,6 +185,7 @@ const FilterDrawer: ForwardRefRenderFunction<
       produce(state, draft => {
         draft.classJob = value.classJob;
         draft.exVersion = value.exVersion;
+        draft.craftFilter = value.craftFilter;
         draft.gatheringItemLevel = value.gatheringItemLevel;
         draft.isRare = value.isRare;
         draft.specialType = value.specialType;
@@ -190,6 +210,7 @@ const FilterDrawer: ForwardRefRenderFunction<
         produce(value, draft => {
           draft.classJob = tempFilterValue.classJob;
           draft.exVersion = tempFilterValue.exVersion;
+          draft.craftFilter = tempFilterValue.craftFilter;
           draft.specialType = tempFilterValue.specialType;
           draft.gatheringItemLevel = tempFilterValue.gatheringItemLevel;
           draft.isRare = tempFilterValue.isRare;
@@ -201,6 +222,7 @@ const FilterDrawer: ForwardRefRenderFunction<
     [
       tempFilterValue.classJob,
       tempFilterValue.exVersion,
+      tempFilterValue.craftFilter,
       tempFilterValue.gatheringItemLevel,
       tempFilterValue.isRare,
       tempFilterValue.specialType,
@@ -214,6 +236,7 @@ const FilterDrawer: ForwardRefRenderFunction<
         draft.isRare = null;
         draft.classJob = null;
         draft.exVersion = null;
+        draft.craftFilter = null;
         draft.gatheringItemLevel = null;
         draft.specialType = null;
         draft.mapId = null;
@@ -225,6 +248,7 @@ const FilterDrawer: ForwardRefRenderFunction<
         draft.classJob = null;
         draft.specialType = null;
         draft.exVersion = null;
+        draft.craftFilter = null;
         draft.gatheringItemLevel = null;
         draft.mapId = null;
       }),
@@ -293,6 +317,42 @@ const FilterDrawer: ForwardRefRenderFunction<
     ),
     [tempFilterValue.exVersion, updateFilterValue],
   );
+  const craftFilterData = useStore(craftFilterDataSelector);
+  const transformedCraftFilterData: Array<
+    LabelBase<null | number> & {
+      style?: ExVersionLabelStyle;
+      linearGradient?: RadioTagGroup.LinearGradientProps;
+    }
+  > = useMemo(
+    () => [
+      ...craftFilterData.map((item, index) => ({
+        ...exVersions[item.exVersion + 1],
+        key: index,
+        label: item.label,
+      })),
+    ],
+    [craftFilterData],
+  );
+  const craftFilterRadioGroup = useMemo(
+    () => (
+      <DrawerItem title="制作">
+        <View style={styles.itemContainer}>
+          <RadioTagGroup<FilterDrawer.FilterValue['craftFilter']>
+            items={transformedCraftFilterData}
+            value={tempFilterValue.craftFilter}
+            showSelectedIcon
+            itemSize="large"
+            setValue={newValue => updateFilterValue('craftFilter', newValue)}
+          />
+        </View>
+      </DrawerItem>
+    ),
+    [
+      tempFilterValue.craftFilter,
+      transformedCraftFilterData,
+      updateFilterValue,
+    ],
+  );
   const gatheringItemLevelRadioGroup = useMemo(
     () => (
       <DrawerItem title="等级">
@@ -349,6 +409,7 @@ const FilterDrawer: ForwardRefRenderFunction<
         {classJobRadioGroup}
         {specialTypeRadioGroup}
       </View>
+      <View>{craftFilterRadioGroup}</View>
       <View>
         {exVersionRadioGroup}
         {gatheringItemLevelRadioGroup}

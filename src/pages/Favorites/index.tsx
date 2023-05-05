@@ -66,6 +66,7 @@ const Favorites: FC = () => {
     isRare: null,
     classJob: null,
     exVersion: null,
+    craftFilter: null,
     specialType: null,
     gatheringItemLevel: null,
     mapId: null,

@@ -75,6 +75,7 @@ declare namespace ZustandStore {
     gatheringItems: AppGlobal.GatheringItem[];
     gatheringPointBases: AppGlobal.GatheringPointBase[];
     reductionItems: AppGlobal.ReductionItems;
+    craftFilterData: AppGlobal.CraftFilterData;
     favoriteGatheringItems: Map<
       AppGlobal.GatheringItem['id'],
       AppGlobal.GatheringItem

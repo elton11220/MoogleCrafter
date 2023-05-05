@@ -22,5 +22,6 @@ declare namespace RadioTagGroup {
     value: T;
     setValue: (value: T) => void;
     showSelectedIcon?: boolean;
+    itemSize?: 'auto' | 'large';
   }
 }

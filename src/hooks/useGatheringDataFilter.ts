@@ -1,5 +1,6 @@
 import {useState, useTransition, useEffect} from 'react';
 import type {FilterValue} from '../components/FilterDrawer';
+import {craftFilterDataSelector, useStore} from '../store';
 
 export function useGatheringDataFilter(
   gatheringItems: AppGlobal.GatheringItem[],
@@ -12,6 +13,7 @@ export function useGatheringDataFilter(
 ] {
   const [filteredGatheringItems, setFilteredGatheringItems] =
     useState(gatheringItems);
+  const craftFilterData = useStore(craftFilterDataSelector);
   const [isPending, startTransition] = useTransition();
   let filterAmount = 0;
   for (const filterVal of Object.values(filterValue)) {
@@ -65,6 +67,15 @@ export function useGatheringDataFilter(
             return false;
           }
         }
+        if (filterValue.craftFilter !== null) {
+          if (
+            !craftFilterData[filterValue.craftFilter].requiredItems.includes(
+              item.id,
+            )
+          ) {
+            return false;
+          }
+        }
         if (filterValue.gatheringItemLevel !== null) {
           if (
             item.gatheringItemLevel > filterValue.gatheringItemLevel ||
@@ -88,6 +99,6 @@ export function useGatheringDataFilter(
       });
       setFilteredGatheringItems(filterResult);
     });
-  }, [filterValue, gatheringItems, searchName]);
+  }, [craftFilterData, filterValue, gatheringItems, searchName]);
   return [isPending, filteredGatheringItems, filterAmount];
 }

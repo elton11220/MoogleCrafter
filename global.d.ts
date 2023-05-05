@@ -91,4 +91,14 @@ declare namespace AppGlobal {
     itemCategory: string;
     desc: string;
   }
+
+  interface CraftFilterItemData {
+    key: number;
+    label: string;
+    requiredItems: number[];
+    preparing: boolean;
+    exVersion: 0 | 1 | 2 | 3 | 4;
+  }
+
+  type CraftFilterData = CraftFilterItemData[];
 }

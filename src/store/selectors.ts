@@ -9,6 +9,9 @@ export const reductionItemsSelector = (s: ZustandStore.Store) =>
 
 export const regionItemsSelector = (s: ZustandStore.Store) => s.regions;
 
+export const craftFilterDataSelector = (s: ZustandStore.Store) =>
+  s.craftFilterData;
+
 export const notificationSettingsSelector = (s: ZustandStore.Store) =>
   s.settings.notificationSettings;
 

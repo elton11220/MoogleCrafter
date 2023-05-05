@@ -35,6 +35,7 @@ const MaterialList: FC = () => {
     isRare: null,
     classJob: null,
     exVersion: null,
+    craftFilter: null,
     gatheringItemLevel: null,
     specialType: null,
     mapId: null,
