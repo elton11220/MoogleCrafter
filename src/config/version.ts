@@ -8,10 +8,10 @@ type VersionInfo = {
 
 const versionInfo: VersionInfo = {
   appName: '莫古锤子',
-  versionSymbol: 5,
-  compositedVersionSymbol: '0.2.1-stable-230505',
+  versionSymbol: 6,
+  compositedVersionSymbol: '0.2.2-stable-230509',
   versionType: 'stable',
-  resVersion: '2023.02.16.0000.0000-6.25-chs',
+  resVersion: '2023.04.21.0000.0000-6.3-chs',
 };
 
 Object.freeze(versionInfo);
