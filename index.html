@@ -23,6 +23,7 @@
       <div class="eorzea-map-glass"></div>
       <div class="eorzea-map-inner" id="eorzea-map"></div>
       <div class="eorzea-map-resize-handler"></div>
+      <div class="upper-pos-container"></div>
       <div class="eorzea-map-copyright">Powered by FFCafe</div>
     </div>
     <script src="https://code.bdstatic.com/npm/jquery@3.2.1/dist/jquery.min.js"></script>
@@ -50,6 +51,14 @@
         map.loadMapKey(Number.parseInt(searchParams.mapId)).then(function () {
           const x = Number.parseFloat(searchParams.x);
           const y = Number.parseFloat(searchParams.y);
+          // 右下角显示坐标
+          const posEle = $(".upper-pos-container")[0];
+          const posXEle = document.createElement("span");
+          posXEle.innerText = `X: ${x.toFixed(1)}`;
+          const posYEle = document.createElement("span");
+          posYEle.innerText = `Y: ${y.toFixed(1)}`;
+          posEle.append(posXEle, " ", posYEle);
+          //
           const iconUrl = window.YZWF.eorzeaMap.loader.getIconUrl(
             "ui/icon/060000/060561.tex"
           );
