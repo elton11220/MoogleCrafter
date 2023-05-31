@@ -9,5 +9,9 @@
         }
       ]
     }
-  ]
+  ],
+  "buildCommand": "yarn build",
+  "installCommand": "yarn install",
+  "devCommand": "yarn dev",
+  "outputDirectory": "/build/dist"
 }
