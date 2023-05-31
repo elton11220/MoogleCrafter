@@ -8,7 +8,7 @@ export function getSearchParams<T>() {
       params[pair[0]] = pair[1];
     });
   for (let [k, v] of Object.entries(params)) {
-    if (v.toString() !== "NaN") {
+    if (Number(v).toString() !== "NaN") {
       params[k] = Number.parseFloat(v);
     } else if (v === "true") {
       params[k] = true;
