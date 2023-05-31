@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "main": "index.js",
   "author": "elton11220",
-  "private": "true",
+  "license": "GPL-3.0",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config build/webpack.config.js",
     "build": "cross-env NODE_ENV=production webpack --config build/webpack.config.js"
