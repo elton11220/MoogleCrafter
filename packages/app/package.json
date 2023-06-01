@@ -1,7 +1,9 @@
 {
-  "name": "ffxiv_gatherer_timer",
-  "version": "0.1.0",
+  "name": "@mooglecrafter/app",
+  "version": "0.2.2",
   "private": true,
+  "author": "elton11220",
+  "license": "GPL-3.0",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",

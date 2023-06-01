@@ -1,0 +1,8 @@
+{
+  "name": "@mooglecrafter/data-extraction",
+  "version": "1.0.0",
+  "author": "elton11220",
+  "license": "GPL-3.0",
+  "private": true,
+  "main": "index.js"
+}
