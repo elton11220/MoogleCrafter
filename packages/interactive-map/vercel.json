@@ -1,0 +1,17 @@
+{
+  "headers": [
+    {
+      "source": "(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=3600, max-age=3600"
+        }
+      ]
+    }
+  ],
+  "buildCommand": "yarn build",
+  "installCommand": "yarn install",
+  "devCommand": "yarn dev",
+  "outputDirectory": "/build/dist"
+}
