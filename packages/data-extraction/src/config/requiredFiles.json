@@ -1,0 +1,24 @@
+{
+  "csv": [
+    "GatheringPoint",
+    "GatheringPointTransient",
+    "GatheringRarePopTimeTable",
+    "GatheringPointBonus",
+    "GatheringCondition",
+    "GatheringPointBonusType",
+    "ClassJob",
+    "GatheringSubCategory",
+    "TerritoryType",
+    "Map",
+    "PlaceName",
+    "GatheringItem",
+    "GatheringItemLevelConvertTable",
+    "GatheringPointBase",
+    "GatheringType",
+    "ExportedGatheringPoint",
+    "Item",
+    "ItemUICategory",
+    "GatheringItemPoint"
+  ],
+  "json": ["aetherytes", "reduction"]
+}

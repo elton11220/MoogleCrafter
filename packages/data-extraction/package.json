@@ -4,5 +4,15 @@
   "author": "elton11220",
   "license": "GPL-3.0",
   "private": true,
-  "main": "index.js"
+  "main": "index.js",
+  "scripts": {
+    "build": "node index.js"
+  },
+  "dependencies": {
+    "@jyeontu/progress-bar": "^1.0.5",
+    "line-reader": "^0.4.0",
+    "sql-template-strings": "^2.2.2",
+    "sqlite": "^4.2.1",
+    "sqlite3": "^5.1.6"
+  }
 }
