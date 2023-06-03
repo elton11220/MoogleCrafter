@@ -10,7 +10,7 @@ module.exports = {
   entry: "./src/index.ts",
   output: {
     filename: "[name].[contenthash:8].bundle.js",
-    path: path.resolve(__dirname, "./dist"),
+    path: path.resolve(__dirname, "../dist"),
   },
   resolve: {
     extensions: [".ts", ".js", ".json"],
