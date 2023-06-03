@@ -1,14 +1,40 @@
-# 莫古锤子应用内交互地图
+# @mooglecrafter/interactive-map
 
 基于 `FFCafe` 的 `Interactive Map` 进行二次封装，添加了部分 `TS` 类型声明并使用 `Webpack` 打包
 
 ## 如何使用
 
-- 安装依赖：`yarn`
-- 调试：`yarn dev`
-- 打包：`yarn build`
+你可以选择在 `vercel` 中部署这个仓库，在 `App` 相关 `WebView` 中配置好相关 `URL`，这样做的好处是你可以随时修改地图的一些配置。（如：修改 CDN、调整样式）
 
-## 查询参数
+你也可以选择将打包后的页面嵌入到应用中，这样可以节省页面加载的时间。
+
+### 安装依赖
+
+仓库使用了 `yarn workspace + lerna` 管理 `monorepo`，有以下几种安装依赖的方法：
+
+- `yarn install`
+- `lerna bootstrap`
+
+### 调试
+
+列出几种以 `development` 模式运行的方法：
+
+- `cd /packages/interactive-map && yarn dev`
+- `lerna run dev --scope @mooglecrafter/interactive-map`
+
+### 打包
+
+列出几种以 `production` 模式运行的方法：
+
+- `cd /packages/interactive-map && yarn build`
+- `lerna run build --scope @mooglecrafter/interactive-map`
+
+## Todo
+
+1. 目前需要修改 `App` 相关代码，使页面能够嵌入到应用。
+2. 需要调整构建流程，使此仓库执行完 `build` 后自动将打包结果复制到应用内。
+
+## 页面查询参数
 
 | searchParam | 是否必需 | 默认值 | 数据类型 | 描述                |
 | :---------: | :------: | :----: | :------: | :------------------ |
