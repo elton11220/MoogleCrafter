@@ -4,6 +4,7 @@
  *
  * @format
  */
+const path = require('path');
 
 const jsoMetroPlugin = require('obfuscator-io-metro-plugin')(
   {
@@ -34,4 +35,5 @@ module.exports = {
     unstable_allowRequireContext: true,
   },
   ...jsoMetroPlugin,
+  watchFolders: [path.resolve(__dirname, '../../node_modules')],
 };
