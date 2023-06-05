@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@jyeontu/progress-bar": "^1.0.5",
+    "fs-extra": "^11.1.1",
     "line-reader": "^0.4.0",
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.2.1",
