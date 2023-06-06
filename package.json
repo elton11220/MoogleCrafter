@@ -4,9 +4,19 @@
   "author": "elton11220",
   "license": "GPL-3.0",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/react",
+      "**/react-dom",
+      "**/react-native",
+      "**/react-native/**",
+      "**/react-native-codegen",
+      "**/react-native-dev-menu"
+    ]
+  },
   "devDependencies": {
     "lerna": "^6.6.2"
   }

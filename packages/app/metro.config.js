@@ -4,7 +4,11 @@
  *
  * @format
  */
+const {getMetroTools} = require('react-native-monorepo-tools');
+const exclusionList = require('metro-config/src/defaults/exclusionList');
 const path = require('path');
+
+const monorepoMetroTools = getMetroTools();
 
 const jsoMetroPlugin = require('obfuscator-io-metro-plugin')(
   {
@@ -25,6 +29,7 @@ const jsoMetroPlugin = require('obfuscator-io-metro-plugin')(
 );
 
 module.exports = {
+  projectRoot: path.resolve(__dirname),
   transformer: {
     getTransformOptions: async () => ({
       transform: {
@@ -34,6 +39,10 @@ module.exports = {
     }),
     unstable_allowRequireContext: true,
   },
+  watchFolders: monorepoMetroTools.watchFolders,
+  resolver: {
+    blockList: exclusionList(monorepoMetroTools.blockList),
+    extraNodeModules: monorepoMetroTools.extraNodeModules,
+  },
   ...jsoMetroPlugin,
-  watchFolders: [path.resolve(__dirname, '../../node_modules')],
 };
