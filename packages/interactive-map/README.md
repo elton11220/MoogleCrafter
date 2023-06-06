@@ -1,6 +1,6 @@
 # @mooglecrafter/interactive-map
 
-基于 `FFCafe` 的 `Interactive Map` 进行二次封装，添加了部分 `TS` 类型声明并使用 `Webpack` 打包
+基于 `FFCafe` 的 `Interactive Map` 进行二次封装，添加了部分 `TS` 类型声明并使用 `Webpack` 打包。
 
 ## 如何使用
 
@@ -10,24 +10,24 @@
 
 ### 安装依赖
 
-仓库使用了 `yarn workspace + lerna` 管理 `monorepo`，有以下几种安装依赖的方法：
+仓库使用了 `yarn workspace + lerna` 管理 `monorepo`，建议使用 `lerna` 管理依赖：
 
-- `yarn install`
-- `lerna bootstrap`
+1. `npm i -g lerna`
+2. 打开项目根目录
+3. `lerna bootstrap`
 
-### 调试
+### 运行
 
-列出几种以 `development` 模式运行的方法：
+- 以 `development` 模式运行：`lerna run dev --scope @mooglecrafter/interactive-map`
 
-- `cd /packages/interactive-map && yarn dev`
-- `lerna run dev --scope @mooglecrafter/interactive-map`
+- 以 `production` 模式运行：`lerna run build --scope @mooglecrafter/interactive-map`
 
-### 打包
+### 独立运行
 
-列出几种以 `production` 模式运行的方法：
+如果你只希望使用这个包，可以使用以下命令安装依赖并运行：
 
-- `cd /packages/interactive-map && yarn build`
-- `lerna run build --scope @mooglecrafter/interactive-map`
+1. `yarn install`
+2. `yarn dev` / `yarn build`
 
 ## Todo
 

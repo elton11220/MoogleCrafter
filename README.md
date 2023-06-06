@@ -13,7 +13,7 @@
 
 | Package                                    | 状态 |      描述      |
 | :----------------------------------------- | :--: | :------------: |
-| `@mooglecrafter/app`                       |  🔁  |      App       |
+| `@mooglecrafter/app`                       |  ✅  |      App       |
 | `@mooglecrafter/data-extraction`           |  ✅  | 游戏数据提取器 |
 | `@mooglecrafter/interactive-map`           |  ✅  |    交互地图    |
 | `@mooglecrafter/gathering-event-scheduler` |  🔁  | 采集事件调度器 |
@@ -24,9 +24,16 @@
 > ⚠️ 仓库存在问题&nbsp;&nbsp;
 > ❌ 已停止维护
 
+## 开始
+
+1. [准备游戏数据](https://github.com/elton11220/MoogleCrafter/blob/master/packages/data-extraction/README.md)
+2. [运行 / 构建应用](https://github.com/elton11220/MoogleCrafter/blob/master/packages/app/README.md)
+
+获取更多使用帮助，请查看 `packages` 文件夹中各 `package` 的 `README` 文件。
+
 ## 获取支持
 
-如有疑问，请在 [NGA 论坛](https://bbs.nga.cn/read.php?tid=36031067) 、[Github Discussion](https://github.com/elton11220/MoogleCrafter/discussions) 留言或在 [FF14 幻想科技 QQ 频道](https://pd.qq.com/s/65wz9nr53) 与其他用户交流。此 `repo` 的 `issue` 列表专门用于错误报告和功能请求
+如有疑问，请在 [NGA 论坛](https://bbs.nga.cn/read.php?tid=36031067) 、[Github Discussion](https://github.com/elton11220/MoogleCrafter/discussions) 留言或在 [FF14 幻想科技 QQ 频道](https://pd.qq.com/s/65wz9nr53) 与其他用户交流。此 `repo` 的 `issue` 列表用于错误报告和功能请求。
 
 ## Issues
 

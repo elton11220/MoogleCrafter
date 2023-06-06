@@ -1,6 +1,6 @@
 # @mooglecrafter/data-extraction
 
-这个包用于从 `ffxiv-datamining-cn` 仓库的 `csv` 文件中提取出应用需要的采集数据并将其转换为 `SQLite` 和 `JSON`。同时，从 `SaintConiach` 中提取的图标集合中获取需要的素材的图标
+这个包用于从 `ffxiv-datamining-cn` 仓库的 `csv` 文件中提取出应用需要的采集数据并将其转换为 `SQLite` 和 `JSON`。同时，从 `SaintConiach` 中提取的图标集合中获取需要的素材的图标。
 
 ## 仓库结构
 
@@ -19,7 +19,9 @@
 
 ## 如何使用
 
-本仓库为 `@mooglecrafter/main` 的子仓库，在主仓库 `prebuild` 阶段自动执行相关流程
+本仓库为 `@mooglecrafter/main` 的子仓库，在 `@mooglecrafter/app` 的 `build` 阶段执行前自动执行数据提取流程并复制提取结果。
+
+> 你也可以选择独立运行这个包
 
 ### 在运行前你需要准备什么
 
@@ -54,17 +56,19 @@
 
 ### 安装依赖
 
-仓库使用了 `yarn workspace + lerna` 管理 `monorepo`，有以下几种安装依赖的方法：
+仓库使用了 `yarn workspace + lerna` 管理 `monorepo`，建议使用 `lerna` 管理依赖：
 
-- `yarn install`
-- `lerna bootstrap`
+1. `npm i -g lerna`
+2. 打开项目根目录
+3. `lerna bootstrap`
 
 ### 运行
 
-列出几种独立运行此包的方法：
+- 提取采集数据：`lerna run build --scope @mooglecrafter/data-extraction`
 
-- `cd /packages/data-extraction && yarn build`
-- `lerna run build --scope @mooglecrafter/data-extraction`
+  > 此操作运行时将判断当前是否处于 `lerna` 环境中。<br><br>
+  > 使用 `lerna` 执行这个操作，那么资源将会被输出到 `/dist` 文件夹并复制到 `@mooglecrafter/app` 的 `/src/data` 和 `/src/images/gameResources` 文件夹。<br><br>
+  > 如果使用 `yarn build` 独立运行此包，资源只会被输出到 `/dist` 文件夹。
 
 ### 独立运行
 
@@ -75,7 +79,7 @@
 
 ## 输出说明
 
-此工具会在 `/dist` 目录中输出处理后的采集数据及相关资源
+此工具将处理游戏数据并提取到以下文件/目录中：
 
 | 文件或目录                    |          描述          |
 | :---------------------------- | :--------------------: |
@@ -84,6 +88,10 @@
 | /dist/gatheringPointBase.json |       采集点数据       |
 | /dist/reductionData.json      |      精选素材数据      |
 | /dist/itemIcons               |        素材图标        |
+
+## Todo
+
+1. 加入联网获取数据功能，无需手动下载数据。
 
 ## License
 
