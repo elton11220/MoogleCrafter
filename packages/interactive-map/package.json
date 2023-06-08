@@ -20,12 +20,12 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
     "html-webpack-plugin": "^5.5.1",
+    "prettier": "^2.8.8",
     "style-loader": "^3.3.3",
     "terser-webpack-plugin": "^5.3.9",
     "typescript": "^5.0.4",
     "webpack": "^5.84.1",
     "webpack-cli": "^5.1.1",
     "webpack-dev-server": "^4.15.0"
-  },
-  "dependencies": {}
+  }
 }

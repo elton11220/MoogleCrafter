@@ -15,5 +15,8 @@
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.2.1",
     "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.8"
   }
 }

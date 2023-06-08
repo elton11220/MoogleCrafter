@@ -1,5 +1,5 @@
 module.exports = {
-  root: '',
+  root: false,
   extends: [
     'eslint:recommended',
     '@react-native-community',

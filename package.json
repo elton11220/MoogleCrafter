@@ -6,8 +6,8 @@
   "private": true,
   "scripts": {
     "postinstall": "husky install",
-    "lint-staged": "lint-staged",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "lint": "lint-staged"
   },
   "workspaces": {
     "packages": [
